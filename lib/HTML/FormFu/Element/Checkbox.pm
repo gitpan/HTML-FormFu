@@ -2,7 +2,7 @@ package HTML::FormFu::Element::Checkbox;
 
 use strict;
 use base 'HTML::FormFu::Element::_Input';
-use Class::C3;
+use mro 'c3';
 
 use HTML::FormFu::Constants qw( $EMPTY_STR );
 
@@ -111,3 +111,5 @@ Carl Franks, C<cfranks@cpan.org>
 
 This library is free software, you can redistribute it and/or modify it under
 the same terms as Perl itself.
+
+=cut

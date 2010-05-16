@@ -1,7 +1,7 @@
 package HTML::FormFu::Element::ComboBox;
 use strict;
 use base 'HTML::FormFu::Element::Multi';
-use Class::C3;
+use mro 'c3';
 
 use HTML::FormFu::Element::_Group qw( _process_options_from_model );
 use HTML::FormFu::Util qw( _filter_components _parse_args );
@@ -314,11 +314,11 @@ See L<HTML::FormFu::Element::_Group/value_range> for details.
 
 =head2 empty_first
 
-See L<HTML::FormFu::Element::Select/empty_first> for details.
+See L<HTML::FormFu::Element::_Group/empty_first> for details.
 
 =head2 empty_first_label
 
-See L<HTML::FormFu::Element::Select/empty_first_label> for details.
+See L<HTML::FormFu::Element::_Group/empty_first_label> for details.
 
 =head2 select
 
@@ -355,8 +355,8 @@ added directly to the date element, not to its child elements.
 This element's L<get_elements|HTML::FormFu/get_elements> and 
 L<get_all_elements|HTML::FormFu/get_all_elements> are inherited from 
 L<HTML::FormFu::Element::Block>, and so have the same behaviour. However, it 
-overrides the C<get_fields> method, such that it returns both itself and 
-its child elements.
+overrides the C<get_fields|HTML::FormFu/get_fields> method, such that it
+returns both itself and its child elements.
 
 =head1 SEE ALSO
 
@@ -375,3 +375,5 @@ Carl Franks, C<cfranks@cpan.org>
 
 This library is free software, you can redistribute it and/or modify it under
 the same terms as Perl itself.
+
+=cut

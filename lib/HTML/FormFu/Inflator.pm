@@ -2,7 +2,7 @@ package HTML::FormFu::Inflator;
 
 use strict;
 use base 'HTML::FormFu::Processor';
-use Class::C3;
+use mro 'c3';
 
 use HTML::FormFu::Exception::Inflator;
 use Scalar::Util qw( blessed );
@@ -98,3 +98,5 @@ Carl Franks, C<cfranks@cpan.org>
 
 This library is free software, you can redistribute it and/or modify it under
 the same terms as Perl itself.
+
+=cut

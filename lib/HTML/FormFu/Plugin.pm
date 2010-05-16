@@ -1,7 +1,7 @@
 package HTML::FormFu::Plugin;
 
 use strict;
-use Class::C3;
+use mro 'c3';
 
 use HTML::FormFu::Attribute qw( mk_item_accessors mk_accessors );
 use HTML::FormFu::ObjectUtil qw( populate form parent );
@@ -127,3 +127,5 @@ Carl Franks, C<cfranks@cpan.org>
 
 This library is free software, you can redistribute it and/or modify it under
 the same terms as Perl itself.
+
+=cut

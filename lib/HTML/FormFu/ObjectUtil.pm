@@ -9,14 +9,16 @@ use HTML::FormFu::Util qw(
     _filter_components      _merge_hashes
 );
 use Config::Any;
+use Clone ();
 use Data::Visitor::Callback;
 use File::Spec;
 use Scalar::Util qw( refaddr reftype weaken blessed );
 use List::MoreUtils qw( none uniq );
-use Storable qw( dclone );
+use MRO::Compat;
 use Carp qw( croak );
 
 our @form_and_block = qw(
+    component
     element
     deflator
     filter
@@ -25,6 +27,7 @@ our @form_and_block = qw(
     validator
     transformer
     plugin
+    _single_component
     _single_element
     _single_deflator
     _single_filter
@@ -35,6 +38,8 @@ our @form_and_block = qw(
     _require_constraint
     default_args
     element_defaults
+    get_component
+    get_components
     get_element
     get_elements
     get_deflators
@@ -57,12 +62,14 @@ our @form_and_block = qw(
 );
 
 our @form_and_element = qw(
+    _require_component
     _require_deflator
     _require_filter
     _require_inflator
     _require_validator
     _require_transformer
     _require_plugin
+    get_component
     get_deflator
     get_filter
     get_constraint
@@ -100,30 +107,64 @@ our %EXPORT_TAGS = (
     FORM_AND_ELEMENT => \@form_and_element,
 );
 
-sub default_args {
-    my ( $self, $defaults ) = @_;
+{
+    my @can_have_defaults = qw(
+        elements        deflators
+        filters         constraints
+        inflators       validators
+        transformers    output_processors
+    );
+    
+    sub default_args {
+        my ( $self, $defaults ) = @_;
+    
+        $self->{default_args} ||= {};
+    
+        if ($defaults) {
 
-    $self->{default_args} ||= {};
-
-    if ($defaults) {
-
-        my @valid_types = qw(
-            elements        deflators
-            filters         constraints
-            inflators       validators
-            transformers    output_processors
-        );
-
-        for my $type ( keys %$defaults ) {
-            croak "not a valid type for default_args: '$type'"
-                if none { $type eq $_ } @valid_types;
+            for my $type ( keys %$defaults ) {
+                croak "not a valid type for default_args: '$type'"
+                    if none { $type eq $_ } @can_have_defaults;
+            }
+    
+            $self->{default_args}
+                = _merge_hashes( $self->{default_args}, $defaults );
         }
-
-        $self->{default_args}
-            = _merge_hashes( $self->{default_args}, $defaults );
+    
+        return $self->{default_args};
     }
+    
+    my $super_type = join '|',
+        map {
+            my $type = $_;
+            $type =~ s/s\z//;
+            $type =~ s/_(\w)/uc($1)/ge;
+            ucfirst $type;
+        }
+        @can_have_defaults;
 
-    return $self->{default_args};
+    my $known_class = qr/^HTML::FormFu::(?:$super_type)::([\w]+(?:::[\w]+)*)\z/;
+    
+    sub _handle_defaults {
+        my ( $self, $object, $args, $defaults ) = @_;
+    
+        if ( defined $defaults ) {
+
+            for my $ancestry ( @{ mro::get_linear_isa( ref $object ) } ) {
+                if ( $ancestry =~ $known_class ) {
+                    my $type = $1;
+
+                    if ( exists $defaults->{$type} ) {
+                        my $key = $defaults->{$type};
+
+                        $args = _merge_hashes( $key, $args );
+                    }
+                }
+            }
+        }
+    
+        $object->populate( $args );
+    }
 }
 
 sub element_defaults {
@@ -171,15 +212,15 @@ sub _require_element {
         } );
 
     if ( $element->can('default_args') ) {
-        $element->default_args( dclone $self->default_args );
+        $element->default_args( Clone::clone( $self->default_args ) );
     }
 
-    # handle default_args
-    if ( exists $self->default_args->{elements}{$type} ) {
-        $arg = _merge_hashes( $self->default_args->{elements}{$type}, $arg, );
-    }
-
-    populate( $element, $arg );
+    _handle_defaults(
+            $self,
+            $element,
+            $arg,
+            $self->default_args->{elements}
+        );
 
     $element->setup;
 
@@ -270,15 +311,12 @@ sub _require_constraint {
             parent => $self,
         } );
 
-    # handle default_args
-    my $parent = $self->parent;
-
-    if ( exists $parent->default_args->{constraints}{$type} ) {
-        $arg = _merge_hashes( $parent->default_args->{constraints}{$type}, $arg,
+    _handle_defaults(
+            $self,
+            $constraint,
+            $arg,
+            $self->parent->default_args->{constraints}
         );
-    }
-
-    populate( $constraint, $arg );
 
     return $constraint;
 }
@@ -526,7 +564,7 @@ sub _load_file {
     }
 
     for my $config ( ref $data eq 'ARRAY' ? @$data : $data ) {
-        $self->populate( dclone($config) );
+        $self->populate( Clone::clone($config) );
     }
 
     return;
@@ -631,9 +669,9 @@ sub clone {
     my %new = %$self;
 
     $new{_elements}    = [ map { $_->clone } @{ $self->_elements } ];
-    $new{attributes}   = dclone $self->attributes;
-    $new{tt_args}      = dclone $self->tt_args;
-    $new{model_config} = dclone $self->model_config;
+    $new{attributes}   = Clone::clone( $self->attributes );
+    $new{tt_args}      = Clone::clone( $self->tt_args );
+    $new{model_config} = Clone::clone( $self->model_config );
 
     if ( $self->can('_plugins') ) {
         $new{_plugins} = [ map { $_->clone } @{ $self->_plugins } ];
@@ -641,7 +679,7 @@ sub clone {
 
     $new{languages}
         = ref $self->languages
-        ? dclone $self->languages
+        ? Clone::clone( $self->languages )
         : $self->languages;
 
     $new{default_args} = $self->default_args;
@@ -973,116 +1011,109 @@ sub get_parent {
     return;
 }
 
-sub element {
-    my ( $self, $arg ) = @_;
+sub component {
+    my ( $self, $component_type, $arg ) = @_;
     my @return;
 
+    my $single_component = "_single_$component_type";
+
     if ( ref $arg eq 'ARRAY' ) {
-        push @return, map { $self->_single_element($_) } @$arg;
+        push @return, map { $self->$single_component($_) } @$arg;
     }
     else {
-        push @return, $self->_single_element($arg);
+        push @return, $self->$single_component($arg);
     }
 
     return @return == 1 ? $return[0] : @return;
+}
+
+sub element {
+    my $self = shift;
+
+    return $self->component( 'element', @_ );
 }
 
 sub deflator {
-    my ( $self, $arg ) = @_;
-    my @return;
+    my $self = shift;
 
-    if ( ref $arg eq 'ARRAY' ) {
-        push @return, map { $self->_single_deflator($_) } @$arg;
-    }
-    else {
-        push @return, $self->_single_deflator($arg);
-    }
-
-    return @return == 1 ? $return[0] : @return;
+    return $self->component( 'deflator', @_ );
 }
 
 sub filter {
-    my ( $self, $arg ) = @_;
-    my @return;
+    my $self = shift;
 
-    if ( ref $arg eq 'ARRAY' ) {
-        push @return, map { $self->_single_filter($_) } @$arg;
-    }
-    else {
-        push @return, $self->_single_filter($arg);
-    }
-
-    return @return == 1 ? $return[0] : @return;
+    return $self->component( 'filter', @_ );
 }
 
 sub constraint {
-    my ( $self, $arg ) = @_;
-    my @return;
+    my $self = shift;
 
-    if ( ref $arg eq 'ARRAY' ) {
-        push @return, map { $self->_single_constraint($_) } @$arg;
-    }
-    else {
-        push @return, $self->_single_constraint($arg);
-    }
-
-    return @return == 1 ? $return[0] : @return;
+    return $self->component( 'constraint', @_ );
 }
 
 sub inflator {
-    my ( $self, $arg ) = @_;
-    my @return;
+    my $self = shift;
 
-    if ( ref $arg eq 'ARRAY' ) {
-        push @return, map { $self->_single_inflator($_) } @$arg;
-    }
-    else {
-        push @return, $self->_single_inflator($arg);
-    }
-
-    return @return == 1 ? $return[0] : @return;
+    return $self->component( 'inflator', @_ );
 }
 
 sub validator {
-    my ( $self, $arg ) = @_;
-    my @return;
+    my $self = shift;
 
-    if ( ref $arg eq 'ARRAY' ) {
-        push @return, map { $self->_single_validator($_) } @$arg;
-    }
-    else {
-        push @return, $self->_single_validator($arg);
-    }
-
-    return @return == 1 ? $return[0] : @return;
+    return $self->component( 'validator', @_ );
 }
 
 sub transformer {
-    my ( $self, $arg ) = @_;
-    my @return;
+    my $self = shift;
 
-    if ( ref $arg eq 'ARRAY' ) {
-        push @return, map { $self->_single_transformer($_) } @$arg;
-    }
-    else {
-        push @return, $self->_single_transformer($arg);
-    }
-
-    return @return == 1 ? $return[0] : @return;
+    return $self->component( 'transformer', @_ );
 }
 
 sub plugin {
-    my ( $self, $arg ) = @_;
-    my @return;
+    my $self = shift;
+    return $self->component( 'plugin', @_ );
+}
 
-    if ( ref $arg eq 'ARRAY' ) {
-        push @return, map { $self->_single_plugin($_) } @$arg;
+sub _single_component {
+    my ( $self, $component_type, $arg ) = @_;
+
+    if ( !ref $arg ) {
+        $arg = { type => $arg };
+    }
+    elsif ( ref $arg eq 'HASH' ) {
+        $arg = {%$arg};    # shallow clone
     }
     else {
-        push @return, $self->_single_plugin($arg);
+        croak 'invalid args';
     }
 
-    return @return == 1 ? $return[0] : @return;
+    my @names = map { ref $_ ? @$_ : $_ }
+        grep {defined} ( delete $arg->{name}, delete $arg->{names} );
+
+    if ( !@names ) {
+        @names = uniq
+            grep {defined}
+            map  { $_->nested_name } @{ $self->get_fields };
+    }
+
+    croak "no field names to add $component_type to" if !@names;
+
+    my $type = delete $arg->{type};
+
+    my @return;
+
+    my $_require_component = "_require_$component_type";
+    my $_components = "_${component_type}s";
+
+    for my $x (@names) {
+        for my $field ( @{ $self->get_fields( { nested_name => $x } ) } ) {
+            my $new = $field->$_require_component( $type, $arg );
+            push @{ $field->$_components }, $new;
+            push @return, $new;
+        }
+    }
+
+    return @return;
 }
 
 sub _single_element {
@@ -1120,291 +1151,86 @@ sub _single_element {
 }
 
 sub _single_deflator {
-    my ( $self, $arg ) = @_;
+    my $self = shift;
 
-    if ( !ref $arg ) {
-        $arg = { type => $arg };
-    }
-    elsif ( ref $arg eq 'HASH' ) {
-        $arg = {%$arg};    # shallow clone
-    }
-    else {
-        croak 'invalid args';
-    }
-
-    my @names = map { ref $_ ? @$_ : $_ }
-        grep {defined} ( delete $arg->{name}, delete $arg->{names} );
-
-    if ( !@names ) {
-        @names = uniq
-            grep {defined}
-            map  { $_->nested_name } @{ $self->get_fields };
-    }
-
-    croak "no field names to add deflator to" if !@names;
-
-    my $type = delete $arg->{type};
-
-    my @return;
-
-    for my $x (@names) {
-        for my $field ( @{ $self->get_fields( { nested_name => $x } ) } ) {
-            my $new = $field->_require_deflator( $type, $arg );
-            push @{ $field->_deflators }, $new;
-            push @return, $new;
-        }
-    }
-
-    return @return;
+    return $self->_single_component( 'deflator', @_ );
 }
 
 sub _single_filter {
-    my ( $self, $arg ) = @_;
+    my $self = shift;
 
-    if ( !ref $arg ) {
-        $arg = { type => $arg };
-    }
-    elsif ( ref $arg eq 'HASH' ) {
-        $arg = {%$arg};    # shallow clone
-    }
-    else {
-        croak 'invalid args';
-    }
-
-    my @names = map { ref $_ ? @$_ : $_ }
-        grep {defined} ( delete $arg->{name}, delete $arg->{names} );
-
-    if ( !@names ) {
-        @names = uniq
-            grep {defined}
-            map  { $_->nested_name } @{ $self->get_fields };
-    }
-
-    croak "no field names to add filter to" if !@names;
-
-    my $type = delete $arg->{type};
-
-    my @return;
-
-    for my $x (@names) {
-        for my $field ( @{ $self->get_fields( { nested_name => $x } ) } ) {
-            my $new = $field->_require_filter( $type, $arg );
-            push @{ $field->_filters }, $new;
-            push @return, $new;
-        }
-    }
-
-    return @return;
+    return $self->_single_component( 'filter', @_ );
 }
 
 sub _single_constraint {
-    my ( $self, $arg ) = @_;
+    my $self = shift;
 
-    if ( !ref $arg ) {
-        $arg = { type => $arg };
-    }
-    elsif ( ref $arg eq 'HASH' ) {
-        $arg = {%$arg};    # shallow clone
-    }
-    else {
-        croak 'invalid args';
-    }
-
-    my @names = map { ref $_ ? @$_ : $_ }
-        grep {defined} ( delete $arg->{name}, delete $arg->{names} );
-
-    if ( !@names ) {
-        @names = uniq
-            grep {defined}
-            map  { $_->nested_name } @{ $self->get_fields };
-    }
-
-    croak "no field names to add constraint to" if !@names;
-
-    my $type = delete $arg->{type};
-
-    my @return;
-
-    for my $x (@names) {
-        for my $field ( @{ $self->get_fields( { nested_name => $x } ) } ) {
-            my $new = $field->_require_constraint( $type, $arg );
-            push @{ $field->_constraints }, $new;
-            push @return, $new;
-        }
-    }
-
-    return @return;
+    return $self->_single_component( 'constraint', @_ );
 }
 
 sub _single_inflator {
-    my ( $self, $arg ) = @_;
+    my $self = shift;
 
-    if ( !ref $arg ) {
-        $arg = { type => $arg };
-    }
-    elsif ( ref $arg eq 'HASH' ) {
-        $arg = {%$arg};    # shallow clone
-    }
-    else {
-        croak 'invalid args';
-    }
-
-    my @names = map { ref $_ ? @$_ : $_ }
-        grep {defined} ( delete $arg->{name}, delete $arg->{names} );
-
-    if ( !@names ) {
-        @names = uniq
-            grep {defined}
-            map  { $_->nested_name } @{ $self->get_fields };
-    }
-
-    croak "no field names to add inflator to" if !@names;
-
-    my $type = delete $arg->{type};
-
-    my @return;
-
-    for my $x (@names) {
-        for my $field ( @{ $self->get_fields( { nested_name => $x } ) } ) {
-            my $new = $field->_require_inflator( $type, $arg );
-            push @{ $field->_inflators }, $new;
-            push @return, $new;
-        }
-    }
-
-    return @return;
+    return $self->_single_component( 'inflator', @_ );
 }
 
 sub _single_validator {
-    my ( $self, $arg ) = @_;
+    my $self = shift;
 
-    if ( !ref $arg ) {
-        $arg = { type => $arg };
-    }
-    elsif ( ref $arg eq 'HASH' ) {
-        $arg = {%$arg};    # shallow clone
-    }
-    else {
-        croak 'invalid args';
-    }
-
-    my @names = map { ref $_ ? @$_ : $_ }
-        grep {defined} ( delete $arg->{name}, delete $arg->{names} );
-
-    if ( !@names ) {
-        @names = uniq
-            grep {defined}
-            map  { $_->nested_name } @{ $self->get_fields };
-    }
-
-    croak "no field names to add validator to" if !@names;
-
-    my $type = delete $arg->{type};
-
-    my @return;
-
-    for my $x (@names) {
-        for my $field ( @{ $self->get_fields( { nested_name => $x } ) } ) {
-            my $new = $field->_require_validator( $type, $arg );
-            push @{ $field->_validators }, $new;
-            push @return, $new;
-        }
-    }
-
-    return @return;
+    return $self->_single_component( 'validator', @_ );
 }
 
 sub _single_transformer {
-    my ( $self, $arg ) = @_;
+    my $self = shift;
 
-    if ( !ref $arg ) {
-        $arg = { type => $arg };
-    }
-    elsif ( ref $arg eq 'HASH' ) {
-        $arg = {%$arg};    # shallow clone
-    }
-    else {
-        croak 'invalid args';
-    }
+    return $self->_single_component( 'transformer', @_ );
+}
 
-    my @names = map { ref $_ ? @$_ : $_ }
-        grep {defined} ( delete $arg->{name}, delete $arg->{names} );
+sub get_components {
+    my $self = shift;
+    my $component_type = shift;
+    my %args = _parse_args(@_);
 
-    if ( !@names ) {
-        @names = uniq
-            grep {defined}
-            map  { $_->nested_name } @{ $self->get_fields };
-    }
+    my $get_components = "get_${component_type}s";
+    my @x = map { @{ $_->$get_components(@_) } } @{ $self->_elements };
 
-    croak "no field names to add transformer to" if !@names;
-
-    my $type = delete $arg->{type};
-
-    my @return;
-
-    for my $x (@names) {
-        for my $field ( @{ $self->get_fields( { nested_name => $x } ) } ) {
-            my $new = $field->_require_transformer( $type, $arg );
-            push @{ $field->_transformers }, $new;
-            push @return, $new;
-        }
-    }
-
-    return @return;
+    return _filter_components( \%args, \@x );
 }
 
 sub get_deflators {
     my $self = shift;
-    my %args = _parse_args(@_);
 
-    my @x = map { @{ $_->get_deflators(@_) } } @{ $self->_elements };
-
-    return _filter_components( \%args, \@x );
+    return $self->get_components( 'deflator', @_ );
 }
 
 sub get_filters {
     my $self = shift;
-    my %args = _parse_args(@_);
 
-    my @x = map { @{ $_->get_filters(@_) } } @{ $self->_elements };
-
-    return _filter_components( \%args, \@x );
+    return $self->get_components( 'filter', @_ );
 }
 
 sub get_constraints {
     my $self = shift;
-    my %args = _parse_args(@_);
 
-    my @x = map { @{ $_->get_constraints(@_) } } @{ $self->_elements };
-
-    return _filter_components( \%args, \@x );
+    return $self->get_components( 'constraint', @_ );
 }
 
 sub get_inflators {
     my $self = shift;
-    my %args = _parse_args(@_);
 
-    my @x = map { @{ $_->get_inflators(@_) } } @{ $self->_elements };
-
-    return _filter_components( \%args, \@x );
+    return $self->get_components( 'inflator', @_ );
 }
 
 sub get_validators {
     my $self = shift;
-    my %args = _parse_args(@_);
 
-    my @x = map { @{ $_->get_validators(@_) } } @{ $self->_elements };
-
-    return _filter_components( \%args, \@x );
+    return $self->get_components( 'validator', @_ );
 }
 
 sub get_transformers {
     my $self = shift;
-    my %args = _parse_args(@_);
 
-    my @x = map { @{ $_->get_transformers(@_) } } @{ $self->_elements };
-
-    return _filter_components( \%args, \@x );
+    return $self->get_components( 'transformer', @_ );
 }
 
 sub get_plugins {
@@ -1414,17 +1240,18 @@ sub get_plugins {
     return _filter_components( \%args, $self->_plugins );
 }
 
-sub _require_deflator {
-    my ( $self, $type, $opt ) = @_;
+sub _require_component {
+    my ( $self, $component_type, $type, $opt ) = @_;
 
-    croak 'required arguments: $self, $type, \%options' if @_ != 3;
+    croak 'required arguments: $self, $component_type, $type, \%options' if @_ != 4;
 
     croak "options argument must be hash-ref"
         if reftype( $opt ) ne 'HASH';
 
+    my $component_package = ucfirst $component_type;
     my $class = $type;
     if ( not $class =~ s/^\+// ) {
-        $class = "HTML::FormFu::Deflator::$class";
+        $class = "HTML::FormFu::${component_package}::$class";
     }
 
     $type =~ s/^\+//;
@@ -1436,156 +1263,44 @@ sub _require_deflator {
             parent => $self,
         } );
 
-    # handle default_args
-    my $parent = $self->parent;
-
-    if ( exists $parent->default_args->{deflators}{$type} ) {
-        $opt
-            = _merge_hashes( $parent->default_args->{deflators}{$type}, $opt, );
-    }
-
-    $object->populate($opt);
+    _handle_defaults(
+            $self,
+            $object,
+            $opt,
+            $self->parent->default_args->{"${component_type}s"}
+        );
 
     return $object;
+}
+
+sub _require_deflator {
+    my $self = shift;
+
+    return $self->_require_component( 'deflator', @_ );
 }
 
 sub _require_filter {
-    my ( $self, $type, $opt ) = @_;
+    my $self = shift;
 
-    croak 'required arguments: $self, $type, \%options' if @_ != 3;
-
-    croak "options argument must be hash-ref"
-        if reftype( $opt ) ne 'HASH';
-
-    my $class = $type;
-    if ( not $class =~ s/^\+// ) {
-        $class = "HTML::FormFu::Filter::$class";
-    }
-
-    $type =~ s/^\+//;
-
-    require_class($class);
-
-    my $object = $class->new( {
-            type   => $type,
-            parent => $self,
-        } );
-
-    # handle default_args
-    my $parent = $self->parent;
-
-    if ( exists $parent->default_args->{filters}{$type} ) {
-        $opt = _merge_hashes( $parent->default_args->{filters}{$type}, $opt, );
-    }
-
-    $object->populate($opt);
-
-    return $object;
+    return $self->_require_component( 'filter', @_ );
 }
 
 sub _require_inflator {
-    my ( $self, $type, $opt ) = @_;
+    my $self = shift;
 
-    croak 'required arguments: $self, $type, \%options' if @_ != 3;
-
-    croak "options argument must be hash-ref"
-        if reftype( $opt ) ne 'HASH';
-
-    my $class = $type;
-    if ( not $class =~ s/^\+// ) {
-        $class = "HTML::FormFu::Inflator::$class";
-    }
-
-    $type =~ s/^\+//;
-
-    require_class($class);
-
-    my $object = $class->new( {
-            type   => $type,
-            parent => $self,
-        } );
-
-    # handle default_args
-    my $parent = $self->parent;
-
-    if ( exists $parent->default_args->{inflators}{$type} ) {
-        $opt
-            = _merge_hashes( $parent->default_args->{inflators}{$type}, $opt, );
-    }
-
-    $object->populate($opt);
-
-    return $object;
+    return $self->_require_component( 'inflator', @_ );
 }
 
 sub _require_validator {
-    my ( $self, $type, $opt ) = @_;
+    my $self = shift;
 
-    croak 'required arguments: $self, $type, \%options' if @_ != 3;
-
-    croak "options argument must be hash-ref"
-        if reftype( $opt ) ne 'HASH';
-
-    my $class = $type;
-    if ( not $class =~ s/^\+// ) {
-        $class = "HTML::FormFu::Validator::$class";
-    }
-
-    $type =~ s/^\+//;
-
-    require_class($class);
-
-    my $object = $class->new( {
-            type   => $type,
-            parent => $self,
-        } );
-
-    # handle default_args
-    my $parent = $self->parent;
-
-    if ( exists $parent->default_args->{validators}{$type} ) {
-        %$opt = ( %{ $parent->default_args->{validators}{$type} }, %$opt );
-    }
-
-    $object->populate($opt);
-
-    return $object;
+    return $self->_require_component( 'validator', @_ );
 }
 
 sub _require_transformer {
-    my ( $self, $type, $opt ) = @_;
+    my $self = shift;
 
-    croak 'required arguments: $self, $type, \%options' if @_ != 3;
-
-    croak "options argument must be hash-ref"
-        if reftype( $opt ) ne 'HASH';
-
-    my $class = $type;
-    if ( not $class =~ s/^\+// ) {
-        $class = "HTML::FormFu::Transformer::$class";
-    }
-
-    $type =~ s/^\+//;
-
-    require_class($class);
-
-    my $object = $class->new( {
-            type   => $type,
-            parent => $self,
-        } );
-
-    # handle default_args
-    my $parent = $self->parent;
-
-    if ( exists $parent->default_args->{transformers}{$type} ) {
-        $opt
-            = _merge_hashes( $parent->default_args->{transformers}{$type}, $opt,
-            );
-    }
-
-    $object->populate($opt);
-
-    return $object;
+    return $self->_require_component( 'transformer', @_ );
 }
 
 sub _require_plugin {
@@ -1617,60 +1332,57 @@ sub _require_plugin {
     return $plugin;
 }
 
+sub get_component {
+    my $self = shift;
+    my $component_type = shift;
+
+    my $get_components = "get_${component_type}s";
+
+    my $x = $self->$get_components(@_);
+
+    return @$x ? $x->[0] : ();
+}
+
 sub get_deflator {
     my $self = shift;
 
-    my $x = $self->get_deflators(@_);
-
-    return @$x ? $x->[0] : ();
+    return $self->get_component( 'deflator', @_ );
 }
 
 sub get_filter {
     my $self = shift;
 
-    my $x = $self->get_filters(@_);
-
-    return @$x ? $x->[0] : ();
+    return $self->get_component( 'filter', @_ );
 }
 
 sub get_constraint {
     my $self = shift;
 
-    my $x = $self->get_constraints(@_);
-
-    return @$x ? $x->[0] : ();
+    return $self->get_component( 'constraint', @_ );
 }
 
 sub get_inflator {
     my $self = shift;
 
-    my $x = $self->get_inflators(@_);
-
-    return @$x ? $x->[0] : ();
+    return $self->get_component( 'inflator', @_ );
 }
 
 sub get_validator {
     my $self = shift;
 
-    my $x = $self->get_validators(@_);
-
-    return @$x ? $x->[0] : ();
+    return $self->get_component( 'validator', @_ );
 }
 
 sub get_transformer {
     my $self = shift;
 
-    my $x = $self->get_transformers(@_);
-
-    return @$x ? $x->[0] : ();
+    return $self->get_component( 'transformer', @_ );
 }
 
 sub get_plugin {
     my $self = shift;
 
-    my $x = $self->get_plugins(@_);
-
-    return @$x ? $x->[0] : ();
+    return $self->get_component( 'plugin', @_ );
 }
 
 sub model_config {
@@ -1683,4 +1395,4 @@ sub model_config {
     return $self->{model_config};
 }
 
-1;
+1; 

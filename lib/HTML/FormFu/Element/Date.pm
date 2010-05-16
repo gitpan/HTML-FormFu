@@ -2,7 +2,7 @@ package HTML::FormFu::Element::Date;
 
 use strict;
 use base 'HTML::FormFu::Element::Multi';
-use Class::C3;
+use mro 'c3';
 
 use HTML::FormFu::Util qw( _filter_components _parse_args );
 use DateTime;
@@ -26,6 +26,7 @@ __PACKAGE__->mk_item_accessors( qw(
         strftime
         auto_inflate
         default_natural
+        default_datetime_args
 ) );
 
 *default = \&value;
@@ -154,7 +155,7 @@ sub _date_defaults {
         my $parser = DateTime::Format::Natural->new;
         $default = $parser->parse_datetime($default);
     }
-    elsif ( defined( $default = $self->default ) ) {
+    elsif ( defined( $default = $self->default ) && length $default ) {
         my $is_blessed = blessed($default);
 
         if ( !$is_blessed || ( $is_blessed && !$default->isa('DateTime') ) ) {
@@ -163,9 +164,18 @@ sub _date_defaults {
 
             $default = $builder->parse_datetime($default);
         }
+    } else {
+      $default = undef;
     }
 
     if ( defined $default ) {
+        
+        if ( defined( my $datetime_args = $self->default_datetime_args ) ) {
+            for my $key ( keys %$datetime_args ) {
+                $default->$key( $datetime_args->{$key} );
+            }
+        }
+        
         for my $field ( @{ $self->field_order } ) {
             $self->$field->{default} = $default->$field;
         }
@@ -473,6 +483,17 @@ Arguments: $date_string
 Accepts a date/time string suitable for passing to
 L<DateTime::Format::Natural/parse_datetime>.
 
+=head2 default_datetime_args
+
+    - type: Date
+      default_natural: 'today'
+      default_datetime_args:
+        set_time_zone: 'Europe/London'
+
+Accepts a hashref of method-names / values that will be called on the
+L</default> L<DateTime|DateTime> object, before the select fields' values
+are set from it.
+
 =head2 strftime
 
 Default Value: "%d-%m-%Y"
@@ -653,8 +674,8 @@ added directly to the date element, not to its select-menu child elements.
 This element's L<get_elements|HTML::FormFu/get_elements> and 
 L<get_all_elements|HTML::FormFu/get_all_elements> are inherited from 
 L<HTML::FormFu::Element::Block>, and so have the same behaviour. However, it 
-overrides the C<get_fields> method, such that it returns both itself and 
-its child elements.
+overrides the C<get_fields|HTML::FormFu/get_fields> method, such that it
+returns both itself and its child elements.
 
 =head1 SEE ALSO
 
@@ -674,3 +695,5 @@ Carl Franks, C<cfranks@cpan.org>
 
 This library is free software, you can redistribute it and/or modify it under
 the same terms as Perl itself.
+
+=cut

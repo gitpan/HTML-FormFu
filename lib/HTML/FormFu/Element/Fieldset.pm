@@ -2,7 +2,7 @@ package HTML::FormFu::Element::Fieldset;
 
 use strict;
 use base 'HTML::FormFu::Element::Block';
-use Class::C3;
+use mro 'c3';
 
 __PACKAGE__->mk_output_accessors(qw( legend ));
 
@@ -59,3 +59,5 @@ Carl Franks, C<cfranks@cpan.org>
 
 This library is free software, you can redistribute it and/or modify it under
 the same terms as Perl itself.
+
+=cut

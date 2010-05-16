@@ -2,7 +2,7 @@ package HTML::FormFu::Element::Radiogroup;
 
 use strict;
 use base 'HTML::FormFu::Element::Checkboxgroup';
-use Class::C3;
+use mro 'c3';
 
 use HTML::FormFu::Constants qw( $EMPTY_STR );
 use HTML::FormFu::Util qw( append_xml_attribute process_attrs );
@@ -75,6 +75,10 @@ no duplicated ID's.
       name: foo
       auto_id: "%n_%c"
 
+=head2 reverse_group
+
+See L<HTML::FormFu::Element::Checkboxgroup/reverse_group>.
+
 =head1 SEE ALSO
 
 Is a sub-class of, and inherits methods from 
@@ -93,3 +97,5 @@ Carl Franks, C<cfranks@cpan.org>
 
 This library is free software, you can redistribute it and/or modify it under
 the same terms as Perl itself.
+
+=cut

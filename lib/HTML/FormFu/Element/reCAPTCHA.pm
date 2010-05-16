@@ -2,7 +2,7 @@ package HTML::FormFu::Element::reCAPTCHA;
 
 use strict;
 use base 'HTML::FormFu::Element::Multi';
-use Class::C3;
+use mro 'c3';
 
 use HTML::FormFu::Util qw( process_attrs _merge_hashes );
 use Captcha::reCAPTCHA;
@@ -117,7 +117,7 @@ sub clone {
 
     my $clone = $self->next::method(@_);
 
-    $clone->recaptcha_options( dclone $self->recaptcha_options );
+    $clone->recaptcha_options( Clone::clone $self->recaptcha_options );
 
     return $clone;
 }
@@ -229,3 +229,5 @@ Carl Franks, C<cfranks@cpan.org>
 
 This library is free software, you can redistribute it and/or modify it under
 the same terms as Perl itself.
+
+=cut

@@ -185,6 +185,7 @@ lib/HTML/FormFu/Filter/TrimEdges.pm
 lib/HTML/FormFu/Filter/UpperCase.pm
 lib/HTML/FormFu/Filter/Whitespace.pm
 lib/HTML/FormFu/I18N.pm
+lib/HTML/FormFu/I18N/bg.pm
 lib/HTML/FormFu/I18N/da.pm
 lib/HTML/FormFu/I18N/de.pm
 lib/HTML/FormFu/I18N/en.pm
@@ -399,6 +400,9 @@ t/elements/combobox_required.yml
 t/elements/content_button.t
 t/elements/date.t
 t/elements/date_default.t
+t/elements/date_default_datetime_args.t
+t/elements/date_default_datetime_args.yml
+t/elements/date_default_empty.t
 t/elements/date_month_year.t
 t/elements/date_natural.t
 t/elements/date_order.t
@@ -409,6 +413,8 @@ t/elements/date_year_reverse.t
 t/elements/date_year_reverse.yml
 t/elements/datetime.t
 t/elements/datetime.yml
+t/elements/datetime_seconds.t
+t/elements/datetime_seconds.yml
 t/elements/field_default_empty_value.t
 t/elements/field_non_param.t
 t/elements/fieldset.t
@@ -458,6 +464,7 @@ t/elements/repeatable_counter_name.yml
 t/elements/repeatable_repeatable.t
 t/elements/repeatable_repeatable.yml
 t/elements/reset.t
+t/elements/reverse.t
 t/elements/select.t
 t/elements/select_deflator_default.t
 t/elements/select_empty_first.t
@@ -547,6 +554,8 @@ t/form/config_callback.yml
 t/form/constraints_from_dbic.t
 t/form/constraints_from_dbic_rs.t
 t/form/default_args.t
+t/form/default_args_isa.t
+t/form/default_args_not_inheriting.t
 t/form/default_values.t
 t/form/end.t
 t/form/error_message.t

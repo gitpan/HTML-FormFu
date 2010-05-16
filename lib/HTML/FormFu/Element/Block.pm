@@ -2,14 +2,14 @@ package HTML::FormFu::Element::Block;
 
 use strict;
 use base 'HTML::FormFu::Element';
-use Class::C3;
+use mro 'c3';
 
 use HTML::FormFu::Constants qw( $EMPTY_STR );
 use HTML::FormFu::ObjectUtil qw( :FORM_AND_BLOCK );
 use HTML::FormFu::Util qw( _get_elements xml_escape process_attrs );
-use List::MoreUtils qw( uniq );
-use Storable qw( dclone );
 use Carp qw( croak );
+use Clone ();
+use List::MoreUtils qw( uniq );
 
 __PACKAGE__->mk_item_accessors( qw(
         tag                         _elements
@@ -243,7 +243,7 @@ sub clone {
 
     map { $_->parent($clone) } @{ $clone->_elements };
 
-    $clone->default_args( dclone $self->default_args );
+    $clone->default_args( Clone::clone $self->default_args );
 
     return $clone;
 }
@@ -291,7 +291,7 @@ elements are ignored.
 Arguments: $string
 
 If you don't want the content to be XML-escaped, use the L</content_xml> 
-method instead of </content>.
+method instead of L</content>.
 
 =head2 content_loc
 
@@ -399,7 +399,7 @@ See L<HTML::FormFu/auto_inflator_class> for details.
 
 =head2 auto_validator_class
 
-See L<HTML::FormFu/auto_validator_class > for details.
+See L<HTML::FormFu/auto_validator_class> for details.
 
 =head2 auto_transformer_class
 
@@ -505,3 +505,5 @@ Carl Franks, C<cfranks@cpan.org>
 
 This library is free software, you can redistribute it and/or modify it under
 the same terms as Perl itself.
+
+=cut

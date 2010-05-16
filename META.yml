@@ -26,8 +26,8 @@ no_index:
 requires:
   Captcha::reCAPTCHA: 0.92
   Class::Accessor::Chained::Fast: 0
-  Class::C3: 0
-  Config::Any: 0.10
+  Clone: 0.31
+  Config::Any: 0.18
   Crypt::CBC: 0
   Crypt::DES: 0
   Data::Visitor: 0.26
@@ -47,6 +47,7 @@ requires:
   List::MoreUtils: 0
   List::Util: 0
   Locale::Maketext: 0
+  MRO::Compat: 0
   Module::Pluggable: 0
   Number::Format: 0
   Path::Class::File: 0
@@ -59,4 +60,4 @@ requires:
   perl: 5.8.1
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.06001
+version: 0.07000

@@ -2,7 +2,7 @@ package HTML::FormFu::Validator;
 
 use strict;
 use base 'HTML::FormFu::Processor';
-use Class::C3;
+use mro 'c3';
 
 use HTML::FormFu::Exception::Validator;
 use Scalar::Util qw( reftype blessed );
@@ -136,3 +136,5 @@ Carl Franks, C<cfranks@cpan.org>
 
 This library is free software, you can redistribute it and/or modify it under
 the same terms as Perl itself.
+
+=cut

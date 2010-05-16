@@ -278,9 +278,9 @@ BUILDING A FORM
     the form. Thereafter, "$form->elements()" will add all elements (except
     fieldsets) to that fieldset, rather than directly to the form.
 
-    To be specific, the elements are added to the last fieldset on the form,
-    so if you add another fieldset, any further elements will be added to
-    that fieldset.
+    To be specific, the elements are added to the *last* fieldset on the
+    form, so if you add another fieldset, any further elements will be added
+    to that fieldset.
 
     Also, you may pass a hashref to auto_fieldset(), and this will be used
     to set defaults for the first fieldset created.
@@ -396,7 +396,8 @@ BUILDING A FORM
     Arguments: \%defaults
 
     Set defaults which will be added to every element, constraint, etc. of
-    the listed type which is added to the form.
+    the listed type (or derived from the listed type) which is added to the
+    form.
 
     For example, to make every "Text" element automatically have a size of
     10, and make every "Strftime" deflator automatically get its strftime
@@ -424,6 +425,19 @@ BUILDING A FORM
                         type: DateTime
                         parser:
                             strptime: '%d-%m-%Y'
+
+    To have defaults only be applied to the specific named type, rather than
+    searching through derived types, append the type-name with "+".
+
+    For example, to have the following attributes only be applied to a
+    "Block" element, rather than any element that inherits from "Block",
+    such as "Multi":
+
+        default_args:
+            elements:
+                +Block:
+                    attributes:
+                        class: block
 
     Note: Unlike the proper methods which have aliases, for example
     "elements" which is an alias for "element" - the keys given to
@@ -470,8 +484,9 @@ BUILDING A FORM
 
     Return Value: @elements
 
-    Adds a new element to the form. See "CORE ELEMENTS" in
-    HTML::FormFu::Element for a list of core elements.
+    Adds a new element to the form. See "CORE FORM FIELDS" in
+    HTML::FormFu::Element and "OTHER CORE ELEMENTS" in HTML::FormFu::Element
+    for a list of core elements.
 
     If you want to load an element from a namespace other than
     "HTML::FormFu::Element::", you can use a fully qualified package-name by
@@ -500,7 +515,7 @@ BUILDING A FORM
     Return Value: @deflators
 
     A deflator may be associated with any form field, and allows you to
-    provide <$field->default> with a value which may be an object.
+    provide $field->default with a value which may be an object.
 
     If an object doesn't stringify to a suitable value for display, the
     deflator can ensure that the form field receives a suitable string value
@@ -755,7 +770,7 @@ CHANGING DEFAULT BEHAVIOUR
 
     If you set this on a field with an Inflator, but without an equivalent
     Deflator, you should ensure that the Inflators stringify back to a
-    useable value, so as not to confuse / annoy the user.
+    usable value, so as not to confuse / annoy the user.
 
     Default Value: false
 
@@ -933,7 +948,7 @@ CSS CLASSES
   auto_id
     Arguments: [$string]
 
-    If set, then all form fields will be given an auto-generated id
+    If set, then each form field will be given an auto-generated id
     attribute, if it doesn't have one already.
 
     The following character substitution will be performed: %f will be
@@ -951,8 +966,8 @@ CSS CLASSES
   auto_label
     Arguments: [$string]
 
-    If set, then all form fields will be given an auto-generated name, if it
-    doesn't have one already.
+    If set, then each form field will be given an auto-generated label, if
+    it doesn't have one already.
 
     The following character substitution will be performed: %f will be
     replaced by $form->id, %n will be replaced by $field->name.
@@ -970,7 +985,7 @@ CSS CLASSES
   auto_error_class
     Arguments: [$string]
 
-    If set, then all form errors will be given an auto-generated class-name.
+    If set, then each form error will be given an auto-generated class-name.
 
     The following character substitution will be performed: %f will be
     replaced by $form->id, %n will be replaced by $field->name, %t will be
@@ -987,7 +1002,7 @@ CSS CLASSES
   auto_error_message
     Arguments: [$string]
 
-    If set, then all form fields will be given an auto-generated message, if
+    If set, then each form field will be given an auto-generated message, if
     it doesn't have one already.
 
     The following character substitution will be performed: %f will be
@@ -1012,7 +1027,7 @@ CSS CLASSES
   auto_constraint_class
     Arguments: [$string]
 
-    If set, then all form fields will be given an auto-generated class-name
+    If set, then each form field will be given an auto-generated class-name
     for each associated constraint.
 
     The following character substitution will be performed: %f will be
@@ -1030,7 +1045,7 @@ CSS CLASSES
   auto_inflator_class
     Arguments: [$string]
 
-    If set, then all form fields will be given an auto-generated class-name
+    If set, then each form field will be given an auto-generated class-name
     for each associated inflator.
 
     The following character substitution will be performed: %f will be
@@ -1048,7 +1063,7 @@ CSS CLASSES
   auto_validator_class
     Arguments: [$string]
 
-    If set, then all form fields will be given an auto-generated class-name
+    If set, then each form field will be given an auto-generated class-name
     for each associated validator.
 
     The following character substitution will be performed: %f will be
@@ -1066,7 +1081,7 @@ CSS CLASSES
   auto_transformer_class
     Arguments: [$string]
 
-    If set, then all form fields will be given an auto-generated class-name
+    If set, then each form field will be given an auto-generated class-name
     for each associated validator.
 
     The following character substitution will be performed: %f will be
@@ -1207,7 +1222,7 @@ SUBMITTED FORM VALUES AND ERRORS
     Return Value: @valid_names
 
     No longer recommended for use, as its behaviour is hard to predict. Use
-    param_value, param_array or param_list instead.
+    "param_value", "param_array" or "param_list" instead.
 
     A (readonly) method similar to that of CGI's.
 
@@ -1396,7 +1411,7 @@ ADVANCED CUSTOMISATION
     Accepts a hash-ref of arguments passed to "render_method", which is
     called internally by "render".
 
-    Within "tt", the keys "RELATIVE" and "RECURSION" are overridden to
+    Within tt_args, the keys "RELATIVE" and "RECURSION" are overridden to
     always be true, as these are a basic requirement for the Template
     engine.
 
@@ -1448,7 +1463,7 @@ INTROSPECTION
     Return Value: \@elements
 
     Returns all fields in the form (specifically, all elements which have a
-    true "is_field" in HTML::FormFu::Element value.
+    true "is_field" in HTML::FormFu::Element value).
 
     Accepts both "name" and "type" arguments to narrow the returned results.
 
@@ -1723,19 +1738,19 @@ INTROSPECTION
 
 DEPRECATED METHODS
   element_defaults
-    Is deprecated and provided only for backwards compatability. Will be
+    Is deprecated and provided only for backwards compatibility. Will be
     removed at some point in the future.
 
     See "default_args" instead.
 
   model_class
-    Is deprecated and provided only for backwards compatability. Will be
+    Is deprecated and provided only for backwards compatibility. Will be
     removed at some point in the future.
 
     Use "default_model" instead.
 
   defaults_from_model
-    Is deprecated and provided only for backwards compatability. Will be
+    Is deprecated and provided only for backwards compatibility. Will be
     removed at some point in the future.
 
     Use "default_values" in HTML::FormFu::Model instead.
@@ -1743,7 +1758,7 @@ DEPRECATED METHODS
         $form->model->default_values( $object, \%config )
 
   save_to_model
-    Is deprecated and provided only for backwards compatability. Will be
+    Is deprecated and provided only for backwards compatibility. Will be
     removed at some point in the future.
 
     Use "update" in HTML::FormFu::Model instead.
@@ -1751,7 +1766,7 @@ DEPRECATED METHODS
         $form->model->update( $object, \%config )
 
 DEPRECATION POLICY
-    We try our best to not make incompatable changes, but if they're
+    We try our best to not make incompatible changes, but if they're
     required we'll make every effort possible to provide backwards
     compatibility for several release-cycles, issuing a warnings about the
     changes, before removing the legacy features.
@@ -1808,8 +1823,9 @@ SUPPORT
 
     "irc.perl.org", channel "#formfu"
 
-    The <HTML::Widget archives> between January and May 2007 also contain
-    discussion regarding HTML::FormFu.
+    The HTML::Widget archives
+    <http://lists.scsys.co.uk/pipermail/html-widget/> between January and
+    May 2007 also contain discussion regarding HTML::FormFu.
 
 BUGS
     Please submit bugs / feature requests to

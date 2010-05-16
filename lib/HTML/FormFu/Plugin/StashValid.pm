@@ -2,7 +2,7 @@ package HTML::FormFu::Plugin::StashValid;
 
 use strict;
 use base 'HTML::FormFu::Plugin';
-use Class::C3;
+use mro 'c3';
 
 sub post_process {
     my ($self) = @_;
@@ -65,3 +65,5 @@ Carl Franks C<cfranks@cpan.org>
 
 This library is free software, you can redistribute it and/or modify it under
 the same terms as Perl itself.
+
+=cut

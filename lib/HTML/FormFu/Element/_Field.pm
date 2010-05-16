@@ -2,7 +2,7 @@ package HTML::FormFu::Element::_Field;
 
 use strict;
 use base 'HTML::FormFu::Element';
-use Class::C3;
+use mro 'c3';
 
 use HTML::FormFu::Constants qw( $EMPTY_STR );
 use HTML::FormFu::ObjectUtil qw(
@@ -15,9 +15,9 @@ use HTML::FormFu::Util qw(
     xml_escape                  require_class
     process_attrs               _filter_components
 );
-use List::MoreUtils qw( uniq );
-use Storable qw( dclone );
 use Carp qw( croak );
+use Clone ();
+use List::MoreUtils qw( uniq );
 use Exporter qw( import );
 
 # used by multi.pm
@@ -49,7 +49,8 @@ __PACKAGE__->mk_item_accessors( qw(
         label_filename              label_tag
         retain_default              force_default
         javascript                  non_param
-        reverse_multi               multi_value
+        reverse_single              reverse_multi
+        multi_value
         original_name               original_nested_name
 ) );
 
@@ -614,6 +615,7 @@ sub render_data_non_recursive {
             label_filename       => $self->label_filename,
             label_tag            => $self->label_tag,
             container_tag        => $self->container_tag,
+            reverse_single       => $self->reverse_single,
             reverse_multi        => $self->reverse_multi,
             javascript           => $self->javascript,
             $args ? %$args : (),
@@ -923,7 +925,8 @@ sub _string_field_start {
         }
     }
 
-    if ( defined $render->{label} && $render->{label_tag} ne 'legend' ) {
+    if ( defined $render->{label} && $render->{label_tag} ne 'legend' &&
+         !$render->{reverse_single} ) {
         $html .= sprintf "\n%s", $self->_string_label($render);
     }
 
@@ -955,6 +958,11 @@ sub _string_field_end {
     # field wrapper template - end
 
     my $html = '';
+
+    if ( defined $render->{label} && $render->{label_tag} ne 'legend' &&
+         $render->{reverse_single} ) {
+        $html .= sprintf "\n%s", $self->_string_label($render);
+    }
 
     if ( defined $render->{comment} ) {
         $html .= sprintf "\n<span%s>\n%s\n</span>",
@@ -991,9 +999,9 @@ sub clone {
         map { $_->parent($clone) } @{ $clone->$list };
     }
 
-    $clone->comment_attributes( dclone $self->comment_attributes );
-    $clone->container_attributes( dclone $self->container_attributes );
-    $clone->label_attributes( dclone $self->label_attributes );
+    $clone->comment_attributes( Clone::clone $self->comment_attributes );
+    $clone->container_attributes( Clone::clone $self->container_attributes );
+    $clone->label_attributes( Clone::clone $self->label_attributes );
 
     return $clone;
 }
@@ -1189,7 +1197,7 @@ Set the form-field's default value.
 Arguments: $string
 
 If you don't want the default value to be XML-escaped, use the 
-L</default_xml> method instead of </default>.
+L</default_xml> method instead of L</default>.
 
 =head2 default_loc
 
@@ -1209,8 +1217,8 @@ rendered.
 
 For the L<HTML::FormFu::Element::Radiogroup> and 
 L<HTML::FormFu::Element::Select> elements, the L</value> is ignored: 
-L</values|HTML::FormFu::Element::_Group/values> or 
-L</options|HTML::FormFu::Element::_Group/options> provides the equivalent 
+L<values|HTML::FormFu::Element::_Group/values> or 
+L<options|HTML::FormFu::Element::_Group/options> provides the equivalent 
 function.
 
 =head2 value_xml
@@ -1218,7 +1226,7 @@ function.
 Arguments: $string
 
 If you don't want the value to be XML-escaped, use the L</value_xml> 
-method instead of </value>.
+method instead of L</value>.
 
 =head2 value_loc
 
@@ -1247,7 +1255,7 @@ Set a label to communicate the purpose of the form-field to the user.
 Arguments: $string
 
 If you don't want the label to be XML-escaped, use the L</label_xml> 
-method instead of </label>.
+method instead of L</label>.
 
 =head2 label_loc
 
@@ -1264,7 +1272,7 @@ Set a comment to be displayed along with the form-field.
 Arguments: $string
 
 If you don't want the comment to be XML-escaped, use the L</comment_xml> 
-method instead of </comment>.
+method instead of L</comment>.
 
 =head2 comment_loc
 
@@ -1290,7 +1298,7 @@ field's container.
 
 If L</retain_default> is true and the form was submitted, but the field 
 didn't have a value submitted, then when the form is redisplayed to the user 
-the field will have its value set to its default value , rather than the 
+the field will have its value set to its default value, rather than the 
 usual behaviour of having an empty value.
 
 Default Value: C<false>
@@ -1311,10 +1319,27 @@ Default Value: C<false>
 
 Designed for use by Checkbox fields. Normally if a checkbox is not checked,
 no value is submitted for that field. If C<default_empty_value> is true,
-the Checkbox field is given an empty value during L</process>.
-Please note that, with this setting, the checkbox gets an EMPTY value (as
-opposed to no value at all without enabling it), NOT the default value
-assigned to the element (if any).
+the Checkbox field is given an empty value during
+L<process|HTML::FormFu/process>. Please note that, with this setting,
+the checkbox gets an EMPTY value (as opposed to no value at all without
+enabling it), NOT the default value assigned to the element (if any).
+
+Default Value: C<false>
+
+=head2 reverse_single
+
+If true, then the field's label should be rendered to the right of the
+field control.  (When the field is used within a
+L<Multi|HTML::FormFu::Element::Multi> block, the position of the label
+is controlled by the L</reverse_multi> option instead.)
+
+The default value is C<false>, causing the label to be rendered to the left
+of the field control (or to be explicit: the markup for the label comes
+before the field control in the source).
+
+Exception: If the label tag is 'legend', then the reverse_single attribute
+is ignored; the legend always appears as the first tag within the container
+tag.
 
 Default Value: C<false>
 
@@ -1322,7 +1347,7 @@ Default Value: C<false>
 
 If true, then when the field is used within a 
 L<Multi|HTML::FormFu::Element::Multi> block, the field's label should be 
-rendered to the right of the field control
+rendered to the right of the field control.
 
 The default value is C<false>, causing the label to be rendered to the left
 of the field control (or to be explicit: the markup for the label comes 
@@ -1369,43 +1394,43 @@ Arguments: [%attributes]
 Arguments: [\%attributes]
 
 If you don't want the values to be XML-escaped, use the 
-L</comment_attributes_xml> method instead of </comment_attributes>.
+L</comment_attributes_xml> method instead of L</comment_attributes>.
 
 =head2 add_comment_attributes
 
 =head2 add_comment_attrs
 
-See L<HTML::FormFu::/add_attributes> for details.
+See L<HTML::FormFu/add_attributes> for details.
 
 =head2 add_comment_attributes_xml
 
 =head2 add_comment_attrs_xml
 
-See L<HTML::FormFu::/add_attributes_xml> for details.
+See L<HTML::FormFu/add_attributes_xml> for details.
 
 =head2 add_comment_attributes_loc
 
 =head2 add_comment_attrs_loc
 
-See L<HTML::FormFu::/add_attributes_loc> for details.
+See L<HTML::FormFu/add_attributes_loc> for details.
 
 =head2 del_comment_attributes
 
 =head2 del_comment_attrs
 
-See L<HTML::FormFu::/del_attributes> for details.
+See L<HTML::FormFu/del_attributes> for details.
 
 =head2 del_comment_attributes_xml
 
 =head2 del_comment_attrs_xml
 
-See L<HTML::FormFu::/del_attributes_xml> for details.
+See L<HTML::FormFu/del_attributes_xml> for details.
 
 =head2 del_comment_attributes_loc
 
 =head2 del_comment_attrs_loc
 
-See L<HTML::FormFu::/del_attributes_loc> for details.
+See L<HTML::FormFu/del_attributes_loc> for details.
 
 =head2 container_attributes
 
@@ -1422,43 +1447,43 @@ Arguments: [%attributes]
 Arguments: [\%attributes]
 
 If you don't want the values to be XML-escaped, use the 
-L</container_attributes_xml> method instead of </container_attributes>.
+L</container_attributes_xml> method instead of L</container_attributes>.
 
 =head2 add_container_attributes
 
 =head2 add_container_attrs
 
-See L<HTML::FormFu::/add_attributes> for details.
+See L<HTML::FormFu/add_attributes> for details.
 
 =head2 add_container_attributes_xml
 
 =head2 add_container_attrs_xml
 
-See L<HTML::FormFu::/add_attributes_xml> for details.
+See L<HTML::FormFu/add_attributes_xml> for details.
 
 =head2 add_container_attributes_loc
 
 =head2 add_container_attrs_loc
 
-See L<HTML::FormFu::/add_attributes_loc> for details.
+See L<HTML::FormFu/add_attributes_loc> for details.
 
 =head2 del_container_attributes
 
 =head2 del_container_attrs
 
-See L<HTML::FormFu::/del_attributes> for details.
+See L<HTML::FormFu/del_attributes> for details.
 
 =head2 del_container_attributes_xml
 
 =head2 del_container_attrs_xml
 
-See L<HTML::FormFu::/del_attributes_xml> for details.
+See L<HTML::FormFu/del_attributes_xml> for details.
 
 =head2 del_container_attributes_loc
 
 =head2 del_container_attrs_loc
 
-See L<HTML::FormFu::/del_attributes_loc> for details.
+See L<HTML::FormFu/del_attributes_loc> for details.
 
 =head2 label_attributes
 
@@ -1475,43 +1500,43 @@ Arguments: [%attributes]
 Arguments: [\%attributes]
 
 If you don't want the values to be XML-escaped, use the 
-L</label_attributes_xml> method instead of </label_attributes>.
+L</label_attributes_xml> method instead of L</label_attributes>.
 
 =head2 add_label_attributes
 
 =head2 add_label_attrs
 
-See L<HTML::FormFu::/add_attributes> for details.
+See L<HTML::FormFu/add_attributes> for details.
 
 =head2 add_label_attributes_xml
 
 =head2 add_label_attrs_xml
 
-See L<HTML::FormFu::/add_attributes_xml> for details.
+See L<HTML::FormFu/add_attributes_xml> for details.
 
 =head2 add_label_attributes_loc
 
 =head2 add_label_attrs_loc
 
-See L<HTML::FormFu::/add_attributes_loc> for details.
+See L<HTML::FormFu/add_attributes_loc> for details.
 
 =head2 del_label_attributes
 
 =head2 del_label_attrs
 
-See L<HTML::FormFu::/del_attributes> for details.
+See L<HTML::FormFu/del_attributes> for details.
 
 =head2 del_label_attributes_xml
 
 =head2 del_label_attrs_xml
 
-See L<HTML::FormFu::/del_attributes_xml> for details.
+See L<HTML::FormFu/del_attributes_xml> for details.
 
 =head2 del_label_attributes_loc
 
 =head2 del_label_attrs_loc
 
-See L<HTML::FormFu::/del_attributes_loc> for details.
+See L<HTML::FormFu/del_attributes_loc> for details.
 
 =head1 FORM LOGIC AND VALIDATION
 
@@ -1694,3 +1719,5 @@ Carl Franks, C<cfranks@cpan.org>
 
 This library is free software, you can redistribute it and/or modify it under
 the same terms as Perl itself.
+
+=cut

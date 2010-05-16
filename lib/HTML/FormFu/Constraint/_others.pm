@@ -2,14 +2,14 @@ package HTML::FormFu::Constraint::_others;
 
 use strict;
 use base 'HTML::FormFu::Constraint';
-use Class::C3;
+use mro 'c3';
 
 use HTML::FormFu::Util qw(
     DEBUG_CONSTRAINTS
     debug
 );
+use Clone ();
 use List::MoreUtils qw( any none );
-use Storable qw( dclone );
 
 __PACKAGE__->mk_item_accessors( qw(
         attach_errors_to_base
@@ -115,7 +115,7 @@ sub clone {
     my $clone = $self->next::method(@_);
 
     if ( ref $self->others ) {
-        $clone->others( dclone $self->others );
+        $clone->others( Clone::clone $self->others );
     }
 
     return $clone;
@@ -176,3 +176,5 @@ Carl Franks C<cfranks@cpan.org>
 
 This library is free software, you can redistribute it and/or modify it under
 the same terms as Perl itself.
+
+=cut

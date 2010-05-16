@@ -15,8 +15,9 @@ requires 'Exporter' => '5.57';
 
 requires 'Captcha::reCAPTCHA' => 0.92;
 requires 'Class::Accessor::Chained::Fast';
-requires 'Class::C3';
-requires 'Config::Any' => '0.10'; # supports multi-doc config files
+requires 'Clone' => '0.31';
+requires 'Config::Any' => '0.18'; # 0.10 - supports multi-doc config files
+                                  # 0.18 - prefers YAML::XS for YAML
 requires 'Crypt::CBC';
 requires 'Crypt::DES';
 requires 'Data::Visitor' => 0.26; # when it dumped Any::Moose for Moose
@@ -36,6 +37,7 @@ requires 'List::Util';
 requires 'List::MoreUtils';
 requires 'Locale::Maketext';
 requires 'Module::Pluggable';
+requires 'MRO::Compat';
 requires 'Number::Format';
 requires 'Readonly';
 requires 'Regexp::Copy';

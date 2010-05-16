@@ -2,7 +2,7 @@ package HTML::FormFu::Element::Textarea;
 
 use strict;
 use base 'HTML::FormFu::Element::_Field';
-use Class::C3;
+use mro 'c3';
 
 use HTML::FormFu::Util qw( process_attrs );
 
@@ -73,13 +73,21 @@ HTML::FormFu::Element::Textarea - Textarea form field
 
 =head1 SYNOPSIS
 
-    my $element = $form->element( Text => 'foo' );
+    my $element = $form->element( Textarea => 'foo' );
 
 =head1 DESCRIPTION
 
-Text form field.
+Textarea form field.
 
 =head1 METHODS
+
+=head2 cols
+
+Sets the C<textarea> tag's C<cols> attribute.
+
+=head2 rows
+
+Sets the C<textarea> tag's C<rows> attribute.
 
 =head1 SEE ALSO
 
@@ -97,3 +105,5 @@ Carl Franks, C<cfranks@cpan.org>
 
 This library is free software, you can redistribute it and/or modify it under
 the same terms as Perl itself.
+
+=cut

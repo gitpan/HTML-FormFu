@@ -1,7 +1,7 @@
 package HTML::FormFu::Filter;
 
 use strict;
-use Class::C3;
+use mro 'c3';
 
 use HTML::FormFu::Attribute qw( mk_item_accessors mk_accessors
     mk_inherited_accessors );
@@ -176,6 +176,17 @@ Shorthand for C<< $filter->parent->name >>
 
 =back
 
+=head1 FILTER BASE CLASSES
+
+The following are base classes for other filters, and generally needn't be 
+used directly.
+
+=over
+
+=item L<HTML::FormFu::Filter::_Compound>
+
+=back
+
 =head1 AUTHOR
 
 Carl Franks, C<cfranks@cpan.org>
@@ -187,3 +198,5 @@ Sebastian Riedel.
 
 This library is free software, you can redistribute it and/or modify it under
 the same terms as Perl itself.
+
+=cut

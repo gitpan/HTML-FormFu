@@ -2,9 +2,9 @@ package HTML::FormFu::Constraint::Set;
 
 use strict;
 use base 'HTML::FormFu::Constraint';
-use Class::C3;
+use mro 'c3';
 
-use Storable qw( dclone );
+use Clone ();
 
 __PACKAGE__->mk_accessors(qw( set ));
 
@@ -26,7 +26,7 @@ sub clone {
     my $clone = $self->next::method(@_);
 
     if ( $self->set ) {
-        $clone->set( dclone $self->set );
+        $clone->set( Clone::clone $self->set );
     }
 
     return $clone;
@@ -69,3 +69,5 @@ Carl Franks C<cfranks@cpan.org>
 
 This library is free software, you can redistribute it and/or modify it under
 the same terms as Perl itself.
+
+=cut

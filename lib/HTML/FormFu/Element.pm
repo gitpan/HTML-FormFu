@@ -1,7 +1,7 @@
 package HTML::FormFu::Element;
 use strict;
 use base 'HTML::FormFu::base';
-use Class::C3;
+use mro 'c3';
 
 use HTML::FormFu::Attribute qw(
     mk_attrs
@@ -23,8 +23,8 @@ use HTML::FormFu::ObjectUtil qw(
     get_parent
 );
 use HTML::FormFu::Util qw( require_class xml_escape );
+use Clone ();
 use Scalar::Util qw( refaddr reftype weaken );
-use Storable qw( dclone );
 use Carp qw( croak );
 
 use overload (
@@ -182,11 +182,11 @@ sub clone {
 
     my %new = %$self;
 
-    $new{tt_args} = dclone $self->{tt_args}
+    $new{tt_args} = Clone::clone $self->{tt_args}
         if $self->{tt_args};
 
-    $new{attributes}   = dclone $self->attributes;
-    $new{model_config} = dclone $self->model_config;
+    $new{attributes}   = Clone::clone $self->attributes;
+    $new{model_config} = Clone::clone $self->model_config;
 
     return bless \%new, ref $self;
 }
@@ -426,7 +426,7 @@ See L<HTML::FormFu/del_attributes_xml> for details.
 
 L</del_attrs_xml> is an alias for L</del_attributes_xml>.
 
-The following methods are shortcuts for accessing L<"/attributes"> keys.
+The following methods are shortcuts for accessing L</attributes> keys.
 
 =head2 id
 
@@ -473,8 +473,8 @@ Return Value: $string
 
 =head2 parent
 
-Returns the L<block element|HTML::FormFu::Element> or L<form|HTML::FormFu> 
-object that this element is attached to.
+Returns the L<block element|HTML::FormFu::Element::Block> or
+L<form|HTML::FormFu> object that this element is attached to.
 
 =head2 get_parent
 
@@ -513,6 +513,8 @@ See L<HTML::FormFu/render_method> for details.
 =item L<HTML::FormFu::Element::Checkbox>
 
 =item L<HTML::FormFu::Element::Checkboxgroup>
+
+=item L<HTML::FormFu::Element::ComboBox>
 
 =item L<HTML::FormFu::Element::ContentButton>
 
@@ -581,7 +583,13 @@ used directly.
 
 =item L<HTML::FormFu::Element::_Input>
 
-=item L<HTML::FormFu::Element::NonBlock>
+=item L<HTML::FormFu::Element::_MultiElement>
+
+=item L<HTML::FormFu::Element::_MultiSelect>
+
+=item L<HTML::FormFu::Element::_MultiText>
+
+=item L<HTML::FormFu::Element::_NonBlock>
 
 =back
 
@@ -589,7 +597,7 @@ used directly.
 
 =head2 db
 
-Is deprecated and provided only for backwards compatability. Will be removed
+Is deprecated and provided only for backwards compatibility. Will be removed
 at some point in the future.
 
 Use L</model_config> instead.
@@ -602,3 +610,5 @@ Carl Franks, C<cfranks@cpan.org>
 
 This library is free software, you can redistribute it and/or modify it under
 the same terms as Perl itself.
+
+=cut
