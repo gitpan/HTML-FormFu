@@ -23,10 +23,10 @@ requires 'Crypt::DES';
 requires 'Data::Visitor' => 0.26; # when it dumped Any::Moose for Moose
 requires 'Date::Calc';
 requires 'DateTime' => '0.38'; # required for string overloading
-requires 'DateTime::Format::Strptime';  
+requires 'DateTime::Format::Strptime' => '1.2000';  
 requires 'DateTime::Format::Builder' => '0.7901'; # fixes memory leaks
 requires 'DateTime::Format::Natural';
-requires 'DateTime::Locale';
+requires 'DateTime::Locale' => '0.45';
 requires 'Email::Valid';
 requires 'File::ShareDir';
 requires 'Hash::Flatten';
@@ -40,7 +40,6 @@ requires 'Module::Pluggable';
 requires 'MRO::Compat';
 requires 'Number::Format';
 requires 'Readonly';
-requires 'Regexp::Copy';
 requires 'Regexp::Common';
 requires 'Path::Class::File';
 requires 'Task::Weaken'; # to ensure Scalar::Util was built with weaken()

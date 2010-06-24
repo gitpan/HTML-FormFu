@@ -1,6 +1,7 @@
 package HTML::FormFu::Element::ComboBox;
 use strict;
 use base 'HTML::FormFu::Element::Multi';
+use MRO::Compat;
 use mro 'c3';
 
 use HTML::FormFu::Element::_Group qw( _process_options_from_model );
@@ -124,6 +125,13 @@ sub _combobox_defaults {
     my ($self) = @_;
 
     if ( defined( my $default = $self->default ) ) {
+        
+        if ( !$self->form->submitted || $self->render_processed_value ) {
+            for my $deflator ( @{ $self->_deflators } ) {
+                $default = $deflator->process($default);
+            }
+        }
+        
         my $select_options = $self->_elements->[0]->options;
 
         if ( $default ne ''

@@ -35,8 +35,8 @@ requires:
   DateTime: 0.38
   DateTime::Format::Builder: 0.7901
   DateTime::Format::Natural: 0
-  DateTime::Format::Strptime: 0
-  DateTime::Locale: 0
+  DateTime::Format::Strptime: 1.2000
+  DateTime::Locale: 0.45
   Email::Valid: 0
   Exporter: 5.57
   File::ShareDir: 0
@@ -53,11 +53,10 @@ requires:
   Path::Class::File: 0
   Readonly: 0
   Regexp::Common: 0
-  Regexp::Copy: 0
   Task::Weaken: 0
   Template: 0
   YAML::XS: 0.32
   perl: 5.8.1
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.07001
+version: 0.07002

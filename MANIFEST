@@ -259,6 +259,7 @@ t/05_repeated_render.t
 t/block_insert_after.t
 t/block_insert_before.t
 t/bugs/constructor_arg_overwrites_default.t
+t/bugs/date_element_deflator.t
 t/bugs/date_element_empty_input.t
 t/bugs/datetime_hour_lt_10.t
 t/bugs/element_class.t

@@ -1,18 +1,13 @@
 package HTML::FormFu::Plugin;
 
 use strict;
+use MRO::Compat;
 use mro 'c3';
 
 use HTML::FormFu::Attribute qw( mk_item_accessors mk_accessors );
 use HTML::FormFu::ObjectUtil qw( populate form parent );
 use Scalar::Util qw( refaddr reftype );
 use Carp qw( croak );
-
-use overload
-    'eq' => sub { refaddr $_[0] eq refaddr $_[1] },
-    '==' => sub { refaddr $_[0] eq refaddr $_[1] },
-    bool => sub {1},
-    fallback => 1;
 
 __PACKAGE__->mk_item_accessors(qw( type ));
 

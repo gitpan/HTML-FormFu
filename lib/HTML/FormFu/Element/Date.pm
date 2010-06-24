@@ -2,6 +2,7 @@ package HTML::FormFu::Element::Date;
 
 use strict;
 use base 'HTML::FormFu::Element::Multi';
+use MRO::Compat;
 use mro 'c3';
 
 use HTML::FormFu::Util qw( _filter_components _parse_args );
@@ -156,6 +157,13 @@ sub _date_defaults {
         $default = $parser->parse_datetime($default);
     }
     elsif ( defined( $default = $self->default ) && length $default ) {
+        
+        if ( !$self->form->submitted || $self->render_processed_value ) {
+            for my $deflator ( @{ $self->_deflators } ) {
+                $default = $deflator->process($default);
+            }
+        }
+        
         my $is_blessed = blessed($default);
 
         if ( !$is_blessed || ( $is_blessed && !$default->isa('DateTime') ) ) {
@@ -299,8 +307,8 @@ sub _build_month_list {
             if ( !$@ ) {
                 @months
                     = $month->{short_names}
-                    ? @{ $loc->month_abbreviations }
-                    : @{ $loc->month_names };
+                    ? @{ $loc->month_format_abbreviated }
+                    : @{ $loc->month_format_wide };
 
                 @months = map {ucfirst} @months;
 
