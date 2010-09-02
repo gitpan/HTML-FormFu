@@ -392,6 +392,8 @@ t/elements/checkbox.t
 t/elements/checkbox_force_default.t
 t/elements/checkbox_retain_default.t
 t/elements/checkboxgroup.t
+t/elements/checkboxgroup_attributes_escaped.t
+t/elements/checkboxgroup_attributes_escaped.yml
 t/elements/combobox.t
 t/elements/combobox.yml
 t/elements/combobox_repeatable.t
@@ -446,6 +448,8 @@ t/elements/radio.t
 t/elements/radio_force_default.t
 t/elements/radio_retain_default.t
 t/elements/radiogroup.t
+t/elements/radiogroup_attributes_escaped.t
+t/elements/radiogroup_attributes_escaped.yml
 t/elements/radiogroup_attrs_xml.t
 t/elements/radiogroup_dup_opt.t
 t/elements/radiogroup_errors.t
@@ -467,6 +471,8 @@ t/elements/repeatable_repeatable.yml
 t/elements/reset.t
 t/elements/reverse.t
 t/elements/select.t
+t/elements/select_attributes_escaped.t
+t/elements/select_attributes_escaped.yml
 t/elements/select_deflator_default.t
 t/elements/select_empty_first.t
 t/elements/select_empty_first.yml
@@ -620,6 +626,8 @@ t/inflators/datetime_strptime.t
 t/inflators/datetime_timezone.t
 t/inflators/datetime_with_constraint.t
 t/inflators/datetime_with_constraint.yml
+t/internals/default_args-types.t
+t/internals/default_args-types.yml
 t/lib/HTMLFormFu/ElementSetup.pm
 t/lib/HTMLFormFu/I18N.pm
 t/lib/HTMLFormFu/I18N/en.pm

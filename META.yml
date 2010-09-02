@@ -24,7 +24,7 @@ no_index:
     - t
     - xt
 requires:
-  Captcha::reCAPTCHA: 0.92
+  Captcha::reCAPTCHA: 0.93
   Class::Accessor::Chained::Fast: 0
   Clone: 0.31
   Config::Any: 0.18
@@ -59,4 +59,5 @@ requires:
   perl: 5.8.1
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.07002
+  repository: http://html-formfu.googlecode.com/svn/trunk/HTML-FormFu
+version: 0.07003
