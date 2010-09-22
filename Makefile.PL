@@ -24,7 +24,7 @@ requires 'Crypt::CBC';
 requires 'Crypt::DES';
 requires 'Data::Visitor' => 0.26; # when it dumped Any::Moose for Moose
 requires 'Date::Calc';
-requires 'DateTime' => '0.38'; # required for string overloading
+requires 'DateTime' => '0.54'; # required for string overloading
 requires 'DateTime::Format::Strptime' => '1.2000';  
 requires 'DateTime::Format::Builder' => '0.7901'; # fixes memory leaks
 requires 'DateTime::Format::Natural';
@@ -60,5 +60,15 @@ no_index directory => 'examples';
 install_script('bin/html_formfu_deploy.pl');
 install_script('bin/html_formfu_dumpconf.pl');
 install_share();
+
+# Developers on MS Windows must have Module::Install::PerlTar installed
+# This fixes the problem of tar files having world-writable files,
+# which causes PAUSE to choke
+eval {
+    use_ptar() if author_context && $^O =~/win/i;
+};
+if ($@) {
+    die "Module::Install::PerlTar must be installed when Makefile.PL is run by an author on MS Windows\n";
+}
 
 &WriteAll;

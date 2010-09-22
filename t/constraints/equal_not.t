@@ -1,14 +1,14 @@
 use strict;
 use warnings;
 
-use Test::More tests => 9;
+use Test::More tests => 15;
 
 use HTML::FormFu;
 
 my $form = HTML::FormFu->new;
 
 $form->element('Text')->name('foo')->constraint('Equal')
-    ->others( 'bar', 'baz' )->not(1);
+    ->others([ 'bar', 'baz' ])->not(1);
 
 $form->element('Text')->name('bar');
 $form->element('Text')->name('baz');
@@ -31,6 +31,32 @@ $form->element('Text')->name('baz');
     $form->process( {
             foo => '',
             bar => '',
+            baz => '',
+        } );
+
+    ok( $form->valid('foo'), 'foo valid' );
+    ok( $form->valid('bar'), 'bar valid' );
+    ok( $form->valid('baz'), 'baz valid' );
+}
+
+# Valid
+{
+    $form->process( {
+            foo => '',
+            bar => 'yada',
+            baz => 'boba',
+        } );
+
+    ok( $form->valid('foo'), 'foo valid' );
+    ok( $form->valid('bar'), 'bar valid' );
+    ok( $form->valid('baz'), 'baz valid' );
+}
+
+# Valid
+{
+    $form->process( {
+            foo => '',
+            bar => 'yada',
             baz => '',
         } );
 

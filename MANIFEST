@@ -76,6 +76,7 @@ inc/Module/Install/Metadata.pm
 inc/Module/Install/Scripts.pm
 inc/Module/Install/Share.pm
 inc/Module/Install/Win32.pm
+inc/Module/Install/With.pm
 inc/Module/Install/WriteAll.pm
 lib/HTML/FormFu.pm
 lib/HTML/FormFu/Attribute.pm
@@ -264,6 +265,8 @@ t/bugs/date_element_empty_input.t
 t/bugs/datetime_hour_lt_10.t
 t/bugs/element_class.t
 t/bugs/element_parent.t
+t/bugs/empty_block_with_nested_name.t
+t/bugs/empty_block_with_nested_name.yml
 t/bugs/error_msg.t
 t/bugs/field_no_name.t
 t/bugs/filter_run_once.t
@@ -295,12 +298,20 @@ t/constraints/autoset_group.t
 t/constraints/bool.t
 t/constraints/callback.t
 t/constraints/callbackonce.t
+t/constraints/constraint_other_siblings.t
+t/constraints/constraint_other_siblings.yml
+t/constraints/constraint_other_siblings_not.t
+t/constraints/constraint_other_siblings_not.yml
 t/constraints/constraint_when.t
 t/constraints/constraint_when.yml
+t/constraints/constraint_when_any_field.t
+t/constraints/constraint_when_any_field.yml
 t/constraints/constraint_when_any_true_value.t
 t/constraints/constraint_when_any_true_value.yml
 t/constraints/constraint_when_default_empty_value.t
 t/constraints/constraint_when_default_empty_value.yml
+t/constraints/constraint_when_fields.t
+t/constraints/constraint_when_fields.yml
 t/constraints/datetime_parser.t
 t/constraints/dependon.t
 t/constraints/dependon_attach_errors_to_base.t
@@ -365,7 +376,6 @@ t/deflators/compoundsplit_split.yml
 t/deflators/formatnumber.t
 t/deflators/formatnumber.yml
 t/deflators/pathclassfile.t
-t/deprecated/element_defaults.t
 t/element_setup.t
 t/elements/blank.t
 t/elements/block.t

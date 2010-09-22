@@ -1736,40 +1736,26 @@ INTROSPECTION
     Because of scoping issues, code references (such as in Callback
     constraints) are copied instead of cloned.
 
-DEPRECATED METHODS
-  element_defaults
-    Is deprecated and provided only for backwards compatibility. Will be
-    removed at some point in the future.
-
-    See "default_args" instead.
-
-  model_class
-    Is deprecated and provided only for backwards compatibility. Will be
-    removed at some point in the future.
-
-    Use "default_model" instead.
-
-  defaults_from_model
-    Is deprecated and provided only for backwards compatibility. Will be
-    removed at some point in the future.
-
-    Use "default_values" in HTML::FormFu::Model instead.
-
-        $form->model->default_values( $object, \%config )
-
-  save_to_model
-    Is deprecated and provided only for backwards compatibility. Will be
-    removed at some point in the future.
-
-    Use "update" in HTML::FormFu::Model instead.
-
-        $form->model->update( $object, \%config )
-
 DEPRECATION POLICY
     We try our best to not make incompatible changes, but if they're
     required we'll make every effort possible to provide backwards
     compatibility for several release-cycles, issuing a warnings about the
     changes, before removing the legacy features.
+
+REMOVED METHODS
+    See also "REMOVED METHODS" in HTML::FormFu::Element.
+
+  element_defaults
+    Has been removed; see "default_args" instead.
+
+  model_class
+    Has been removed; use "default_model" instead.
+
+  defaults_from_model
+    Has been removed; use "default_values" in HTML::FormFu::Model instead.
+
+  save_to_model
+    Has been removed; use "update" in HTML::FormFu::Model instead.
 
 BEST PRACTICES
     It is advisable to keep application-wide (or global) settings in a

@@ -10,7 +10,7 @@ build_requires:
 configure_requires:
   ExtUtils::MakeMaker: 6.42
 distribution_type: module
-generated_by: 'Module::Install version 0.97'
+generated_by: 'Module::Install version 1.00'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -32,7 +32,7 @@ requires:
   Crypt::DES: 0
   Data::Visitor: 0.26
   Date::Calc: 0
-  DateTime: 0.38
+  DateTime: 0.54
   DateTime::Format::Builder: 0.7901
   DateTime::Format::Natural: 0
   DateTime::Format::Strptime: 1.2000
@@ -60,4 +60,4 @@ requires:
 resources:
   license: http://dev.perl.org/licenses/
   repository: http://html-formfu.googlecode.com/svn/trunk/HTML-FormFu
-version: 0.07003
+version: 0.08002

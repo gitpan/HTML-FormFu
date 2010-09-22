@@ -1,3 +1,31 @@
+0.08002 2010-09-22
+
+    - Incompatible Change: removed all previously deprecated methods.
+    
+    - Incompatible Change: HTML::FormFu::QueryType::Catalyst
+      File uploads under Catalyst no longer have copy_to(), link_to() and
+      catalyst_upload() methods
+    
+    - Deprecated passing multiple arguments to many methods, where they were
+      being implicitly converted to a hash-ref or array-ref.
+      A warning is now issued.
+    
+    - Fix: Constraint::Equal with not(1) set no longer sets an error when both
+      field values are empty strings.
+    
+    - Fix: An empty block with nested_name set, containing Label elements and
+      no other fields, was causing the block's nested_name to be added to
+      $form->valid(). RT #54967
+    
+    - Constraints that inherit from HTML::FormFu::Constraint::_others have a new
+      'other_siblings' option, which auto-generates the 'others' list.
+    
+    - Constraint 'when' condition now supports new 'fields' and 'any_field'
+      options.
+    
+    - Bumped required version of DateTime to 0.54 - needed to pass tests under
+      Test::More 0.96.
+
 0.07003 2010-08-02
 
     - Fix: Group element now escapes each items attributes, label_attributes
