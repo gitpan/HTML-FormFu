@@ -1,8 +1,8 @@
 package HTML::FormFu::I18N::ru;
-use strict;
 use utf8;
 
-use base qw( HTML::FormFu::I18N );
+use Moose;
+extends 'HTML::FormFu::I18N';
 
 our %Lexicon = (
     form_error_message =>
@@ -67,5 +67,7 @@ our %Lexicon = (
     form_transformer_imager =>
         'Ошибка обработки файла изображения',
 );
+
+__PACKAGE__->meta->make_immutable( inline_constructor => 0 );
 
 1;

@@ -1,11 +1,13 @@
 package HTML::FormFu::QueryType::Catalyst;
+use Moose;
 
-use strict;
-use base 'HTML::FormFu::Upload';
+extends 'HTML::FormFu::Upload';
 
+use IO::File ();
 use Scalar::Util qw( weaken );
 
-__PACKAGE__->mk_item_accessors(qw( basename tempname ));
+has basename => ( is => 'rw', traits  => ['Chained'] );
+has tempname => ( is => 'rw', traits  => ['Chained'] );
 
 sub parse_uploads {
     my ( $class, $form, $name ) = @_;
@@ -59,6 +61,8 @@ sub fh {
 
     return $fh;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

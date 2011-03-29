@@ -1,9 +1,9 @@
 package HTML::FormFu::Inflator::Callback;
 
-use strict;
-use base 'HTML::FormFu::Inflator';
+use Moose;
+extends 'HTML::FormFu::Inflator';
 
-__PACKAGE__->mk_accessors(qw( callback ));
+has callback => ( is => 'rw', traits  => ['Chained'] );
 
 sub inflator {
     my ( $self, $value ) = @_;
@@ -14,6 +14,8 @@ sub inflator {
 
     return $callback->($value);
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

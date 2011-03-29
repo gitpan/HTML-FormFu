@@ -1,14 +1,13 @@
 package HTML::FormFu::Constraint::File::MIME;
 
-use strict;
-use base 'HTML::FormFu::Constraint';
+use Moose;
+extends 'HTML::FormFu::Constraint';
 
 use List::MoreUtils qw( any );
 use Scalar::Util qw( blessed );
 
-__PACKAGE__->mk_item_accessors(qw( regex ));
-
-__PACKAGE__->mk_accessors(qw( types ));
+has regex => ( is => 'rw', traits  => ['Chained'] );
+has types => ( is => 'rw', traits  => ['Chained'] );
 
 sub constrain_value {
     my ( $self, $value ) = @_;
@@ -35,6 +34,8 @@ sub constrain_value {
 
     return;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

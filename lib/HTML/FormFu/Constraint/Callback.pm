@@ -1,9 +1,9 @@
 package HTML::FormFu::Constraint::Callback;
 
-use strict;
-use base 'HTML::FormFu::Constraint';
+use Moose;
+extends 'HTML::FormFu::Constraint';
 
-__PACKAGE__->mk_item_accessors(qw( callback ));
+has callback => ( is => 'rw', traits  => ['Chained'] );
 
 sub constrain_value {
     my ( $self, $value, $params ) = @_;
@@ -16,6 +16,8 @@ sub constrain_value {
 
     return $ok;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

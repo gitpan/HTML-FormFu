@@ -1,7 +1,8 @@
 package HTML::FormFu::Constraint::AllOrNone;
+use Moose;
+extends 'HTML::FormFu::Constraint';
 
-use strict;
-use base 'HTML::FormFu::Constraint::_others';
+with 'HTML::FormFu::Role::Constraint::Others';
 
 sub process {
     my ( $self, $params ) = @_;
@@ -57,6 +58,8 @@ sub constrain_value {
 
     return 1;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

@@ -1,20 +1,18 @@
 package HTML::FormFu::Element::Number;
+use Moose;
 
-use strict;
-use base 'HTML::FormFu::Element::Text';
-use MRO::Compat;
-use mro 'c3';
+extends 'HTML::FormFu::Element::Text';
 
-sub new {
-    my $self = shift->next::method(@_);
+after BUILD => sub {
+    my $self = shift;
     
     $self->field_type('number');
     
     $self->deflator( 'FormatNumber' );
     $self->filter(   'FormatNumber' );
     
-    return $self;
-}
+    return;
+};
 
 sub precision {
     my $self = shift;
@@ -27,6 +25,8 @@ sub trailing_zeroes {
     
     return $self->get_deflator({ type => 'FormatNumber' })->trailing_zeroes(@_);
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

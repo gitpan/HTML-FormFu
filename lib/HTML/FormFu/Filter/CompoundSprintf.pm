@@ -1,12 +1,13 @@
 package HTML::FormFu::Filter::CompoundSprintf;
+use Moose;
+extends 'HTML::FormFu::Filter';
 
-use strict;
-use base 'HTML::FormFu::Filter::_Compound';
+with 'HTML::FormFu::Role::Filter::Compound';
 
 use HTML::FormFu::Constants qw( $EMPTY_STR );
 use Carp qw( croak );
 
-__PACKAGE__->mk_item_accessors(qw( sprintf ));
+has sprintf => ( is => 'rw', traits => ['Chained'] );
 
 sub filter {
     my ( $self, $value ) = @_;
@@ -23,6 +24,8 @@ sub filter {
 
     return $value;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

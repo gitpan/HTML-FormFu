@@ -1,14 +1,74 @@
-use inc::Module::Install 0.75;
+use inc::Module::Install 1.00;
+use IO::Interactive qw( is_interactive );
+use File::Spec;
+$|=1;
+
+name 'HTML-FormFu';
+perl_version '5.008001';
+
+# required for legacy check below
+bundle 'IO::Interactive' => '0.04';
+
+{
+    # check for old non-Moose version
+    
+    eval { require HTML::FormFu::Element::_Field };
+    
+    if ( !$@ ) {
+        my $path = $INC{'HTML/FormFu/Element/_Field.pm'};
+        
+        my ( $volume, $dir, $file ) = File::Spec->splitpath( $path );
+        
+        my @dirs = File::Spec->splitdir( $dir );
+        # get rid of HTML/FormFu/Element
+        splice @dirs, -4;
+        
+        my $lib_dir  = File::Spec->catdir( @dirs );
+        my $lib_path = File::Spec->catpath( $volume, $lib_dir );
+        
+        my $msg = <<ERROR;
+Files from an older, pre-0.09000 version of HTML-FormFu have been detected
+in directory: '$lib_path'.
+
+This will cause problems if you use HTML::FormFu::Preload, and will also
+cause spurious warnings during the test suite run.
+
+We strongly recommend you manually remove old HTML-FormFu files before
+continuing.
+
+ERROR
+        
+        if ( is_interactive() ) {
+            warn <<WARN;
+***Warning***
+$msg
+Continue?
+WARN
+
+            chomp( my $answer = <STDIN> );
+            
+            if ( $answer !~ /y/i ) {
+                die "Remove old HTML-FormFu files and retry\n";
+            }
+        }
+        else {
+            die <<ERROR;
+***Error***
+$msg
+Will not continue non-interactively
+ERROR
+
+        }
+    }
+}
 
 if ( -e 'MANIFEST.SKIP' ) {
     system( 'pod2text lib/HTML/FormFu.pm > README' );
 }
 
-name 'HTML-FormFu';
-perl_version '5.008001';
 all_from 'lib/HTML/FormFu.pm';
 
-repository 'http://html-formfu.googlecode.com/svn/trunk/HTML-FormFu';
+repository 'git://github.com/fireartist/HTML-FormFu.git';
 
 # this is the lowest version of Exporter I can identify that exports import()
 # it's bundled with perl 5.83
@@ -18,6 +78,7 @@ requires 'Exporter' => '5.57';
 requires 'Captcha::reCAPTCHA' => 0.93;
 requires 'Class::Accessor::Chained::Fast';
 requires 'Clone' => '0.31';
+requires 'Class::MOP::Method';
 requires 'Config::Any' => '0.18'; # 0.10 - supports multi-doc config files
                                   # 0.18 - prefers YAML::XS for YAML
 requires 'Crypt::CBC';
@@ -39,7 +100,10 @@ requires 'List::Util';
 requires 'List::MoreUtils';
 requires 'Locale::Maketext';
 requires 'Module::Pluggable';
-requires 'MRO::Compat';
+requires 'Moose' => '1.00'; # Reasonable default until we get test results
+requires 'MooseX::Aliases';
+requires 'MooseX::ChainedAccessors::Accessor' => '0.02'; # for more recent Moose
+requires 'MooseX::SetOnce';
 requires 'Number::Format';
 requires 'Readonly';
 requires 'Regexp::Common';

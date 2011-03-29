@@ -1,14 +1,6 @@
 NAME
     HTML::FormFu - HTML Form Creation, Rendering and Validation Framework
 
-BETA SOFTWARE
-    There may be API changes required before the 1.0 release. Any
-    incompatible changes will first be discussed on the mailing list. See
-    "DEPRECATION POLICY" for further details.
-
-    Work is still needed on the documentation, if you come across any errors
-    or find something confusing, please give feedback via the mailing list.
-
 SYNOPSIS
     Note: These examples make use of HTML::FormFu::Model::DBIC. As of
     "HTML::FormFu" v02.005, the HTML::FormFu::Model::DBIC module is not
@@ -1825,20 +1817,11 @@ PATCHES
     it's against. Mailing list messages are limited to 256KB, so gzip the
     patch if necessary.
 
-SUBVERSION REPOSITORY
-    The publicly viewable subversion code repository is at
-    <http://html-formfu.googlecode.com/svn/trunk/HTML-FormFu>.
+GITHUB REPOSITORY
+    This module's sourcecode is maintained in a git repository at
+    <git://github.com/fireartist/HTML-FormFu.git>
 
-    If you wish to contribute, you'll need a google account. Then just ask
-    on the mailing list for commit access, giving the email address your
-    account uses.
-
-    If you wish to contribute but for some reason really don't want to sign
-    up for a google account, please post patches to the mailing list
-    (although you'll have to wait for someone to commit them).
-
-    If you have commit permissions, use the HTTPS repository url:
-    <https://html-formfu.googlecode.com/svn/trunk/HTML-FormFu>
+    The project page is <https://github.com/fireartist/HTML-FormFu>
 
 SEE ALSO
     HTML::FormFu::Imager

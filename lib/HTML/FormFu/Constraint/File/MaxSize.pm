@@ -1,13 +1,15 @@
 package HTML::FormFu::Constraint::File::MaxSize;
 
-use strict;
-use base 'HTML::FormFu::Constraint::File::Size';
+use Moose;
+extends 'HTML::FormFu::Constraint::File::Size';
 
 sub _localize_args {
     my ($self) = @_;
 
     return $self->max;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

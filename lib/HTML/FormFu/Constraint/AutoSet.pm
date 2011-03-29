@@ -1,9 +1,7 @@
 package HTML::FormFu::Constraint::AutoSet;
 
-use strict;
-use base 'HTML::FormFu::Constraint::Set';
-use MRO::Compat;
-use mro 'c3';
+use Moose;
+extends 'HTML::FormFu::Constraint::Set';
 
 sub process {
     my $self = shift;
@@ -12,7 +10,7 @@ sub process {
 
     $self->set( \@set );
 
-    return $self->next::method(@_);
+    return $self->SUPER::process(@_);
 }
 
 sub _parse_value {
@@ -25,6 +23,8 @@ sub _parse_value {
         return $item->{value};
     }
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

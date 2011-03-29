@@ -1,9 +1,11 @@
 package HTML::FormFu::Constraint::Integer;
 
-use strict;
-use base 'HTML::FormFu::Constraint::Regex';
+use Moose;
+extends 'HTML::FormFu::Constraint::Regex';
 
 sub regex {qr/^[0-9]*\z/}
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

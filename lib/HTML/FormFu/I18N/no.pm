@@ -1,8 +1,8 @@
 package HTML::FormFu::I18N::no;
-use strict;
 use utf8;
 
-use base qw( HTML::FormFu::I18N );
+use Moose;
+extends 'HTML::FormFu::I18N';
 
 our %Lexicon = (
     form_error_message =>
@@ -48,5 +48,7 @@ our %Lexicon = (
     form_validator_imager_size => 'Bildet er for stort',
     form_transformer_imager    => 'Feil ved behandling av bilde',
 );
+
+__PACKAGE__->meta->make_immutable( inline_constructor => 0 );
 
 1;

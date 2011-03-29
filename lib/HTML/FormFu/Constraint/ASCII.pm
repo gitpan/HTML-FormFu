@@ -1,11 +1,13 @@
 package HTML::FormFu::Constraint::ASCII;
 
-use strict;
-use base 'HTML::FormFu::Constraint::Regex';
+use Moose;
+extends 'HTML::FormFu::Constraint::Regex';
 
 sub regex {
     return qr/^\p{IsASCII}*\z/;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

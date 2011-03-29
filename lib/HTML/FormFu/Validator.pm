@@ -1,9 +1,7 @@
 package HTML::FormFu::Validator;
 
-use strict;
-use base 'HTML::FormFu::Processor';
-use MRO::Compat;
-use mro 'c3';
+use Moose;
+extends 'HTML::FormFu::Processor';
 
 use HTML::FormFu::Exception::Validator;
 use Scalar::Util qw( reftype blessed );
@@ -66,6 +64,8 @@ sub return_error {
 
     return $err;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

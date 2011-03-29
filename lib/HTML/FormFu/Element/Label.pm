@@ -1,27 +1,37 @@
 package HTML::FormFu::Element::Label;
+use Moose;
 
-use strict;
-use base 'HTML::FormFu::Element::_Field';
-use MRO::Compat;
-use mro 'c3';
+extends "HTML::FormFu::Element";
 
-use HTML::FormFu::ObjectUtil qw( _coerce );
+with 'HTML::FormFu::Role::Element::Field',
+     'HTML::FormFu::Role::Element::SingleValueField' => { -excludes => 'nested_name' },
+     'HTML::FormFu::Role::Element::Coercible';
+
 use HTML::FormFu::Util qw( process_attrs );
+use List::MoreUtils qw( none );
 
-__PACKAGE__->mk_item_accessors(qw( field_type tag label_filename ));
+has field_type     => ( is => 'rw', traits => ['Chained'] );
+has label_filename => ( is => 'rw', traits => ['Chained'] );
 
-sub new {
-    my $self = shift->next::method(@_);
+has tag => (
+    is      => 'rw',
+    default => 'span',
+    lazy    => 1,
+    traits  => ['Chained'],
+);
 
-    $self->tag('span');
+after BUILD => sub {
+    my $self = shift;
+
     $self->filename('label_tag');
     $self->non_param(1);
 
     #$self->field_type('label');
-    #$self->retain_default(1);
+
     $self->model_config->{read_only} = 1;
-    return $self;
-}
+    
+    return;
+};
 
 sub string {
     my ( $self, $args ) = @_;
@@ -73,8 +83,14 @@ sub process_input {
     my $form = $self->form;
     my $name = $self->nested_name;
 
-    if ( $form->submitted && $form->nested_hash_key_exists( $input, $name ) ) {
-        $form->delete_nested_hash_value( $input, $name );
+    if ( $form->submitted
+        && $form->nested_hash_key_exists( $input, $name ) )
+    {
+        my @fields = @{ $form->get_fields({ nested_name => $name }) };
+        
+        if ( none { $_ == $self } @fields ) {
+            $form->delete_nested_hash_key( $input, $name );
+        }
     }
 
     return;
@@ -83,13 +99,15 @@ sub process_input {
 sub render_data_non_recursive {
     my ( $self, $args ) = @_;
 
-    my $render = $self->next::method( {
+    my $render = $self->SUPER::render_data_non_recursive( {
             tag => $self->tag,
             $args ? %$args : (),
         } );
 
     return $render;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

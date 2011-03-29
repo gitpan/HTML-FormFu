@@ -26,6 +26,7 @@ no_index:
 requires:
   Captcha::reCAPTCHA: 0.93
   Class::Accessor::Chained::Fast: 0
+  Class::MOP::Method: 0
   Clone: 0.31
   Config::Any: 0.18
   Crypt::CBC: 0
@@ -47,8 +48,11 @@ requires:
   List::MoreUtils: 0
   List::Util: 0
   Locale::Maketext: 0
-  MRO::Compat: 0
   Module::Pluggable: 0
+  Moose: 1.00
+  MooseX::Aliases: 0
+  MooseX::ChainedAccessors::Accessor: 0.02
+  MooseX::SetOnce: 0
   Number::Format: 0
   Path::Class::File: 0
   Readonly: 0
@@ -59,5 +63,5 @@ requires:
   perl: 5.8.1
 resources:
   license: http://dev.perl.org/licenses/
-  repository: http://html-formfu.googlecode.com/svn/trunk/HTML-FormFu
-version: 0.08002
+  repository: git://github.com/fireartist/HTML-FormFu.git
+version: 0.09000

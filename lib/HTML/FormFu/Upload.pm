@@ -1,32 +1,20 @@
 package HTML::FormFu::Upload;
+use Moose;
 
-use strict;
+with 'HTML::FormFu::Role::Populate';
+
 use Carp qw( croak );
 
-use HTML::FormFu::Attribute qw( mk_item_accessors );
-use HTML::FormFu::ObjectUtil qw( form parent populate );
+use HTML::FormFu::ObjectUtil qw( form parent );
 use HTML::FormFu::UploadParam;
 use Scalar::Util qw( reftype );
 
-__PACKAGE__->mk_item_accessors(qw( headers filename size type ));
+has headers  => ( is => 'rw', traits  => ['Chained'] );
+has filename => ( is => 'rw', traits  => ['Chained'] );
+has size     => ( is => 'rw', traits  => ['Chained'] );
+has type     => ( is => 'rw', traits  => ['Chained'] );
 
-sub new {
-    my $class = shift;
-    my %attrs;
-    
-    if (@_) {
-        croak "attributes argument must be a hashref"
-            if reftype( $_[0] ) ne 'HASH';
-        
-        %attrs = %{ $_[0] };
-    }
-
-    my $self = bless \%attrs, $class;
-
-    $self->populate( \%attrs );
-
-    return $self;
-}
+sub BUILD {}
 
 sub _param {
     my ( $self, $param ) = @_;
@@ -41,6 +29,22 @@ sub _param {
 
     return defined $self->{_param} ? $self->{_param}->param : ();
 }
+
+sub slurp {
+    my ($self) = @_;
+
+    my $fh = $self->fh;
+
+    return if !defined $fh;
+
+    binmode $fh;
+
+    local $/;
+
+    return <$fh>;
+}
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

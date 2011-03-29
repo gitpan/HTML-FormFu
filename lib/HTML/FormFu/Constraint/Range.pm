@@ -1,14 +1,22 @@
 package HTML::FormFu::Constraint::Range;
+use Moose;
+use MooseX::Aliases;
 
-use strict;
-use base 'HTML::FormFu::Constraint';
+extends 'HTML::FormFu::Constraint';
 
 use Scalar::Util qw( looks_like_number );
 
-__PACKAGE__->mk_item_accessors(qw( minimum maximum ));
+has minimum => (
+    is      => 'rw',
+    alias   => 'min',
+    traits  => ['Chained'],
+);
 
-*min = \&minimum;
-*max = \&maximum;
+has maximum => (
+    is      => 'rw',
+    alias   => 'max',
+    traits  => ['Chained'],
+);
 
 sub constrain_value {
     my ( $self, $value ) = @_;
@@ -33,6 +41,8 @@ sub _localize_args {
 
     return $self->min, $self->max;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

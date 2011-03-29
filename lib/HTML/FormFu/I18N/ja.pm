@@ -1,8 +1,8 @@
 package HTML::FormFu::I18N::ja;
-use strict;
 use utf8;
 
-use base qw( HTML::FormFu::I18N );
+use Moose;
+extends 'HTML::FormFu::I18N';
 
 our %Lexicon = (
     form_error_message        => 'フォーム内容が不正です',
@@ -53,5 +53,7 @@ our %Lexicon = (
     form_transformer_imager =>
         '画像データの処理に問題がありました',
 );
+
+__PACKAGE__->meta->make_immutable( inline_constructor => 0 );
 
 1;

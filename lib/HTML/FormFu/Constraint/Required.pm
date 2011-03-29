@@ -1,13 +1,15 @@
 package HTML::FormFu::Constraint::Required;
 
-use strict;
-use base 'HTML::FormFu::Constraint';
+use Moose;
+extends 'HTML::FormFu::Constraint';
 
 sub constrain_value {
     my ( $self, $value ) = @_;
 
     return defined $value && length $value;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

@@ -1,7 +1,7 @@
 package HTML::FormFu::Constraint::SingleValue;
 
-use strict;
-use base 'HTML::FormFu::Constraint';
+use Moose;
+extends 'HTML::FormFu::Constraint';
 
 sub constrain_values {
     my ( $self, $values ) = @_;
@@ -12,6 +12,8 @@ sub constrain_values {
 sub constrain_value {
     return 1;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

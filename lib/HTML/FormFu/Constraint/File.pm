@@ -1,7 +1,7 @@
 package HTML::FormFu::Constraint::File;
 
-use strict;
-use base 'HTML::FormFu::Constraint';
+use Moose;
+extends 'HTML::FormFu::Constraint';
 
 use Scalar::Util qw( blessed );
 
@@ -12,6 +12,8 @@ sub constrain_value {
 
     return blessed($value) && $value->isa('HTML::FormFu::Upload');
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

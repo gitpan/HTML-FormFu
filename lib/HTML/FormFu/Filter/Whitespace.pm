@@ -1,9 +1,11 @@
 package HTML::FormFu::Filter::Whitespace;
 
-use strict;
-use base 'HTML::FormFu::Filter::Regex';
+use Moose;
+extends 'HTML::FormFu::Filter::Regex';
 
 sub match {qr/\s+/}
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

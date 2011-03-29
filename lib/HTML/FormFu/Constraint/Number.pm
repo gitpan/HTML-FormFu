@@ -1,7 +1,7 @@
 package HTML::FormFu::Constraint::Number;
 
-use strict;
-use base 'HTML::FormFu::Constraint';
+use Moose;
+extends 'HTML::FormFu::Constraint';
 
 use Scalar::Util qw( looks_like_number );
 
@@ -14,6 +14,8 @@ sub constrain_value {
 
     return $self->not ? !$ok : $ok;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

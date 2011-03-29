@@ -1,8 +1,8 @@
 package HTML::FormFu::I18N::fr;
-use strict;
 use utf8;
 
-use base qw( HTML::FormFu::I18N );
+use Moose;
+extends 'HTML::FormFu::I18N';
 
 our %Lexicon = (
     form_error_message =>
@@ -44,5 +44,7 @@ our %Lexicon = (
     form_validator_imager_size => "Image à charger trop grosse",
     form_transformer_imager    => "Erreur lors du traitement de l'image",
 );
+
+__PACKAGE__->meta->make_immutable( inline_constructor => 0 );
 
 1;

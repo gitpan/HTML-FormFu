@@ -1,7 +1,7 @@
 package HTML::FormFu::QueryType::CGI::Simple;
+use Moose;
 
-use strict;
-use base 'HTML::FormFu::QueryType::CGI';
+extends 'HTML::FormFu::QueryType::CGI';
 
 sub parse_uploads {
     my ( $class, $form, $name ) = @_;
@@ -42,6 +42,8 @@ sub fh {
 
     return $self->form->query->upload( $self->filename );
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

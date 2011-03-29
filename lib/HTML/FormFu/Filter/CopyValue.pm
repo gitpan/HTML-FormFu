@@ -1,9 +1,9 @@
 package HTML::FormFu::Filter::CopyValue;
 
-use strict;
-use base 'HTML::FormFu::Filter';
+use Moose;
+extends 'HTML::FormFu::Filter';
 
-__PACKAGE__->mk_item_accessors(qw( field ));
+has field => ( is => 'rw', traits => ['Chained'] );
 
 sub filter {
     my ( $self, $value ) = @_;
@@ -21,6 +21,8 @@ sub filter {
 
     return $field_value;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

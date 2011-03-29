@@ -1,34 +1,35 @@
 package HTML::FormFu::Element::Date;
+use Moose;
 
-use strict;
-use base 'HTML::FormFu::Element::Multi';
-use MRO::Compat;
-use mro 'c3';
+extends 'HTML::FormFu::Element::Multi';
 
 use HTML::FormFu::Util qw( _filter_components _parse_args );
 use DateTime;
 use DateTime::Format::Builder;
 use DateTime::Format::Natural;
 use DateTime::Locale;
+use Moose::Util qw( apply_all_roles );
 use Scalar::Util qw( blessed );
 use List::MoreUtils qw( all none uniq );
 use Carp qw( croak );
 
 __PACKAGE__->mk_attrs(qw( day  month  year ));
 
-__PACKAGE__->mk_accessors( qw(
-        _known_fields
-        printf_day
-        printf_month
-        printf_year
-) );
+has auto_inflate          => ( is => 'rw', traits => ['Chained'] );
+has default_natural       => ( is => 'rw', traits => ['Chained'] );
+has default_datetime_args => ( is => 'rw', traits => ['Chained'] );
+has printf_day            => ( is => 'rw', traits => ['Chained'] );
+has printf_month          => ( is => 'rw', traits => ['Chained'] );
+has printf_year           => ( is => 'rw', traits => ['Chained'] );
 
-__PACKAGE__->mk_item_accessors( qw(
-        strftime
-        auto_inflate
-        default_natural
-        default_datetime_args
-) );
+has _known_fields => ( is => 'rw' );
+
+has strftime => (
+    is      => 'rw',
+    default => '%d-%m-%Y',
+    lazy    => 1,
+    traits  => ['Chained'],
+);
 
 *default = \&value;
 
@@ -58,39 +59,34 @@ for my $method ( qw(
     *{$name} = $sub;
 }
 
-sub new {
-    my $self = shift->next::method(@_);
+after BUILD => sub {
+    my ( $self, $args ) = @_;
 
-    $self->strftime("%d-%m-%Y");
+    $self->printf_day(   '%d' );
+    $self->printf_month( '%d' );
+    $self->printf_year(  '%d' );
 
-    $self->_known_fields( [qw/ day month year /] );
+    $self->_known_fields( [qw( day month year )] );
 
-    $self->printf_day  ('%d');
-    $self->printf_month('%d');
-    $self->printf_year ('%d');
-
-    $self->field_order( [qw/ day month year /] );
+    $self->field_order( [qw( day month year )] );
 
     $self->day( {
-            type   => '_MultiSelect',
             prefix => [],
         } );
 
     $self->month( {
-            type   => '_MultiSelect',
             prefix => [],
         } );
 
     $self->year( {
-            type    => '_MultiSelect',
-            prefix  => [],
-            less    => 0,
-            plus    => 10,
+            prefix => [],
+            less   => 0,
+            plus   => 10,
             reverse => 0,
         } );
 
-    return $self;
-}
+    return;
+};
 
 sub value {
     my ( $self, $value ) = @_;
@@ -152,7 +148,24 @@ sub _date_defaults {
 
     my $default;
 
-    if ( defined( $default = $self->default_natural ) ) {
+    if ( defined( $default = $self->default ) && length $default ) {
+        
+        if ( !$self->form->submitted || $self->render_processed_value ) {
+            for my $deflator ( @{ $self->_deflators } ) {
+                $default = $deflator->process($default);
+            }
+        }
+        
+        my $is_blessed = blessed($default);
+
+        if ( !$is_blessed || ( $is_blessed && !$default->isa('DateTime') ) ) {
+            my $builder = DateTime::Format::Builder->new;
+            $builder->parser( { strptime => $self->strftime } );
+
+            $default = $builder->parse_datetime($default);
+        }
+    }
+    elsif ( defined( $default = $self->default_natural ) ) {
         my $parser;
         
         if ( defined( my $datetime_args = $self->default_datetime_args ) ) {
@@ -169,23 +182,7 @@ sub _date_defaults {
         }
         $default = $parser->parse_datetime( $default );
     }
-    elsif ( defined( $default = $self->default ) && length $default ) {
-        
-        if ( !$self->form->submitted || $self->render_processed_value ) {
-            for my $deflator ( @{ $self->_deflators } ) {
-                $default = $deflator->process($default);
-            }
-        }
-        
-        my $is_blessed = blessed($default);
-
-        if ( !$is_blessed || ( $is_blessed && !$default->isa('DateTime') ) ) {
-            my $builder = DateTime::Format::Builder->new;
-            $builder->parser( { strptime => $self->strftime } );
-
-            $default = $builder->parse_datetime($default);
-        }
-    } else {
+    else {
       $default = undef;
     }
 
@@ -219,13 +216,15 @@ sub _add_day {
 
     @day_prefix = map { [ '', $_ ] } @day_prefix;
 
-    $self->element( {
-            type    => $day->{type},
+    my $element = $self->element( {
+            type    => 'Select',
             name    => $day_name,
             options => [ @day_prefix, map { [ $_, $_ ] } 1 .. 31 ],
 
             defined $day->{default} ? ( default => $day->{default} ) : (),
         } );
+
+    apply_all_roles( $element, 'HTML::FormFu::Role::Element::MultiElement' );
 
     return;
 }
@@ -248,13 +247,15 @@ sub _add_month {
 
     my $options = [ @month_prefix, map { [ $_ + 1, $months[$_] ] } 0 .. 11 ];
 
-    $self->element( {
-            type    => $month->{type},
+    my $element = $self->element( {
+            type    => 'Select',
             name    => $month_name,
             options => $options,
 
             defined $month->{default} ? ( default => $month->{default} ) : (),
         } );
+
+    apply_all_roles( $element, 'HTML::FormFu::Role::Element::MultiElement' );
 
     return;
 }
@@ -287,13 +288,15 @@ sub _add_year {
 
     @year_prefix = map { [ '', $_ ] } @year_prefix;
 
-    $self->element( {
-            type    => $year->{type},
+    my $element = $self->element( {
+            type    => 'Select',
             name    => $year_name,
             options => [ @year_prefix, map { [ $_, $_ ] } @years ],
 
             defined $year->{default} ? ( default => $year->{default} ) : (),
         } );
+
+    apply_all_roles( $element, 'HTML::FormFu::Role::Element::MultiElement' );
 
     return;
 }
@@ -331,6 +334,20 @@ sub _build_month_list {
     }
 
     return @months;
+}
+
+sub _build_number_list {
+    my ( $self, $start, $end, $interval ) = @_;
+    
+    $interval ||= 1;
+    
+    my @list;
+    
+    for ( my $i = $start; $i <= $end; $i += $interval ) {
+        push @list, $i;
+    }
+    
+    return @list;
 }
 
 sub _build_name {
@@ -386,7 +403,7 @@ sub process {
 
     $self->_add_elements;
 
-    return $self->next::method(@args);
+    return $self->SUPER::process(@args);
 }
 
 sub process_input {
@@ -425,7 +442,7 @@ sub process_input {
         $self->set_nested_hash_value( $input, $self->nested_name, $value );
     }
 
-    return $self->next::method($input);
+    return $self->SUPER::process_input($input);
 }
 
 sub render_data {
@@ -435,13 +452,15 @@ sub render_data {
 sub render_data_non_recursive {
     my ( $self, $args ) = @_;
 
-    my $render = $self->next::method( {
+    my $render = $self->SUPER::render_data_non_recursive( {
             elements => [ map { $_->render_data } @{ $self->_elements } ],
             $args ? %$args : (),
         } );
 
     return $render;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

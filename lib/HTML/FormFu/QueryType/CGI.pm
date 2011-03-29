@@ -1,7 +1,7 @@
 package HTML::FormFu::QueryType::CGI;
+use Moose;
 
-use strict;
-use base 'HTML::FormFu::Upload';
+extends 'HTML::FormFu::Upload';
 
 use HTTP::Headers;
 use Scalar::Util qw( blessed );
@@ -50,19 +50,7 @@ sub fh {
     return $self->_param;
 }
 
-sub slurp {
-    my ($self) = @_;
-
-    my $fh = $self->fh;
-
-    return if !defined $fh;
-
-    binmode $fh;
-
-    local $/;
-
-    return <$fh>;
-}
+__PACKAGE__->meta->make_immutable;
 
 1;
 

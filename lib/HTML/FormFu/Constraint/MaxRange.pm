@@ -1,13 +1,15 @@
 package HTML::FormFu::Constraint::MaxRange;
 
-use strict;
-use base 'HTML::FormFu::Constraint::Range';
+use Moose;
+extends 'HTML::FormFu::Constraint::Range';
 
 sub _localize_args {
     my ($self) = @_;
 
     return $self->max;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

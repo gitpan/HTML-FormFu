@@ -1,12 +1,20 @@
 package HTML::FormFu;
-use strict;
-use base 'HTML::FormFu::base';
+use Moose;
+
+with 'HTML::FormFu::Role::Render',
+     'HTML::FormFu::Role::CreateChildren',
+     'HTML::FormFu::Role::GetProcessors',
+     'HTML::FormFu::Role::ContainsElements',
+     'HTML::FormFu::Role::ContainsElementsSharedWithField',
+     'HTML::FormFu::Role::FormAndBlockMethods',
+     'HTML::FormFu::Role::FormAndElementMethods',
+     'HTML::FormFu::Role::NestedHashUtils',
+     'HTML::FormFu::Role::Populate';
 
 use HTML::FormFu::Attribute qw(
     mk_attrs                        mk_attr_accessors
     mk_inherited_accessors          mk_output_accessors
     mk_inherited_merging_accessors
-    mk_item_accessors               mk_accessors
 );
 use HTML::FormFu::Constants qw( $EMPTY_STR );
 use HTML::FormFu::Constraint;
@@ -16,13 +24,10 @@ use HTML::FormFu::Filter;
 use HTML::FormFu::Inflator;
 use HTML::FormFu::Localize;
 use HTML::FormFu::ObjectUtil qw(
-    :FORM_AND_BLOCK             :FORM_AND_ELEMENT
     populate                    form
     load_config_file            load_config_filestem
     clone                       stash
     constraints_from_dbic       parent
-    get_nested_hash_value       set_nested_hash_value
-    delete_nested_hash_key      nested_hash_key_exists
 );
 use HTML::FormFu::Util qw(
     DEBUG
@@ -38,7 +43,7 @@ use HTML::FormFu::Util qw(
 use Clone ();
 use List::Util qw( first );
 use List::MoreUtils qw( any none uniq );
-use Scalar::Util qw( blessed refaddr reftype weaken );
+use Scalar::Util qw( blessed refaddr weaken reftype );
 use Carp qw( croak );
 
 use overload (
@@ -53,35 +58,62 @@ __PACKAGE__->mk_attrs(qw( attributes ));
 
 __PACKAGE__->mk_attr_accessors(qw( id action enctype method ));
 
-__PACKAGE__->mk_item_accessors( qw(
-        indicator
-        filename
-        query_type
-        force_error_message
-        localize_class
-        query
-        input
-        _auto_fieldset
-        _elements
-        _processed_params
-        _output_processors
-        tt_module
-        nested_name
-        nested_subscript
-        default_model
-        tmp_upload_dir
-        params_ignore_underscore
-        _plugins
-) );
+for my $name ( qw(
+    _elements
+    _output_processors
+    _valid_names
+    _plugins
+    _models
+     ) )
+{
+    has $name => (
+        is       => 'rw',
+        default  => sub { [] },
+        lazy     => 1,
+        isa      => 'ArrayRef',
+    );
+}
 
-__PACKAGE__->mk_accessors( qw(
-        javascript
-        javascript_src
-        languages
-        submitted
-        _valid_names
-        _models
-) );
+has languages => (
+    is      => 'rw',
+    default => sub { ['en'] },
+    lazy    => 1,
+    isa     => 'ArrayRef',
+    traits  => ['Chained'],
+);
+
+has input => (
+    is       => 'rw',
+    default  => sub { {} },
+    lazy     => 1,
+    isa      => 'HashRef',
+    traits  => ['Chained'],
+);
+
+has _processed_params => (
+    is       => 'rw',
+    default  => sub { {} },
+    lazy     => 1,
+    isa      => 'HashRef',
+);
+
+has javascript               => ( is => 'rw', traits  => ['Chained'] );
+has javascript_src           => ( is => 'rw', traits  => ['Chained'] );
+has submitted                => ( is => 'rw', traits  => ['Chained'] );
+has indicator                => ( is => 'rw', traits => ['Chained'] );
+has filename                 => ( is => 'rw', traits => ['Chained'] );
+has query_type               => ( is => 'rw', traits => ['Chained'] );
+has force_error_message      => ( is => 'rw', traits => ['Chained'] );
+has localize_class           => ( is => 'rw', traits => ['Chained'] );
+has query                    => ( is => 'rw', traits => ['Chained'] );
+has tt_module                => ( is => 'rw', traits => ['Chained'] );
+has nested_name              => ( is => 'rw', traits => ['Chained'] );
+has nested_subscript         => ( is => 'rw', traits => ['Chained'] );
+has default_model            => ( is => 'rw', traits => ['Chained'] );
+has tmp_upload_dir           => ( is => 'rw', traits => ['Chained'] );
+has params_ignore_underscore => ( is => 'rw', traits => ['Chained'] );
+
+has _auto_fieldset           => ( is => 'rw' );
 
 __PACKAGE__->mk_output_accessors(qw( form_error_message ));
 
@@ -109,48 +141,30 @@ __PACKAGE__->mk_inherited_merging_accessors(qw( tt_args config_callback ));
 *plugins           = \&plugin;
 *add_plugins       = \&add_plugin;
 
-our $VERSION = '0.08002';
+our $VERSION = '0.09000';
 $VERSION = eval $VERSION;
 
-Class::C3::initialize();
-
-sub new {
-    my ( $class, $argument_ref ) = @_;
+sub BUILD {
+    my ( $self, $args ) = @_;
 
     my %defaults = (
-        _elements          => [],
-        _output_processors => [],
-        _valid_names       => [],
-        _plugins           => [],
-        _models            => [],
-        _processed_params  => {},
-        input              => {},
-        stash              => {},
         action             => '',
         method             => 'post',
         filename           => 'form',
-        default_args       => {},
         render_method      => 'string',
         tt_args            => {},
         tt_module          => 'Template',
         query_type         => 'CGI',
-        languages          => ['en'],
         default_model      => 'DBIC',
         localize_class     => 'HTML::FormFu::I18N',
         auto_error_class   => 'error_%s_%t',
         auto_error_message => 'form_%s_%t',
     );
 
-    my $self = bless {}, $class;
-
     $self->populate( \%defaults );
 
-    if ($argument_ref) {
-        $self->populate($argument_ref);
-    }
-
-    return $self;
-}
+    return;
+};
 
 sub auto_fieldset {
     my ( $self, $element_ref ) = @_;
@@ -920,7 +934,8 @@ sub _single_plugin {
     return @return;
 }
 
-sub render {
+around render => sub {
+    my $orig = shift;
     my $self = shift;
 
     my $plugins = $self->get_plugins;
@@ -929,14 +944,14 @@ sub render {
         $plugin->render;
     }
 
-    my $output = $self->next::method(@_);
+    my $output = $self->$orig;
 
     for my $plugin (@$plugins) {
         $plugin->post_render( \$output );
     }
 
     return $output;
-}
+};
 
 sub render_data {
     my ( $self, $args ) = @_;
@@ -1155,6 +1170,8 @@ sub get_output_processor {
     return @$x ? $x->[0] : ();
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
 
 __END__
@@ -1162,16 +1179,6 @@ __END__
 =head1 NAME
 
 HTML::FormFu - HTML Form Creation, Rendering and Validation Framework
-
-=head1 BETA SOFTWARE
-
-There may be API changes required before the 1.0 release. Any incompatible
-changes will first be discussed on the L<mailing list|/SUPPORT>.
-See L</DEPRECATION POLICY> for further details.
-
-Work is still needed on the documentation, if you come across any errors or
-find something confusing, please give feedback via the
-L<mailing list|/SUPPORT>.
 
 =head1 SYNOPSIS
 
@@ -3141,21 +3148,12 @@ attached, rather than inline; against subversion, rather than a cpan version
 (run C<< svn diff > patchfile >>); mention which svn version it's against.
 Mailing list messages are limited to 256KB, so gzip the patch if necessary.
 
-=head1 SUBVERSION REPOSITORY
+=head1 GITHUB REPOSITORY
 
-The publicly viewable subversion code repository is at
-L<http://html-formfu.googlecode.com/svn/trunk/HTML-FormFu>.
+This module's sourcecode is maintained in a git repository at
+L<git://github.com/fireartist/HTML-FormFu.git>
 
-If you wish to contribute, you'll need a google account. Then just
-ask on the mailing list for commit access, giving the email address
-your account uses.
-
-If you wish to contribute but for some reason really don't want to sign up
-for a google account, please post patches to the mailing list (although
-you'll have to wait for someone to commit them).
-
-If you have commit permissions, use the HTTPS repository url:
-L<https://html-formfu.googlecode.com/svn/trunk/HTML-FormFu>
+The project page is L<https://github.com/fireartist/HTML-FormFu>
 
 =head1 SEE ALSO
 

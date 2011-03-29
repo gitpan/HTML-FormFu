@@ -1,9 +1,9 @@
 package HTML::FormFu::Constraint::CallbackOnce;
 
-use strict;
-use base 'HTML::FormFu::Constraint';
+use Moose;
+extends 'HTML::FormFu::Constraint';
 
-__PACKAGE__->mk_item_accessors(qw( callback ));
+has callback => ( is => 'rw', traits => ['Chained'] );
 
 sub process {
     my ( $self, $params ) = @_;
@@ -24,6 +24,8 @@ sub process {
             message => $@,
         } );
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

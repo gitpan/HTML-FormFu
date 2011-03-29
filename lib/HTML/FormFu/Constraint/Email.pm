@@ -1,7 +1,7 @@
 package HTML::FormFu::Constraint::Email;
 
-use strict;
-use base 'HTML::FormFu::Constraint';
+use Moose;
+extends 'HTML::FormFu::Constraint';
 
 use Email::Valid;
 
@@ -14,6 +14,8 @@ sub constrain_value {
 
     return $ok;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

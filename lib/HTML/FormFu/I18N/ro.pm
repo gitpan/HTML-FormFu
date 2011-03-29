@@ -1,8 +1,8 @@
 package HTML::FormFu::I18N::ro;
-use strict;
 use utf8;
 
-use base qw( HTML::FormFu::I18N );
+use Moose;
+extends 'HTML::FormFu::I18N';
 
 our %Lexicon = (
     form_error_message =>
@@ -60,5 +60,7 @@ our %Lexicon = (
     form_validator_imager_size => 'Imaginea încărcată este prea mare',
     form_transformer_imager    => 'Eroare la procesarea fişierului imagine',
 );
+
+__PACKAGE__->meta->make_immutable( inline_constructor => 0 );
 
 1;
