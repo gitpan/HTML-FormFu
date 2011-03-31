@@ -1,5 +1,4 @@
 use inc::Module::Install 1.00;
-use IO::Interactive qw( is_interactive );
 use File::Spec;
 $|=1;
 
@@ -7,7 +6,7 @@ name 'HTML-FormFu';
 perl_version '5.008001';
 
 # required for legacy check below
-bundle 'IO::Interactive' => '0.04';
+include_deps 'IO::Interactive' => '0.04';
 
 {
     # check for old non-Moose version
