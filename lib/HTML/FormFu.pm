@@ -141,7 +141,7 @@ __PACKAGE__->mk_inherited_merging_accessors(qw( tt_args config_callback ));
 *plugins           = \&plugin;
 *add_plugins       = \&add_plugin;
 
-our $VERSION = '0.09000';
+our $VERSION = '0.09001';
 $VERSION = eval $VERSION;
 
 sub BUILD {
@@ -3196,5 +3196,9 @@ C<sri@oook.de>.
 
 This library is free software, you can redistribute it and/or modify it under
 the same terms as Perl itself.
+
+=head1 PERL GAME
+
+Play the MMO written in perl: L<http://www.lacunaexpanse.com>!
 
 =cut
