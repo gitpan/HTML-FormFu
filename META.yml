@@ -6,7 +6,6 @@ build_requires:
   CGI: 0
   ExtUtils::MakeMaker: 6.42
   Test::More: 0.92
-  Test::NoWarnings: 0
 configure_requires:
   ExtUtils::MakeMaker: 6.42
 distribution_type: module
@@ -45,6 +44,7 @@ requires:
   HTML::TokeParser::Simple: 3.14
   HTTP::Headers: 1.64
   Hash::Flatten: 0
+  IO::File: 0
   List::MoreUtils: 0
   List::Util: 0
   Locale::Maketext: 0
@@ -65,4 +65,4 @@ requires:
 resources:
   license: http://dev.perl.org/licenses/
   repository: git://github.com/fireartist/HTML-FormFu.git
-version: 0.09003
+version: 0.09003_01

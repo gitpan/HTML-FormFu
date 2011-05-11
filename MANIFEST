@@ -272,6 +272,7 @@ t/01use.t
 t/04basic.t
 t/04basic.yml
 t/05_repeated_render.t
+t/aggregate.t
 t/block_insert_after.t
 t/block_insert_before.t
 t/bugs/constructor_arg_overwrites_default.t
@@ -299,10 +300,6 @@ t/bugs/value_no_default.t
 t/bugs/yaml_utf8.t
 t/bugs/yaml_utf8.txt
 t/bugs/yaml_utf8.yml
-t/config_file_path.t
-t/config_file_path/form.yml
-t/config_file_path2/form.yml
-t/constraint.t
 t/constraints/allornone.t
 t/constraints/allornone_attach_errors_to_base.t
 t/constraints/allornone_attach_errors_to_base.yml
@@ -314,6 +311,7 @@ t/constraints/autoset_group.t
 t/constraints/bool.t
 t/constraints/callback.t
 t/constraints/callbackonce.t
+t/constraints/constraint.t
 t/constraints/constraint_other_siblings.t
 t/constraints/constraint_other_siblings.yml
 t/constraints/constraint_other_siblings_not.t
@@ -394,7 +392,6 @@ t/deflators/compoundsplit_split.yml
 t/deflators/formatnumber.t
 t/deflators/formatnumber.yml
 t/deflators/pathclassfile.t
-t/element_setup.t
 t/elements/blank.t
 t/elements/block.t
 t/elements/block_auto_block_id.t
@@ -450,6 +447,8 @@ t/elements/datetime_interval.t
 t/elements/datetime_interval.yml
 t/elements/datetime_seconds.t
 t/elements/datetime_seconds.yml
+t/elements/element_setup.t
+t/elements/escaping.t
 t/elements/field_default_empty_value.t
 t/elements/field_non_param.t
 t/elements/fieldset.t
@@ -533,7 +532,6 @@ t/elements/text_errors.t
 t/elements/text_force_default.t
 t/elements/text_retain_default.t
 t/elements/textarea.t
-t/escaping.t
 t/examples/custom_label.t
 t/examples/custom_label2.t
 t/examples/field_as.t
@@ -543,7 +541,6 @@ t/field_accessor_loc_arrayref.t
 t/field_accessor_loc_arrayref.yml
 t/field_change_name.t
 t/field_id.t
-t/filter.t
 t/filters/all_by_default.t
 t/filters/callback.t
 t/filters/compoundjoin.t
@@ -558,6 +555,7 @@ t/filters/compoundsprintf_field_order.t
 t/filters/compoundsprintf_field_order.yml
 t/filters/copyvalue.t
 t/filters/encode.t
+t/filters/filter.t
 t/filters/formatnumber.t
 t/filters/formatnumber.yml
 t/filters/htmlescape.t
@@ -573,11 +571,11 @@ t/filters/split.yml
 t/filters/trimedges.t
 t/filters/uppercase.t
 t/filters/whitespace.t
-t/force_errors.t
 t/force_errors/allornone.t
 t/force_errors/callbackonce.t
 t/force_errors/dependon.t
 t/force_errors/equal.t
+t/force_errors/force_errors.t
 t/force_errors/integer.t
 t/force_errors/minmaxfields.t
 t/form/add_render_class_args.t
@@ -615,6 +613,8 @@ t/form/get_filter.t
 t/form/get_filters.t
 t/form/get_inflator.t
 t/form/get_inflators.t
+t/form/get_parent.t
+t/form/get_parent.yml
 t/form/has_errors.t
 t/form/hidden_fields.t
 t/form/insert_after.t
@@ -641,8 +641,6 @@ t/form/stash.t
 t/form/submitted.t
 t/form/submitted_and_valid.t
 t/form/valid.t
-t/get_parent.t
-t/get_parent.yml
 t/i18n/add_localize_object.t
 t/i18n/add_localize_object_from_class.t
 t/i18n/add_localize_object_from_class.yml
@@ -675,18 +673,21 @@ t/lib/HTMLFormFu/TestLib.pm
 t/lib/MyApp/Schema.pm
 t/lib/MyApp/Schema/Dongle.pm
 t/lib/MyApp/Schema/Person.pm
-t/load_config_file.t
-t/load_config_file_constraint_regex.t
-t/load_config_file_constraint_regex.yml
-t/load_config_file_fieldset.yml
-t/load_config_file_form.yml
-t/load_config_file_multi_stream.t
-t/load_config_file_multi_stream.yml
-t/load_config_file_multiple.t
-t/load_config_file_multiple.yml
-t/load_config_file_multiple1.yml
-t/load_config_file_multiple2.yml
-t/load_config_filestem.t
+t/load_config/config_file_path.t
+t/load_config/config_file_path/form.yml
+t/load_config/config_file_path2/form.yml
+t/load_config/load_config_file.t
+t/load_config/load_config_file_constraint_regex.t
+t/load_config/load_config_file_constraint_regex.yml
+t/load_config/load_config_file_fieldset.yml
+t/load_config/load_config_file_form.yml
+t/load_config/load_config_file_multi_stream.t
+t/load_config/load_config_file_multi_stream.yml
+t/load_config/load_config_file_multiple.t
+t/load_config/load_config_file_multiple.yml
+t/load_config/load_config_file_multiple1.yml
+t/load_config/load_config_file_multiple2.yml
+t/load_config/load_config_filestem.t
 t/model/hashref_create.t
 t/model/hashref_create_repeatable_without_nestedname.t
 t/model/hashref_create_repeatable_without_nestedname.yml
@@ -744,7 +745,6 @@ t/nested/elements/checkbox_retain_default.t
 t/nested/elements/combobox.t
 t/nested/elements/date.t
 t/nested/elements/file_post.t
-t/nested/elements/file_post.txt
 t/nested/elements/multi.t
 t/nested/elements/multi_named.t
 t/nested/elements/radio.t
@@ -802,5 +802,5 @@ t/transformers/callback.t
 t/utils/append_xml_attribute.t
 t/utils/has_xml_attribute.t
 t/utils/remove_xml_attribute.t
-t/validator.t
 t/validators/callback.t
+t/validators/validator.t
