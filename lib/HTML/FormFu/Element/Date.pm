@@ -1,5 +1,6 @@
 package HTML::FormFu::Element::Date;
 use Moose;
+use MooseX::Attribute::Chained;
 
 extends 'HTML::FormFu::Element::Multi';
 
@@ -214,12 +215,20 @@ sub _add_day {
         ? @{ $day->{prefix} }
         : $day->{prefix};
 
+    if (exists $day->{prefix_loc}) {
+        @day_prefix
+            = ref $day->{prefix_loc}
+            ? map { $self->form->localize($_) } @{ $day->{prefix_loc} }
+            : $self->form->localize($day->{prefix_loc});
+    }
+
     @day_prefix = map { [ '', $_ ] } @day_prefix;
 
     my $element = $self->element( {
-            type    => 'Select',
-            name    => $day_name,
-            options => [ @day_prefix, map { [ $_, $_ ] } 1 .. 31 ],
+            type       => 'Select',
+            name       => $day_name,
+            options    => [ @day_prefix, map { [ $_, $_ ] } 1 .. 31 ],
+            attributes => $day->{attributes},
 
             defined $day->{default} ? ( default => $day->{default} ) : (),
         } );
@@ -243,14 +252,22 @@ sub _add_month {
         ? @{ $month->{prefix} }
         : $month->{prefix};
 
+    if (exists $month->{prefix_loc}) {
+        @month_prefix
+            = ref $month->{prefix_loc}
+            ? map { $self->form->localize($_) } @{ $month->{prefix_loc} }
+            : $self->form->localize($month->{prefix_loc});
+    }
+
     @month_prefix = map { [ '', $_ ] } @month_prefix;
 
     my $options = [ @month_prefix, map { [ $_ + 1, $months[$_] ] } 0 .. 11 ];
 
     my $element = $self->element( {
-            type    => 'Select',
-            name    => $month_name,
-            options => $options,
+            type       => 'Select',
+            name       => $month_name,
+            options    => $options,
+            attributes => $month->{attributes},
 
             defined $month->{default} ? ( default => $month->{default} ) : (),
         } );
@@ -286,12 +303,20 @@ sub _add_year {
         ? @{ $year->{prefix} }
         : $year->{prefix};
 
+    if (exists $year->{prefix_loc}) {
+        @year_prefix
+            = ref $year->{prefix_loc}
+            ? map { $self->form->localize($_) } @{ $year->{prefix_loc} }
+            : $self->form->localize($year->{prefix_loc});
+    }
+
     @year_prefix = map { [ '', $_ ] } @year_prefix;
 
     my $element = $self->element( {
-            type    => 'Select',
-            name    => $year_name,
-            options => [ @year_prefix, map { [ $_, $_ ] } @years ],
+            type       => 'Select',
+            name       => $year_name,
+            options    => [ @year_prefix, map { [ $_, $_ ] } @years ],
+            attributes => $year->{attributes},
 
             defined $year->{default} ? ( default => $year->{default} ) : (),
         } );
@@ -572,6 +597,20 @@ menu.
 Each value is only used as the label for a select item - the value for each 
 of these items is always the empty string C<''>.
 
+=head3 prefix_loc
+
+Arguments: $localization_key
+
+Arguments: \@localization_keys
+
+A localized string or arrayref of localized strings to be inserted into the
+start of the select menu.
+
+Each value is localized and then only used as the label for a select item
+- the value for each of these items is always the empty string C<''>.
+
+Use C<prefix_loc> insted of C<prefix>.
+
 =head2 month
 
 Arguments: \%setting
@@ -597,6 +636,20 @@ menu.
 
 Each value is only used as the label for a select item - the value for each 
 of these items is always the empty string C<''>.
+
+=head3 prefix_loc
+
+Arguments: $localization_key
+
+Arguments: \@localization_keys
+
+A localized string or arrayref of localized strings to be inserted into the
+start of the select menu.
+
+Each value is localized and then only used as the label for a select item
+- the value for each of these items is always the empty string C<''>.
+
+Use C<prefix_loc> insted of C<prefix>.
 
 =head3 names
 
@@ -640,6 +693,20 @@ menu.
 
 Each value is only used as the label for a select item - the value for each 
 of these items is always the empty string C<''>.
+
+=head3 prefix_loc
+
+Arguments: $localization_key
+
+Arguments: \@localization_keys
+
+A localized string or arrayref of localized strings to be inserted into the
+start of the select menu.
+
+Each value is localized and then only used as the label for a select item
+- the value for each of these items is always the empty string C<''>.
+
+Use C<prefix_loc> insted of C<prefix>.
 
 =head3 list
 

@@ -194,6 +194,7 @@ lib/HTML/FormFu/I18N/pt_pt.pm
 lib/HTML/FormFu/I18N/ro.pm
 lib/HTML/FormFu/I18N/ru.pm
 lib/HTML/FormFu/I18N/ua.pm
+lib/HTML/FormFu/I18N/zh_cn.pm
 lib/HTML/FormFu/Inflator.pm
 lib/HTML/FormFu/Inflator/Callback.pm
 lib/HTML/FormFu/Inflator/CompoundDateTime.pm
@@ -512,6 +513,8 @@ t/elements/select_empty_first.yml
 t/elements/select_empty_first_label.t
 t/elements/select_force_default.t
 t/elements/select_label_loc.t
+t/elements/select_multi_default_values.t
+t/elements/select_multi_value.t
 t/elements/select_optgroup.t
 t/elements/select_options.t
 t/elements/select_retain_default.t

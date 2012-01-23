@@ -1,6 +1,7 @@
 package HTML::FormFu::Constraint::Regex;
 
 use Moose;
+use MooseX::Attribute::Chained;
 extends 'HTML::FormFu::Constraint';
 
 use Regexp::Common;
@@ -58,7 +59,7 @@ Regular expression-based constraint.
 
 =head2 regex
 
-Arguments: $regex
+Arguments: $regex. In a config file, enclose the regex in a string, like this: C<regex: '^[-_+=!\w\d]*\z'>.
 
 Arguments: $string
 
