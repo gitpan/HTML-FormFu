@@ -1088,6 +1088,15 @@ CSS CLASSES
     hierarchy of parents, through any block elements and up to the form,
     searching for a defined value.
 
+  form_error_message_class
+    Arguments: [$string]
+
+    Default Value: 'form_error_message'
+
+    Class attribute for the error message displayed at the top of the form.
+
+    See "form_error_message"
+
 LOCALIZATION
   languages
     Arguments: [\@languages]

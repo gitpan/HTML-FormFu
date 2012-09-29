@@ -248,6 +248,8 @@ lib/HTML/FormFu/Validator/Callback.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml
+MYMETA.json
+MYMETA.yml
 README
 share/templates/tt/xhtml/block
 share/templates/tt/xhtml/checkboxgroup
@@ -453,6 +455,8 @@ t/elements/escaping.t
 t/elements/field_default_empty_value.t
 t/elements/field_non_param.t
 t/elements/fieldset.t
+t/elements/fieldset_legend_attrs.t
+t/elements/fieldset_legend_attrs.yml
 t/elements/file.t
 t/elements/file_post.t
 t/elements/file_post.txt
@@ -602,6 +606,7 @@ t/form/default_values.t
 t/form/end.t
 t/form/error_message.t
 t/form/force_error_message.t
+t/form/form_error_message_class.t
 t/form/get_all_elements.t
 t/form/get_constraint.t
 t/form/get_constraints.t
@@ -620,6 +625,7 @@ t/form/get_parent.t
 t/form/get_parent.yml
 t/form/has_errors.t
 t/form/hidden_fields.t
+t/form/init_arg.t
 t/form/insert_after.t
 t/form/insert_before.t
 t/form/javascript.t
@@ -663,6 +669,7 @@ t/inflators/datetime_with_constraint.t
 t/inflators/datetime_with_constraint.yml
 t/internals/default_args-types.t
 t/internals/default_args-types.yml
+t/lib/HTMLFormFu/DBICUniqueFake.pm
 t/lib/HTMLFormFu/ElementSetup.pm
 t/lib/HTMLFormFu/I18N.pm
 t/lib/HTMLFormFu/I18N/en.pm
@@ -788,6 +795,8 @@ t/plugins/stashvalid_on_field.t
 t/plugins/stashvalid_on_field.yml
 t/repeatable/clone.t
 t/repeatable/clone.yml
+t/repeatable/constraints/dbic_unique.t
+t/repeatable/constraints/dbic_unique.yml
 t/repeatable/constraints/equal.t
 t/repeatable/constraints/equal.yml
 t/repeatable/constraints/required.t
