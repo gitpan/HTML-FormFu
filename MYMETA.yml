@@ -73,4 +73,4 @@ requires:
   Template: 0
   YAML::XS: 0.32
   perl: 5.008001
-version: 0.09008
+version: 0.09009
