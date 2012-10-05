@@ -2,14 +2,13 @@ package HTML::FormFu::Plugin;
 use Moose;
 use MooseX::Attribute::Chained;
 
-with 'HTML::FormFu::Role::HasParent',
-     'HTML::FormFu::Role::Populate';
+with 'HTML::FormFu::Role::HasParent', 'HTML::FormFu::Role::Populate';
 
 use HTML::FormFu::ObjectUtil qw( form parent );
 use Scalar::Util qw( refaddr reftype );
 use Carp qw( croak );
 
-has type => ( is => 'rw', traits  => ['Chained'] );
+has type => ( is => 'rw', traits => ['Chained'] );
 
 sub pre_process { }
 
@@ -52,7 +51,7 @@ Plugins can override any of the following method stubs.
 =head2 process
 
 Only plugins added to a form or a field element inheriting from
-L<HTML::FormFu::Element::_Field> will have their C<process> method run.
+L<HTML::FormFu::Role::Element::Field> will have their C<process> method run.
 
 For form plugins, is called during L<HTML::FormFu/process>, before C<process>
 is called on any elements.

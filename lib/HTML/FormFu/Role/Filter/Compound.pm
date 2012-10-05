@@ -1,7 +1,7 @@
 package HTML::FormFu::Role::Filter::Compound;
 use Moose::Role;
 
-has field_order => ( is => 'rw', traits  => ['Chained'] );
+has field_order => ( is => 'rw', traits => ['Chained'] );
 
 sub _get_values {
     my ( $self, $value ) = @_;
@@ -35,7 +35,7 @@ __END__
 
 =head1 NAME
 
-HTML::FormFu::Filter::_Compound - base class for Compound filters
+HTML::FormFu::Role::Filter::Compound - Role for Compound filters
 
 =head1 METHODS
 

@@ -4,7 +4,8 @@ use Moose;
 extends "HTML::FormFu::Element";
 
 with 'HTML::FormFu::Role::Element::Field',
-     'HTML::FormFu::Role::Element::SingleValueField' => { -excludes => 'nested_name' };
+    'HTML::FormFu::Role::Element::SingleValueField' =>
+    { -excludes => 'nested_name' };
 
 use HTML::FormFu::Util qw( process_attrs );
 
@@ -120,7 +121,7 @@ Set the  C<placeholder> attribute using a L10N key.
 =head1 SEE ALSO
 
 Is a sub-class of, and inherits methods from 
-L<HTML::FormFu::Element::_Field>, 
+L<HTML::FormFu::Role::Element::Field>, 
 L<HTML::FormFu::Element>
 
 L<HTML::FormFu>

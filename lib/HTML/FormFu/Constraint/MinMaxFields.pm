@@ -6,16 +6,18 @@ extends 'HTML::FormFu::Constraint';
 
 with 'HTML::FormFu::Role::Constraint::Others';
 
+use HTML::FormFu::Util qw( DEBUG_CONSTRAINTS debug );
+
 has minimum => (
-    is      => 'rw',
-    alias   => 'min',
-    traits  => ['Chained'],
+    is     => 'rw',
+    alias  => 'min',
+    traits => ['Chained'],
 );
 
 has maximum => (
-    is      => 'rw',
-    alias   => 'max',
-    traits  => ['Chained'],
+    is     => 'rw',
+    alias  => 'max',
+    traits => ['Chained'],
 );
 
 after BUILD => sub {
@@ -54,6 +56,9 @@ sub process {
 
     for my $name (@names) {
         my $value = $self->get_nested_hash_value( $params, $name );
+
+        DEBUG_CONSTRAINTS && debug( OTHER_NAME => $name );
+        DEBUG_CONSTRAINTS && debug( VALUE      => $value );
 
         if ( ref $value eq 'ARRAY' ) {
             my @errors = eval { $self->constrain_values( $value, $params ) };
@@ -146,7 +151,7 @@ Default Value: 0
 =head1 SEE ALSO
 
 Is a sub-class of, and inherits methods from  
-L<HTML::FormFu::Constraint::_others>, L<HTML::FormFu::Constraint>
+L<HTML::FormFu::Role::Constraint::Others>, L<HTML::FormFu::Constraint>
 
 L<HTML::FormFu>
 

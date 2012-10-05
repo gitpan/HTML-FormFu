@@ -39,22 +39,20 @@ after BUILD => sub {
 
 sub constraint_args {
     my ( $self, $args ) = @_;
-    
+
     $self->{constraint_args} ||= {};
-    
+
     if ( @_ > 1 ) {
-        $self->{constraint_args} = _merge_hashes(
-            $self->{constraint_args},
-            $args,
-        );
-        
+        $self->{constraint_args}
+            = _merge_hashes( $self->{constraint_args}, $args, );
+
         my $constraint = $self->get_constraint( { type => 'reCAPTCHA' } );
-        
+
         if ( defined $constraint ) {
             $constraint->populate( $self->{constraint_args} );
         }
     }
-    
+
     return $self->{constraint_args};
 }
 
@@ -225,7 +223,7 @@ automatically added for you.
 =head1 SEE ALSO
 
 Is a sub-class of, and inherits methods from 
-L<HTML::FormFu::Element::_Field>, 
+L<HTML::FormFu::Role::Element::Field>, 
 L<HTML::FormFu::Element::Multi>, 
 L<HTML::FormFu::Element::Block>, 
 L<HTML::FormFu::Element>

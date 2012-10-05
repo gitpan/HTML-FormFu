@@ -9,11 +9,12 @@ use HTML::FormFu::Constants qw( $EMPTY_STR );
 
 after BUILD => sub {
     my $self = shift;
-    
-    $self->label_tag(  $EMPTY_STR );
+
+    $self->label_tag($EMPTY_STR);
+
     #$self->field_type( $EMPTY_STR );
-    $self->render(     $EMPTY_STR );
-    
+    $self->render($EMPTY_STR);
+
     return;
 };
 
@@ -42,8 +43,8 @@ HTML::FormFu::Element::Blank - blank element
 =head1 SEE ALSO
 
 Is a sub-class of, and inherits methods from 
-L<HTML::FormFu::Element::_Input>, 
-L<HTML::FormFu::Element::_Field>, 
+L<HTML::FormFu::Role::Element::Input>, 
+L<HTML::FormFu::Role::Element::Field>, 
 L<HTML::FormFu::Element>
 
 L<HTML::FormFu>

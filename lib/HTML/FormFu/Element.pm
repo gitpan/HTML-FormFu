@@ -3,8 +3,8 @@ use Moose;
 use MooseX::Attribute::Chained;
 
 with 'HTML::FormFu::Role::Render',
-     'HTML::FormFu::Role::FormAndElementMethods',
-     'HTML::FormFu::Role::HasParent';
+    'HTML::FormFu::Role::FormAndElementMethods',
+    'HTML::FormFu::Role::HasParent';
 
 use HTML::FormFu::Attribute qw(
     mk_attrs
@@ -28,10 +28,10 @@ use Scalar::Util qw( refaddr weaken );
 use Carp qw( croak );
 
 use overload (
-    'eq' => '_string_equals',
-    '==' => '_object_equals',
-    '""' => sub { return shift->render },
-    bool => sub {1},
+    'eq'     => '_string_equals',
+    '=='     => '_object_equals',
+    '""'     => sub { return shift->render },
+    bool     => sub {1},
     fallback => 1
 );
 
@@ -39,11 +39,11 @@ __PACKAGE__->mk_attrs(qw( attributes ));
 
 __PACKAGE__->mk_attr_accessors(qw( id ));
 
-has type         => ( is => 'rw', traits  => ['Chained'] );
-has filename     => ( is => 'rw', traits  => ['Chained'] );
-has is_field     => ( is => 'rw', traits  => ['Chained'] );
-has is_block     => ( is => 'rw', traits  => ['Chained'] );
-has is_repeatable => ( is => 'rw', traits  => ['Chained'] );
+has type          => ( is => 'rw', traits => ['Chained'] );
+has filename      => ( is => 'rw', traits => ['Chained'] );
+has is_field      => ( is => 'rw', traits => ['Chained'] );
+has is_block      => ( is => 'rw', traits => ['Chained'] );
+has is_repeatable => ( is => 'rw', traits => ['Chained'] );
 
 __PACKAGE__->mk_inherited_accessors( qw(
         tt_args
@@ -55,10 +55,11 @@ __PACKAGE__->mk_inherited_merging_accessors(qw( config_callback ));
 
 after BUILD => sub {
     my ( $self, $args ) = @_;
+
     # TODO move to attribute 'default'
-    $self->attributes({});
-    $self->stash({});
-    
+    $self->attributes( {} );
+    $self->stash(      {} );
+
     return;
 };
 
@@ -163,8 +164,8 @@ sub render_data_non_recursive {
         is_field   => $self->is_field,
         stash      => $self->stash,
         parent     => $self->parent,
-        form       => sub { return shift->{parent}->form },
-        object     => $self,
+        form   => sub { return shift->{parent}->form },
+        object => $self,
         $args ? %$args : (),
     );
 
@@ -231,7 +232,7 @@ L<Transformers|HTML::FormFu::Transformer>.
 
 =head2 name
 
-For L<field|HTML::FormFu::Element::_Field> element, this value is used as 
+For L<field|HTML::FormFu::Role::Element::Field> element, this value is used as 
 the C<name> attribute which the field's value is associated with.
 
 For all elements, the L</name> value can be useful for identifying and 
@@ -416,13 +417,13 @@ L</render> to render the element.
 
 Arguments: $render
 
-See L<HTML::FormFu::Element::_Field/prepare_id> for details.
+See L<HTML::FormFu::Role::Element::Field/prepare_id> for details.
 
 =head2 prepare_attrs
 
 Arguments: $render
 
-See L<HTML::FormFu::Element::_Field/prepare_attrs> for details.
+See L<HTML::FormFu::Role::Element::Field/prepare_attrs> for details.
 
 =head2 render
 
@@ -536,11 +537,11 @@ used directly.
 
 =over
 
-=item L<HTML::FormFu::Element::_Field>
+=item L<HTML::FormFu::Role::Element::Field>
 
-=item L<HTML::FormFu::Element::_Group>
+=item L<HTML::FormFu::Role::Element::Group>
 
-=item L<HTML::FormFu::Element::_Input>
+=item L<HTML::FormFu::Role::Element::Input>
 
 =item L<HTML::FormFu::Element::_MultiElement>
 
@@ -548,7 +549,7 @@ used directly.
 
 =item L<HTML::FormFu::Element::_MultiText>
 
-=item L<HTML::FormFu::Element::_NonBlock>
+=item L<HTML::FormFu::Role::Element::NonBlock>
 
 =back
 

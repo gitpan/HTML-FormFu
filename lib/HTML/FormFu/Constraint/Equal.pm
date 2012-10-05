@@ -39,13 +39,14 @@ sub process {
 
         if ( $self->not ) {
             if ( $value eq $EMPTY_STR ) {
+
                 # no error if both values are empty and not(1) is set
             }
             elsif ($ok) {
                 push @failed, $name;
             }
         }
-        elsif (!$ok) {
+        elsif ( !$ok ) {
             push @failed, $name;
         }
 
@@ -54,7 +55,7 @@ sub process {
 
     # special case for $self->not()
     # no errors if all values are empty
-    if ( $self->not
+    if (   $self->not
         && $value eq $EMPTY_STR
         && all { !defined || $_ eq $EMPTY_STR } values %values )
     {
@@ -129,13 +130,13 @@ HTML::FormFu::Constraint::Equal - Multi-field Equality Constraint
 
 =head1 DESCRIPTION
 
-All fields named in L<HTML::FormFu::Constraint::_others/others> must have an equal value to the field this 
+All fields named in L<HTML::FormFu::Role::Constraint::Others/others> must have an equal value to the field this 
 constraint is attached to.
 
 =head1 SEE ALSO
 
 Is a sub-class of, and inherits methods from  
-L<HTML::FormFu::Constraint::_others>, L<HTML::FormFu::Constraint>
+L<HTML::FormFu::Role::Constraint::Others>, L<HTML::FormFu::Constraint>
 
 L<HTML::FormFu>
 

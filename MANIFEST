@@ -795,8 +795,8 @@ t/plugins/stashvalid_on_field.t
 t/plugins/stashvalid_on_field.yml
 t/repeatable/clone.t
 t/repeatable/clone.yml
-t/repeatable/constraints/dbic_unique.t
-t/repeatable/constraints/dbic_unique.yml
+t/repeatable/constraints/attach_errors_to.t
+t/repeatable/constraints/attach_errors_to.yml
 t/repeatable/constraints/equal.t
 t/repeatable/constraints/equal.yml
 t/repeatable/constraints/required.t
