@@ -1,4 +1,7 @@
 package HTML::FormFu::Role::Element::ProcessOptionsFromModel;
+{
+  $HTML::FormFu::Role::Element::ProcessOptionsFromModel::VERSION = '1.00';
+}
 use Moose::Role;
 
 sub _process_options_from_model {

@@ -1,4 +1,7 @@
 package HTML::FormFu::Element::Fieldset;
+{
+  $HTML::FormFu::Element::Fieldset::VERSION = '1.00';
+}
 
 use Moose;
 extends 'HTML::FormFu::Element::Block';

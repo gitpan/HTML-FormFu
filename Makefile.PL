@@ -1,156 +1,162 @@
-use inc::Module::Install 1.00;
-use File::Spec;
-$|=1;
 
-name 'HTML-FormFu';
-perl_version '5.008001';
+use strict;
+use warnings;
 
-# required for legacy check below
-include_deps 'IO::Interactive' => '0.04';
+use 5.008001;
+
+use ExtUtils::MakeMaker 6.30;
+
+use File::ShareDir::Install;
+install_share dist => "share";
+
+
+my %WriteMakefileArgs = (
+  "ABSTRACT" => "HTML Form Creation, Rendering and Validation Framework",
+  "AUTHOR" => "Carl Franks <cpan\@fireartist.com>",
+  "BUILD_REQUIRES" => {},
+  "CONFIGURE_REQUIRES" => {
+    "ExtUtils::MakeMaker" => "6.30",
+    "File::ShareDir::Install" => "0.03"
+  },
+  "DISTNAME" => "HTML-FormFu",
+  "EXE_FILES" => [
+    "bin/html_formfu_deploy.pl",
+    "bin/html_formfu_dumpconf.pl"
+  ],
+  "LICENSE" => "perl",
+  "NAME" => "HTML::FormFu",
+  "PREREQ_PM" => {
+    "Carp" => 0,
+    "Class::Accessor::Chained::Fast" => 0,
+    "Class::MOP::Method" => 0,
+    "Clone" => "0.31",
+    "Config::Any" => "0.18",
+    "Cwd" => 0,
+    "Data::Visitor" => "0.26",
+    "Data::Visitor::Callback" => 0,
+    "Date::Calc" => 0,
+    "DateTime" => "0.54",
+    "DateTime::Format::Builder" => "0.7901",
+    "DateTime::Format::Natural" => 0,
+    "DateTime::Format::Strptime" => "1.2000",
+    "DateTime::Locale" => "0.45",
+    "Email::Valid" => 0,
+    "Encode" => 0,
+    "Exporter" => "5.57",
+    "Fatal" => 0,
+    "File::Copy" => 0,
+    "File::Find" => 0,
+    "File::ShareDir" => 0,
+    "File::Spec" => 0,
+    "File::Temp" => 0,
+    "HTML::Scrubber" => 0,
+    "HTML::TokeParser::Simple" => "3.14",
+    "HTTP::Headers" => "1.64",
+    "Hash::Flatten" => 0,
+    "IO::File" => 0,
+    "List::MoreUtils" => 0,
+    "List::Util" => 0,
+    "Locale::Maketext" => 0,
+    "Module::Pluggable" => 0,
+    "Moose" => "1.00",
+    "Moose::Role" => 0,
+    "Moose::Util" => 0,
+    "MooseX::Aliases" => 0,
+    "MooseX::Attribute::Chained" => "v1.0.1",
+    "MooseX::SetOnce" => 0,
+    "Number::Format" => 0,
+    "Path::Class::File" => 0,
+    "Readonly" => 0,
+    "Regexp::Common" => 0,
+    "Scalar::Util" => 0,
+    "Storable" => 0,
+    "Task::Weaken" => 0,
+    "YAML::XS" => "0.32"
+  },
+  "TEST_REQUIRES" => {
+    "CGI" => "3.37",
+    "POSIX" => 0,
+    "Test::Aggregate::Nested" => "0.371",
+    "Test::Exception" => 0,
+    "Test::More" => "0.92"
+  },
+  "VERSION" => "1.00",
+  "test" => {
+    "TESTS" => "t/*.t"
+  }
+);
+
+
+my %FallbackPrereqs = (
+  "CGI" => "3.37",
+  "Carp" => 0,
+  "Class::Accessor::Chained::Fast" => 0,
+  "Class::MOP::Method" => 0,
+  "Clone" => "0.31",
+  "Config::Any" => "0.18",
+  "Cwd" => 0,
+  "Data::Visitor" => "0.26",
+  "Data::Visitor::Callback" => 0,
+  "Date::Calc" => 0,
+  "DateTime" => "0.54",
+  "DateTime::Format::Builder" => "0.7901",
+  "DateTime::Format::Natural" => 0,
+  "DateTime::Format::Strptime" => "1.2000",
+  "DateTime::Locale" => "0.45",
+  "Email::Valid" => 0,
+  "Encode" => 0,
+  "Exporter" => "5.57",
+  "Fatal" => 0,
+  "File::Copy" => 0,
+  "File::Find" => 0,
+  "File::ShareDir" => 0,
+  "File::Spec" => 0,
+  "File::Temp" => 0,
+  "HTML::Scrubber" => 0,
+  "HTML::TokeParser::Simple" => "3.14",
+  "HTTP::Headers" => "1.64",
+  "Hash::Flatten" => 0,
+  "IO::File" => 0,
+  "List::MoreUtils" => 0,
+  "List::Util" => 0,
+  "Locale::Maketext" => 0,
+  "Module::Pluggable" => 0,
+  "Moose" => "1.00",
+  "Moose::Role" => 0,
+  "Moose::Util" => 0,
+  "MooseX::Aliases" => 0,
+  "MooseX::Attribute::Chained" => "v1.0.1",
+  "MooseX::SetOnce" => 0,
+  "Number::Format" => 0,
+  "POSIX" => 0,
+  "Path::Class::File" => 0,
+  "Readonly" => 0,
+  "Regexp::Common" => 0,
+  "Scalar::Util" => 0,
+  "Storable" => 0,
+  "Task::Weaken" => 0,
+  "Test::Aggregate::Nested" => "0.371",
+  "Test::Exception" => 0,
+  "Test::More" => "0.92",
+  "YAML::XS" => "0.32"
+);
+
+
+unless ( eval { ExtUtils::MakeMaker->VERSION(6.63_03) } ) {
+  delete $WriteMakefileArgs{TEST_REQUIRES};
+  delete $WriteMakefileArgs{BUILD_REQUIRES};
+  $WriteMakefileArgs{PREREQ_PM} = \%FallbackPrereqs;
+}
+
+delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
+  unless eval { ExtUtils::MakeMaker->VERSION(6.52) };
+
+WriteMakefile(%WriteMakefileArgs);
 
 {
-    # check for old non-Moose version
-    
-    eval { require HTML::FormFu::Element::_Field };
-    
-    if ( !$@ ) {
-        my $path = $INC{'HTML/FormFu/Element/_Field.pm'};
-        
-        my ( $volume, $dir, $file ) = File::Spec->splitpath( $path );
-        
-        my @dirs = File::Spec->splitdir( $dir );
-        # get rid of HTML/FormFu/Element
-        splice @dirs, -4;
-        
-        my $lib_dir  = File::Spec->catdir( @dirs );
-        my $lib_path = File::Spec->catpath( $volume, $lib_dir );
-        
-        my $msg = <<ERROR;
-Files from an older, pre-0.09000 version of HTML-FormFu have been detected
-in directory: '$lib_path'.
-
-This will cause problems if you use HTML::FormFu::Preload, and will also
-cause spurious warnings during the test suite run.
-
-We strongly recommend you manually remove old HTML-FormFu files before
-continuing.
-
-ERROR
-        
-        eval { require IO::Interactive };
-        
-        if ( IO::Interactive::is_interactive() ) {
-            warn <<WARN;
-***Warning***
-$msg
-Continue?
-WARN
-
-            chomp( my $answer = <STDIN> );
-            
-            if ( $answer !~ /y/i ) {
-                die "Remove old HTML-FormFu files and retry\n";
-            }
-        }
-        else {
-            die <<ERROR;
-***Error***
-$msg
-Will not continue non-interactively
-ERROR
-
-        }
-    }
+package
+MY;
+use File::ShareDir::Install qw(postamble);
 }
 
-if ( -e 'MANIFEST.SKIP' ) {
-    system( 'pod2text lib/HTML/FormFu.pm > README' );
-}
 
-all_from 'lib/HTML/FormFu.pm';
-
-repository 'git://github.com/fireartist/HTML-FormFu.git';
-
-# this is the lowest version of Exporter I can identify that exports import()
-# it's bundled with perl 5.83
-# version 5.567 that ships with perl 5.82 is no good
-requires 'Exporter' => '5.57';
-
-requires 'Captcha::reCAPTCHA' => 0.93;
-requires 'Carp';
-requires 'Class::Accessor::Chained::Fast';
-requires 'Class::MOP::Method';
-requires 'Clone' => '0.31';
-requires 'Config::Any' => '0.18'; # 0.10 - supports multi-doc config files
-                                  # 0.18 - prefers YAML::XS for YAML
-requires 'Crypt::CBC';
-requires 'Crypt::DES';
-requires 'Cwd';
-requires 'Data::Visitor' => 0.26; # when it dumped Any::Moose for Moose
-requires 'Data::Visitor::Callback';
-requires 'Date::Calc';
-requires 'DateTime' => '0.54'; # required for string overloading
-requires 'DateTime::Format::Strptime' => '1.2000';  
-requires 'DateTime::Format::Builder' => '0.7901'; # fixes memory leaks
-requires 'DateTime::Format::Natural';
-requires 'DateTime::Format::Strptime';
-requires 'DateTime::Locale' => '0.45';
-requires 'Email::Valid';
-requires 'Encode';
-requires 'Fatal';
-requires 'File::Copy';
-requires 'File::Find';
-requires 'File::ShareDir';
-requires 'File::Spec';
-requires 'File::Temp';
-requires 'Hash::Flatten';
-requires 'HTML::Scrubber';
-requires 'HTML::TokeParser::Simple' => '3.14';
-requires 'HTTP::Headers' => '1.64';
-requires 'IO::File';
-requires 'List::MoreUtils';
-requires 'List::Util';
-requires 'Locale::Maketext';
-requires 'Module::Pluggable';
-requires 'Moose' => '1.00'; # Reasonable default until we get test results
-requires 'Moose::Role';
-requires 'Moose::Util';
-requires 'MooseX::Aliases';
-requires 'MooseX::Attribute::Chained' => '1.0.1';
-requires 'MooseX::SetOnce';
-requires 'Number::Format';
-requires 'Readonly';
-requires 'Regexp::Common';
-requires 'Path::Class::File';
-requires 'Scalar::Util';
-requires 'Storable';
-requires 'Task::Weaken'; # to ensure Scalar::Util was built with weaken()
-requires 'Template'; # form->start and ->end still require TT
-                     # so does t/elements/render_method
-requires 'YAML::XS' => '0.32';
-
-test_requires 'CGI' => '3.37'; # for file POST tests
-test_requires 'POSIX';
-test_requires 'Test::More' => '0.92';
-test_requires 'Test::Exception';
-
-eval "require Test::Aggregate::Nested";
-$^O eq 'MSWin32' || $@ ? tests_recursive 't' : tests 't/*.t';
-
-no_index directory => 'examples';
-
-install_script('bin/html_formfu_deploy.pl');
-install_script('bin/html_formfu_dumpconf.pl');
-install_share();
-
-# Developers on MS Windows must have Module::Install::PerlTar installed
-# This fixes the problem of tar files having world-writable files,
-# which causes PAUSE to choke
-eval {
-    use_ptar() if author_context && $^O =~/(?:ms|cyg)win/i;
-};
-if ($@) {
-    die "Module::Install::PerlTar must be installed when Makefile.PL is run by an author on MS Windows\n";
-}
-
-&WriteAll;

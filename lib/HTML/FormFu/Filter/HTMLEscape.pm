@@ -1,4 +1,7 @@
 package HTML::FormFu::Filter::HTMLEscape;
+{
+  $HTML::FormFu::Filter::HTMLEscape::VERSION = '1.00';
+}
 
 use Moose;
 extends 'HTML::FormFu::Filter';

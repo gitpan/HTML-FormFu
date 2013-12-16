@@ -1,4 +1,7 @@
 package HTML::FormFu::FakeQuery;
+{
+  $HTML::FormFu::FakeQuery::VERSION = '1.00';
+}
 use strict;
 use Scalar::Util qw( reftype );
 use Carp qw( croak );

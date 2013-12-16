@@ -1,4 +1,7 @@
 package HTML::FormFu::Constraint::MaxLength;
+{
+  $HTML::FormFu::Constraint::MaxLength::VERSION = '1.00';
+}
 
 use Moose;
 extends 'HTML::FormFu::Constraint::Length';

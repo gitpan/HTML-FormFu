@@ -1,4 +1,7 @@
 package HTML::FormFu::Element::Select;
+{
+  $HTML::FormFu::Element::Select::VERSION = '1.00';
+}
 use Moose;
 extends 'HTML::FormFu::Element';
 

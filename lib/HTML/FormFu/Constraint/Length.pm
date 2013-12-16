@@ -1,4 +1,7 @@
 package HTML::FormFu::Constraint::Length;
+{
+  $HTML::FormFu::Constraint::Length::VERSION = '1.00';
+}
 use Moose;
 use MooseX::Attribute::Chained;
 use MooseX::Aliases;

@@ -1,4 +1,7 @@
 package HTML::FormFu::Constraint::CallbackOnce;
+{
+  $HTML::FormFu::Constraint::CallbackOnce::VERSION = '1.00';
+}
 
 use Moose;
 use MooseX::Attribute::Chained;

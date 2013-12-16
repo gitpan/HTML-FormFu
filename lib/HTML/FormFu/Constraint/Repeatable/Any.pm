@@ -1,4 +1,7 @@
 package HTML::FormFu::Constraint::Repeatable::Any;
+{
+  $HTML::FormFu::Constraint::Repeatable::Any::VERSION = '1.00';
+}
 use Moose;
 
 extends 'HTML::FormFu::Constraint';
@@ -98,6 +101,12 @@ sub constrain_value {
     my ( $self, $value ) = @_;
 
     return defined $value && length $value;
+}
+
+sub _localize_args {
+    my ($self) = @_;
+
+    return $self->parent->label || $self->parent->original_name || $self->parent->name;
 }
 
 __PACKAGE__->meta->make_immutable;

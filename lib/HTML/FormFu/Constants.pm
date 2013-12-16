@@ -1,4 +1,7 @@
 package HTML::FormFu::Constants;
+{
+  $HTML::FormFu::Constants::VERSION = '1.00';
+}
 
 use strict;
 use Readonly;

@@ -1,4 +1,7 @@
 package HTML::FormFu::QueryType::Catalyst;
+{
+  $HTML::FormFu::QueryType::Catalyst::VERSION = '1.00';
+}
 use Moose;
 use MooseX::Attribute::Chained;
 
@@ -71,7 +74,7 @@ __END__
 
 =head1 NAME
 
-HTML::FormFu::QueryType::Catalyst
+HTML::FormFu::QueryType::Catalyst - uploaded file
 
 =head1 DESCRIPTION
 

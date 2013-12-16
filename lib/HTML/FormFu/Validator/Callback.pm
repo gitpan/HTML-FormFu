@@ -1,4 +1,7 @@
 package HTML::FormFu::Validator::Callback;
+{
+  $HTML::FormFu::Validator::Callback::VERSION = '1.00';
+}
 
 use Moose;
 use MooseX::Attribute::Chained;

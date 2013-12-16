@@ -1,4 +1,7 @@
 package HTML::FormFu::Constraint::Range;
+{
+  $HTML::FormFu::Constraint::Range::VERSION = '1.00';
+}
 use Moose;
 use MooseX::Attribute::Chained;
 use MooseX::Aliases;

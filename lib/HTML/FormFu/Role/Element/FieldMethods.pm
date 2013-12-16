@@ -1,4 +1,7 @@
 package HTML::FormFu::Role::Element::FieldMethods;
+{
+  $HTML::FormFu::Role::Element::FieldMethods::VERSION = '1.00';
+}
 use Moose::Role;
 
 use Carp qw( croak );

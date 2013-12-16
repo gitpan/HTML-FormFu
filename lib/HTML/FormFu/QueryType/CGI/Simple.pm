@@ -1,4 +1,7 @@
 package HTML::FormFu::QueryType::CGI::Simple;
+{
+  $HTML::FormFu::QueryType::CGI::Simple::VERSION = '1.00';
+}
 use Moose;
 
 extends 'HTML::FormFu::QueryType::CGI';
@@ -51,7 +54,7 @@ __END__
 
 =head1 NAME
 
-HTML::FormFu::QueryType::CGI::Simple
+HTML::FormFu::QueryType::CGI::Simple - uploaded file
 
 =head1 METHODS
 

@@ -1,4 +1,7 @@
 package HTML::FormFu::Element::Password;
+{
+  $HTML::FormFu::Element::Password::VERSION = '1.00';
+}
 use Moose;
 use MooseX::Attribute::Chained;
 

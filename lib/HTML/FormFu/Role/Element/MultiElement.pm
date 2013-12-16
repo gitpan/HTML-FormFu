@@ -1,4 +1,7 @@
 package HTML::FormFu::Role::Element::MultiElement;
+{
+  $HTML::FormFu::Role::Element::MultiElement::VERSION = '1.00';
+}
 use Moose::Role;
 
 use Carp qw( croak );

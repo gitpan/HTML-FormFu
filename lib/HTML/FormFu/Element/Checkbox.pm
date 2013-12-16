@@ -1,4 +1,7 @@
 package HTML::FormFu::Element::Checkbox;
+{
+  $HTML::FormFu::Element::Checkbox::VERSION = '1.00';
+}
 use Moose;
 
 extends 'HTML::FormFu::Element';
@@ -39,6 +42,10 @@ sub prepare_attrs {
         = defined $self->name
         ? $self->get_nested_hash_value( $form->input, $self->nested_name )
         : undef;
+
+    if (defined $value and ref $value eq 'ARRAY') {
+        $value = $original if grep { $_ eq $original } @$value;
+    }
 
     if (   $submitted
         && defined $value

@@ -1,4 +1,7 @@
 package HTML::FormFu::Inflator::Callback;
+{
+  $HTML::FormFu::Inflator::Callback::VERSION = '1.00';
+}
 
 use Moose;
 use MooseX::Attribute::Chained;

@@ -1,4 +1,7 @@
 package HTML::FormFu::Constraint::File::MinSize;
+{
+  $HTML::FormFu::Constraint::File::MinSize::VERSION = '1.00';
+}
 
 use Moose;
 extends 'HTML::FormFu::Constraint::File::Size';

@@ -1,4 +1,7 @@
 package HTML::FormFu::Element::Radiogroup;
+{
+  $HTML::FormFu::Element::Radiogroup::VERSION = '1.00';
+}
 use Moose;
 use MooseX::Attribute::Chained;
 extends 'HTML::FormFu::Element::Checkboxgroup';

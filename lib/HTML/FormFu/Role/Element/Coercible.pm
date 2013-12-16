@@ -1,4 +1,7 @@
 package HTML::FormFu::Role::Element::Coercible;
+{
+  $HTML::FormFu::Role::Element::Coercible::VERSION = '1.00';
+}
 use Moose::Role;
 
 use Carp qw( croak );

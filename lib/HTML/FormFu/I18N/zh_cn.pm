@@ -1,4 +1,7 @@
 package HTML::FormFu::I18N::zh_cn;
+{
+  $HTML::FormFu::I18N::zh_cn::VERSION = '1.00';
+}
 use utf8;
 
 use Moose;

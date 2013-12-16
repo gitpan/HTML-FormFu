@@ -1,0 +1,11 @@
+# Don't know if it's getting kept
+^lib\/HTML\/FormFu\/Filter\/Default\.pm$
+
+# not ready yet
+^t-aggregate\/multiform-misc\/file
+
+^benchmarks\b
+^examples\/client-side-constraint\b
+^xt\/
+
+^\.perltidyrc$

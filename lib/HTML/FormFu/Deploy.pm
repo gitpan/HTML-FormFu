@@ -1,4 +1,7 @@
 package HTML::FormFu::Deploy;
+{
+  $HTML::FormFu::Deploy::VERSION = '1.00';
+}
 
 use strict;
 

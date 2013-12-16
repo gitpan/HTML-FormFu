@@ -1,4 +1,7 @@
 package HTML::FormFu::Role::Render;
+{
+  $HTML::FormFu::Role::Render::VERSION = '1.00';
+}
 use HTML::FormFu::Util qw( process_attrs );
 use Carp qw( croak );
 

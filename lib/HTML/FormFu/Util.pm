@@ -1,4 +1,7 @@
 package HTML::FormFu::Util;
+{
+  $HTML::FormFu::Util::VERSION = '1.00';
+}
 
 use strict;
 
@@ -18,6 +21,8 @@ our @EXPORT_OK = qw(
     DEBUG
     DEBUG_PROCESS
     DEBUG_CONSTRAINTS
+    DEBUG_CONSTRAINTS_WHEN
+    DEBUG_CONSTRAINTS_OTHERS
     debug
     append_xml_attribute
     has_xml_attribute
@@ -50,6 +55,22 @@ sub DEBUG_CONSTRAINTS {
     DEBUG
         || DEBUG_PROCESS
         || $ENV{HTML_FORMFU_DEBUG_CONSTRAINTS}
+        || 0;
+}
+
+sub DEBUG_CONSTRAINTS_WHEN {
+    DEBUG
+        || DEBUG_PROCESS
+        || $ENV{HTML_FORMFU_DEBUG_CONSTRAINTS}
+        || $ENV{HTML_FORMFU_DEBUG_CONSTRAINTS_WHEN}
+        || 0;
+}
+
+sub DEBUG_CONSTRAINTS_OTHERS {
+    DEBUG
+        || DEBUG_PROCESS
+        || $ENV{HTML_FORMFU_DEBUG_CONSTRAINTS}
+        || $ENV{HTML_FORMFU_DEBUG_CONSTRAINTS_OTHERS}
         || 0;
 }
 
@@ -297,9 +318,6 @@ sub remove_xml_attribute {
         }
 
         $attrs->{$key} = $dispatcher{$orig}->{$new}->( $attrs->{$key}, $value );
-    }
-    else {
-        $attrs->{$key} = $value;
     }
 
     return $attrs;

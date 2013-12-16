@@ -1,4 +1,7 @@
 package HTML::FormFu::Localize;
+{
+  $HTML::FormFu::Localize::VERSION = '1.00';
+}
 
 use strict;
 

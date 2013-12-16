@@ -1,4 +1,7 @@
 package HTML::FormFu::Filter::Regex;
+{
+  $HTML::FormFu::Filter::Regex::VERSION = '1.00';
+}
 
 use Moose;
 use MooseX::Attribute::Chained;

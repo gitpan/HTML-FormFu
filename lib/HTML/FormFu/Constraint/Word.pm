@@ -1,4 +1,7 @@
 package HTML::FormFu::Constraint::Word;
+{
+  $HTML::FormFu::Constraint::Word::VERSION = '1.00';
+}
 
 use Moose;
 extends 'HTML::FormFu::Constraint::Regex';

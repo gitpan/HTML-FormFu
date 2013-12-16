@@ -1,4 +1,7 @@
 package HTML::FormFu::Constraint;
+{
+  $HTML::FormFu::Constraint::VERSION = '1.00';
+}
 
 use strict;
 use base 'HTML::FormFu::Processor';
@@ -9,6 +12,7 @@ extends 'HTML::FormFu::Processor';
 use HTML::FormFu::Exception::Constraint;
 use HTML::FormFu::Util qw(
     DEBUG_CONSTRAINTS
+    DEBUG_CONSTRAINTS_WHEN
     debug
 );
 use Clone ();
@@ -274,10 +278,10 @@ sub _process_when {
             if defined $value;
     }
 
-    DEBUG_CONSTRAINTS && debug( 'WHEN_FIELDS_VALUES' => \@when_fields_value );
+    DEBUG_CONSTRAINTS_WHEN && debug( 'WHEN_FIELDS_VALUES' => \@when_fields_value );
 
     if ( !@when_fields_value ) {
-        DEBUG_CONSTRAINTS
+        DEBUG_CONSTRAINTS_WHEN
             && debug("No 'when' fields values exist - returning false");
         return 0;
     }
@@ -305,16 +309,28 @@ sub _process_when {
         }
     }
 
-    DEBUG_CONSTRAINTS && debug( "'when' value matches" => \@ok );
+    DEBUG_CONSTRAINTS_WHEN && debug( "'when' value matches" => \@ok );
 
     my $return
         = $any
         ? any { $when->{not} ? !$_ : $_ } @ok
         : all { $when->{not} ? !$_ : $_ } @ok;
 
-    DEBUG_CONSTRAINTS && debug( "'when' return value" => $return );
+    DEBUG_CONSTRAINTS_WHEN && debug( "'when' return value" => $return );
 
     return $return;
+}
+
+sub fetch_error_message {
+    my ( $self ) = @_;
+
+    my $error = HTML::FormFu::Exception::Constraint->new({
+        form      => $self->form,
+        parent    => $self->parent,
+        processor => $self,
+    });
+
+    return $error->message;
 }
 
 sub clone {
@@ -529,6 +545,22 @@ C<$constraint> (the Constraint object)
 
 =back
 
+=head1 EXPERIMENTAL METHODS
+
+=head2 fetch_error_message
+
+Return value: $string
+
+Attempt to return the error message that would be used if this constraint 
+generated an error.
+
+This will generally be correct for simple constraints with a fixed message or
+which use a placeholder from a known value, such as 
+L<HTML::FormFu::Constraint::Min/min>.
+This will generally C<not> return the correct message for constraints which
+use L<HTML::FormFu::Role::Constraint::Others/others>, where the field with an
+error is not known without actually fully processing a form submission.
+
 =head1 CORE CONSTRAINTS
 
 =over
@@ -583,8 +615,6 @@ C<$constraint> (the Constraint object)
 
 =item L<HTML::FormFu::Constraint::Range>
 
-=item L<HTML::FormFu::Constraint::reCAPTCHA>
-
 =item L<HTML::FormFu::Constraint::Regex>
 
 =item L<HTML::FormFu::Constraint::Required>
@@ -594,6 +624,14 @@ C<$constraint> (the Constraint object)
 =item L<HTML::FormFu::Constraint::SingleValue>
 
 =item L<HTML::FormFu::Constraint::Word>
+
+=back
+
+=head1 NON-CORE CONSTRAINTS AVAILABLE ON CPAN
+
+=over
+
+=item L<HTML::FormFu::Constraint::reCAPTCHA>
 
 =back
 

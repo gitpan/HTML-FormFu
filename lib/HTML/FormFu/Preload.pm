@@ -1,4 +1,7 @@
 package HTML::FormFu::Preload;
+{
+  $HTML::FormFu::Preload::VERSION = '1.00';
+}
 
 use strict;
 use HTML::FormFu;

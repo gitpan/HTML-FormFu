@@ -1,4 +1,7 @@
 package HTML::FormFu::Element::Image;
+{
+  $HTML::FormFu::Element::Image::VERSION = '1.00';
+}
 use Moose;
 
 extends 'HTML::FormFu::Element::Button';

@@ -1,4 +1,7 @@
 package HTML::FormFu::Element::SimpleTable;
+{
+  $HTML::FormFu::Element::SimpleTable::VERSION = '1.00';
+}
 
 use Moose;
 use MooseX::Attribute::Chained;

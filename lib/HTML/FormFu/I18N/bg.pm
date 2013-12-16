@@ -1,4 +1,7 @@
 package HTML::FormFu::I18N::bg;
+{
+  $HTML::FormFu::I18N::bg::VERSION = '1.00';
+}
 use strict;
 use utf8;
 

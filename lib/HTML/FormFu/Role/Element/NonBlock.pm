@@ -1,4 +1,7 @@
 package HTML::FormFu::Role::Element::NonBlock;
+{
+  $HTML::FormFu::Role::Element::NonBlock::VERSION = '1.00';
+}
 use Moose::Role;
 
 use HTML::FormFu::Util qw( process_attrs );

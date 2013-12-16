@@ -1,4 +1,7 @@
 package HTML::FormFu::I18N::en;
+{
+  $HTML::FormFu::I18N::en::VERSION = '1.00';
+}
 use utf8;
 
 use Moose;
@@ -13,6 +16,7 @@ our %Lexicon = (
     form_constraint_bool      => 'Field must be a boolean value',
     form_constraint_callback  => 'Invalid input',
     form_constraint_datetime  => 'Invalid date',
+    form_constraint_dbic_unique => 'Value already exists in database',
     form_constraint_dependon =>
         "This field is required if field '[_1]' is filled in",
     form_constraint_email        => 'This field must contain an email address',
@@ -35,6 +39,7 @@ our %Lexicon = (
     form_constraint_range     => 'Must be between [_1] and [_2]',
     form_constraint_recaptcha => 'reCAPTCHA error',
     form_constraint_regex     => 'Invalid input',
+    form_constraint_repeatable_any => "At least one of the '[_1]' fields is required",
     form_constraint_required  => 'This field is required',
     form_constraint_set       => 'Field contains an invalid choice',
     form_constraint_singlevalue    => 'This field only accepts a single value',

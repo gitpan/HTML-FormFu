@@ -1,4 +1,7 @@
 package HTML::FormFu::Deflator::FormatNumber;
+{
+  $HTML::FormFu::Deflator::FormatNumber::VERSION = '1.00';
+}
 
 use Moose;
 use MooseX::Attribute::Chained;

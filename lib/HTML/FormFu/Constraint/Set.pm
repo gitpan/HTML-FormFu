@@ -1,4 +1,7 @@
 package HTML::FormFu::Constraint::Set;
+{
+  $HTML::FormFu::Constraint::Set::VERSION = '1.00';
+}
 
 use Moose;
 use MooseX::Attribute::Chained;

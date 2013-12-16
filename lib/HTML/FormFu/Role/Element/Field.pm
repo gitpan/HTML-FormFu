@@ -1,14 +1,17 @@
 package HTML::FormFu::Role::Element::Field;
+{
+  $HTML::FormFu::Role::Element::Field::VERSION = '1.00';
+}
 use Moose::Role;
 use MooseX::Aliases;
 
 with 'HTML::FormFu::Role::ContainsElementsSharedWithField',
-    'HTML::FormFu::Role::NestedHashUtils';
+    'HTML::FormFu::Role::NestedHashUtils',
+    'HTML::FormFu::Role::FormBlockAndFieldMethods';
 
 use HTML::FormFu::Attribute qw(
     mk_attrs
     mk_output_accessors
-    mk_inherited_accessors
 );
 use HTML::FormFu::Constants qw( $EMPTY_STR );
 use HTML::FormFu::Util qw(
@@ -25,6 +28,8 @@ __PACKAGE__->mk_attrs( qw(
         comment_attributes
         container_attributes
         label_attributes
+        error_attributes
+        error_container_attributes
 ) );
 
 has _constraints         => ( is => 'rw', traits => ['Chained'] );
@@ -39,6 +44,7 @@ has container_tag        => ( is => 'rw', traits => ['Chained'] );
 has field_filename       => ( is => 'rw', traits => ['Chained'] );
 has label_filename       => ( is => 'rw', traits => ['Chained'] );
 has label_tag            => ( is => 'rw', traits => ['Chained'] );
+has errors_filename      => ( is => 'rw', traits => ['Chained'] );
 has retain_default       => ( is => 'rw', traits => ['Chained'] );
 has force_default        => ( is => 'rw', traits => ['Chained'] );
 has javascript           => ( is => 'rw', traits => ['Chained'] );
@@ -48,18 +54,9 @@ has reverse_multi        => ( is => 'rw', traits => ['Chained'] );
 has multi_value          => ( is => 'rw', traits => ['Chained'] );
 has original_name        => ( is => 'rw', traits => ['Chained'] );
 has original_nested_name => ( is => 'rw', traits => ['Chained'] );
+has default_empty_value  => ( is => 'rw', traits => ['Chained'] );
 
-__PACKAGE__->mk_output_accessors(qw( comment label value placeholder ));
-
-__PACKAGE__->mk_inherited_accessors( qw(
-        auto_id                     auto_label
-        auto_error_class            auto_error_message
-        auto_constraint_class       auto_inflator_class
-        auto_validator_class        auto_transformer_class
-        render_processed_value      force_errors
-        repeatable_count            default_empty_value
-        locale
-) );
+__PACKAGE__->mk_output_accessors(qw( comment label value ));
 
 alias( "default",     "value" );
 alias( "default_xml", "value_xml" );
@@ -76,11 +73,14 @@ after BUILD => sub {
     $self->_transformers( [] );
     $self->_plugins(      [] );
     $self->_errors(       [] );
-    $self->comment_attributes(   {} );
-    $self->container_attributes( {} );
-    $self->label_attributes(     {} );
+    $self->comment_attributes(         {} );
+    $self->container_attributes(       {} );
+    $self->label_attributes(           {} );
+    $self->error_attributes(           {} );
+    $self->error_container_attributes( {} );
     $self->label_filename('label');
     $self->label_tag('label');
+    $self->errors_filename('errors');
     $self->container_tag('div');
     $self->is_field(1);
 
@@ -504,7 +504,10 @@ around render_data_non_recursive => sub {
             field_filename       => $self->field_filename,
             label_filename       => $self->label_filename,
             label_tag            => $self->label_tag,
+            errors_filename      => $self->errors_filename,
             container_tag        => $self->container_tag,
+            error_container_tag  => $self->error_container_tag,
+            error_tag            => $self->error_tag,
             reverse_single       => $self->reverse_single,
             reverse_multi        => $self->reverse_multi,
             javascript           => $self->javascript,
@@ -542,9 +545,66 @@ sub _render_label {
         $render->{label} = $self->form->localize($label);
     }
 
-    if ( defined $render->{label} ) {
+    if (    defined $render->{label}
+         && defined $self->auto_label_class
+         && length $self->auto_label_class
+        )
+    {
+        my $form_name
+            = defined $self->form->id
+            ? $self->form->id
+            : $EMPTY_STR;
+
+        my $field_name
+            = defined $render->{nested_name}
+            ? $render->{nested_name}
+            : $EMPTY_STR;
+        
+        my $type = lc $self->type;
+        $type =~ s/:://g;
+        
+        my %string = (
+            f => $form_name,
+            n => $field_name,
+            t => $type,
+        );
+
+        my $class = $self->auto_label_class;
+        $class =~ s/%([fnt])/$string{$1}/g;
+        
+        append_xml_attribute( $render->{label_attributes},
+            'class', $class );
+    }
+
+    if (    defined $render->{label}
+         && defined $self->auto_container_label_class
+         && length $self->auto_container_label_class
+        )
+    {
+        my $form_name
+            = defined $self->form->id
+            ? $self->form->id
+            : $EMPTY_STR;
+
+        my $field_name
+            = defined $render->{nested_name}
+            ? $render->{nested_name}
+            : $EMPTY_STR;
+        
+        my $type = lc $self->type;
+        $type =~ s/:://g;
+        
+        my %string = (
+            f => $form_name,
+            n => $field_name,
+            t => $type,
+        );
+
+        my $class = $self->auto_container_label_class;
+        $class =~ s/%([fnt])/$string{$1}/g;
+        
         append_xml_attribute( $render->{container_attributes},
-            'class', $self->label_tag );
+            'class', $class );
     }
 
     # label "for" attribute
@@ -560,13 +620,59 @@ sub _render_label {
 
 sub _render_comment_class {
     my ( $self, $render ) = @_;
+    
+    if (    defined $render->{comment}
+         && defined $self->auto_comment_class
+         && length $self->auto_comment_class
+        )
+    {
+        my $form_name
+            = defined $self->form->id
+            ? $self->form->id
+            : $EMPTY_STR;
 
-    if ( defined $render->{comment} ) {
+        my $field_name
+            = defined $render->{nested_name}
+            ? $render->{nested_name}
+            : $EMPTY_STR;
+        
+        my %string = (
+            f => $form_name,
+            n => $field_name,
+        );
+
+        my $class = $self->auto_comment_class;
+        $class =~ s/%([fn])/$string{$1}/g;
+
         append_xml_attribute( $render->{comment_attributes},
-            'class', 'comment' );
+            'class', $class );
+    }
+
+    if (    defined $render->{comment}
+         && defined $self->auto_container_comment_class
+         && length $self->auto_container_comment_class
+        )
+    {
+        my $form_name
+            = defined $self->form->id
+            ? $self->form->id
+            : $EMPTY_STR;
+
+        my $field_name
+            = defined $render->{nested_name}
+            ? $render->{nested_name}
+            : $EMPTY_STR;
+        
+        my %string = (
+            f => $form_name,
+            n => $field_name,
+        );
+
+        my $class = $self->auto_container_comment_class;
+        $class =~ s/%([fn])/$string{$1}/g;
 
         append_xml_attribute( $render->{container_attributes},
-            'class', 'comment' );
+            'class', $class );
     }
 
     return;
@@ -634,11 +740,35 @@ sub _render_value {
 sub _render_container_class {
     my ( $self, $render ) = @_;
 
-    my $type = $self->type;
-    $type =~ s/:://g;
+    if (    defined $self->auto_container_class
+         && length $self->auto_container_class
+        )
+    {
+        my $form_name
+            = defined $self->form->id
+            ? $self->form->id
+            : $EMPTY_STR;
 
-    append_xml_attribute( $render->{container_attributes}, 'class', lc($type),
-    );
+        my $field_name
+            = defined $render->{nested_name}
+            ? $render->{nested_name}
+            : $EMPTY_STR;
+        
+        my $type = lc $self->type;
+        $type =~ s/:://g;
+        
+        my %string = (
+            f => $form_name,
+            n => $field_name,
+            t => $type,
+        );
+
+        my $class = $self->auto_container_class;
+        $class =~ s/%([fnt])/$string{$1}/g;
+
+        append_xml_attribute( $render->{container_attributes},
+            'class', $class );
+    }
 
     return;
 }
@@ -760,18 +890,91 @@ sub _render_error_class {
 
     my @errors = @{ $self->get_errors( { forced => 1 } ) };
 
-    if (@errors) {
-        $render->{errors} = \@errors;
+    return if !@errors;
 
-        append_xml_attribute( $render->{container_attributes},
-            'class', 'error' );
+    @errors = map { $_->render_data } @errors;
 
-        my @class = uniq map { $_->class } @errors;
+    $render->{errors} = \@errors;
 
-        for my $class (@class) {
-            append_xml_attribute( $render->{container_attributes},
-                'class', $class, );
+    my @container_class;
+
+    # auto_container_error_class
+    my $auto_class = $self->auto_container_error_class;
+
+    if ( defined $auto_class && length $auto_class ) {
+        my %string = (
+            f => sub { defined $self->form->id ? $self->form->id   : '' },
+            n => sub { defined $render->{name} ? $render->{name}   : '' },
+        );
+
+        $auto_class =~ s/%([fn])/$string{$1}->()/ge;
+
+        push @container_class, $auto_class;
+    }
+
+    # auto_container_per_error_class
+    my $item_class = $self->auto_container_per_error_class;
+
+    if ( defined $item_class && length $item_class ) {
+        for my $error (@errors) {
+            my %string = (
+                f => sub { defined $self->form->id ? $self->form->id   : '' },
+                n => sub { defined $render->{name} ? $render->{name}   : '' },
+                s => sub { $error->{stage} },
+                t => sub { lc $error->{type} },
+            );
+
+            my $string = $item_class;
+            $string =~ s/%([fnst])/$string{$1}->()/ge;
+
+            push @container_class, $string;
         }
+    }
+
+    map {
+        append_xml_attribute( $render->{container_attributes}, 'class', $_ )
+    } uniq @container_class;
+
+    my @error_container_class;
+
+    if ( $self->error_container_tag ) {
+
+        # auto_error_container_class
+        my $auto_class = $self->auto_error_container_class;
+
+        if ( defined $auto_class && length $auto_class ) {
+            my %string = (
+                f => sub { defined $self->form->id ? $self->form->id   : '' },
+                n => sub { defined $render->{name} ? $render->{name}   : '' },
+            );
+
+            $auto_class =~ s/%([fn])/$string{$1}->()/ge;
+
+            push @error_container_class, $auto_class;
+        }
+
+        # auto_container_per_error_class
+        my $item_class = $self->auto_container_per_error_class;
+
+        if ( defined $item_class && length $item_class ) {
+            for my $error (@errors) {
+                my %string = (
+                    f => sub { defined $self->form->id ? $self->form->id   : '' },
+                    n => sub { defined $render->{name} ? $render->{name}   : '' },
+                    s => sub { $error->{stage} },
+                    t => sub { lc $error->{type} },
+                );
+
+                my $string = $item_class;
+                $string =~ s/%([fnst])/$string{$1}->()/ge;
+
+                push @error_container_class, $string;
+            }
+        }
+
+         map {
+            append_xml_attribute( $render->{error_container_attributes}, 'class', $_ )
+        } uniq @error_container_class;
     }
 
     return;
@@ -806,14 +1009,7 @@ sub _string_field_start {
         $html .= sprintf "\n%s", $self->_string_label($render);
     }
 
-    if ( $render->{errors} ) {
-        for my $error ( @{ $render->{errors} } ) {
-            $html .= sprintf qq{\n<span class="error_message %s">%s</span>},
-                $error->class,
-                $error->message,
-                ;
-        }
-    }
+    $html .= $self->_string_errors( $render );
 
     if (   defined $render->{label}
         && $render->{label_tag} ne 'legend'
@@ -840,6 +1036,36 @@ sub _string_label {
         $render->{label},
         $render->{label_tag},
         ;
+
+    return $html;
+}
+
+sub _string_errors {
+    my ( $self, $render ) = @_;
+
+    return '' if !$render->{errors};
+
+    my $html = '';
+
+    if ( $render->{error_container_tag} ) {
+        $html .= sprintf qq{<%s%s>\n},
+            $render->{error_container_tag},
+            process_attrs( $render->{error_container_attributes} ),
+            ;
+    }
+
+    for my $error ( @{ $render->{errors} } ) {
+        $html .= sprintf qq{\n<%s%s>%s</%s>},
+            $render->{error_tag},
+            process_attrs( $error->{attributes} ),
+            $error->{message},
+            $render->{error_tag},
+            ;
+    }
+
+    if ( $render->{error_container_tag} ) {
+        $html .= sprintf qq{\n</%s>}, $render->{error_container_tag};
+    }
 
     return $html;
 }
@@ -919,18 +1145,7 @@ Base-class for all form-field elements.
 
 Set the form-field's default value.
 
-=head2 default_xml
-
-Arguments: $string
-
-If you don't want the default value to be XML-escaped, use the 
-L</default_xml> method instead of L</default>.
-
-=head2 default_loc
-
-Arguments: $localization_key
-
-Set the default value using a L10N key.
+Is an L<output accessor|HTML::FormFu/OUTPUT ACCESSORS>.
 
 =head2 value
 
@@ -948,88 +1163,25 @@ L<values|HTML::FormFu::Role::Element::Group/values> or
 L<options|HTML::FormFu::Role::Element::Group/options> provides the equivalent 
 function.
 
-=head2 value_xml
-
-Arguments: $string
-
-If you don't want the value to be XML-escaped, use the L</value_xml> 
-method instead of L</value>.
-
-=head2 value_loc
-
-Arguments: $localization_key
-
-Set the value using a L10N key.
+Is an L<output accessor|HTML::FormFu/OUTPUT ACCESSORS>.
 
 =head2 non_param
 
 Arguments: bool
 
+Default Value: false
+
 If true, values for this field are never returned by L<HTML::FormFu/params>, 
 L<HTML::FormFu/param> and L<HTML::FormFu/valid>.
 
 This is useful for Submit buttons, when you only use its value as an 
-L<indicator|HTML::FormFu/indicator>.
-
-Default Value: false
-
-=head2 label
-
-Set a label to communicate the purpose of the form-field to the user.
-
-=head2 label_xml
-
-Arguments: $string
-
-If you don't want the label to be XML-escaped, use the L</label_xml> 
-method instead of L</label>.
-
-=head2 label_loc
-
-Arguments: $localization_key
-
-Set the label using a L10N key.
+L<indicator|HTML::FormFu/indicator>
 
 =head2 placeholder
 
 Sets the HTML5 attribute C<placeholder> to the specified value.
 
-=head2 placeholder_xml
-
-If you don't want the C<placeholder> attribute to be XML-escaped, use the L</placeholder_xml> 
-method instead of L</placeholder>.
-
-Arguments: $string
-
-=head2 placeholder_loc
-
-Arguments: $localization_key
-
-Set the C<placeholder> attribute using a L10N key.
-
-=head2 comment
-
-Set a comment to be displayed along with the form-field.
-
-=head2 comment_xml
-
-Arguments: $string
-
-If you don't want the comment to be XML-escaped, use the L</comment_xml> 
-method instead of L</comment>.
-
-=head2 comment_loc
-
-Arguments: $localization_key
-
-Set the comment using a L10N key.
-
-=head2 container_tag
-
-Set which tag-name should be used to contain the various field parts (field, 
-label, comment, errors, etc.).
-
-Default Value: 'div'
+Is an L<output accessor|HTML::FormFu/OUTPUT ACCESSORS>.
 
 =head2 javascript
 
@@ -1121,166 +1273,20 @@ See L<HTML::FormFu/deflators> for details.
 
 See L<HTML::FormFu/deflator> for details.
 
-=head1 ATTRIBUTES
+=head2 auto_datalist_id
 
-=head2 comment_attributes
+Arguments: [$string]
 
-Arguments: [%attributes]
+If any L<Input|HTML::FormFu::Role::Element::Input> element had a datalist,
+but does not have L<HTML::FormFu::Role::Element::Input/datalist_id> set,
+L</auto_datalist_id> is used to generate the datalist id.
 
-Arguments: [\%attributes]
+The following character substitution will be performed: C<%f> will be
+replaced by L<< $form->id|/id >>, C<%n> will be replaced by
+L<< $field->name|HTML::FormFu::Element/name >>, C<%r> will be replaced by
+L<< $block->repeatable_count|HTML::FormFu::Element::Repeatable/repeatable_count >>.
 
-Attributes added to the comment container.
-
-=head2 comment_attributes_xml
-
-Arguments: [%attributes]
-
-Arguments: [\%attributes]
-
-If you don't want the values to be XML-escaped, use the 
-L</comment_attributes_xml> method instead of L</comment_attributes>.
-
-=head2 add_comment_attributes
-
-=head2 add_comment_attrs
-
-See L<HTML::FormFu/add_attributes> for details.
-
-=head2 add_comment_attributes_xml
-
-=head2 add_comment_attrs_xml
-
-See L<HTML::FormFu/add_attributes_xml> for details.
-
-=head2 add_comment_attributes_loc
-
-=head2 add_comment_attrs_loc
-
-See L<HTML::FormFu/add_attributes_loc> for details.
-
-=head2 del_comment_attributes
-
-=head2 del_comment_attrs
-
-See L<HTML::FormFu/del_attributes> for details.
-
-=head2 del_comment_attributes_xml
-
-=head2 del_comment_attrs_xml
-
-See L<HTML::FormFu/del_attributes_xml> for details.
-
-=head2 del_comment_attributes_loc
-
-=head2 del_comment_attrs_loc
-
-See L<HTML::FormFu/del_attributes_loc> for details.
-
-=head2 container_attributes
-
-Arguments: [%attributes]
-
-Arguments: [\%attributes]
-
-Arguments added to the field's container.
-
-=head2 container_attributes_xml
-
-Arguments: [%attributes]
-
-Arguments: [\%attributes]
-
-If you don't want the values to be XML-escaped, use the 
-L</container_attributes_xml> method instead of L</container_attributes>.
-
-=head2 add_container_attributes
-
-=head2 add_container_attrs
-
-See L<HTML::FormFu/add_attributes> for details.
-
-=head2 add_container_attributes_xml
-
-=head2 add_container_attrs_xml
-
-See L<HTML::FormFu/add_attributes_xml> for details.
-
-=head2 add_container_attributes_loc
-
-=head2 add_container_attrs_loc
-
-See L<HTML::FormFu/add_attributes_loc> for details.
-
-=head2 del_container_attributes
-
-=head2 del_container_attrs
-
-See L<HTML::FormFu/del_attributes> for details.
-
-=head2 del_container_attributes_xml
-
-=head2 del_container_attrs_xml
-
-See L<HTML::FormFu/del_attributes_xml> for details.
-
-=head2 del_container_attributes_loc
-
-=head2 del_container_attrs_loc
-
-See L<HTML::FormFu/del_attributes_loc> for details.
-
-=head2 label_attributes
-
-Arguments: [%attributes]
-
-Arguments: [\%attributes]
-
-Attributes added to the label container.
-
-=head2 label_attributes_xml
-
-Arguments: [%attributes]
-
-Arguments: [\%attributes]
-
-If you don't want the values to be XML-escaped, use the 
-L</label_attributes_xml> method instead of L</label_attributes>.
-
-=head2 add_label_attributes
-
-=head2 add_label_attrs
-
-See L<HTML::FormFu/add_attributes> for details.
-
-=head2 add_label_attributes_xml
-
-=head2 add_label_attrs_xml
-
-See L<HTML::FormFu/add_attributes_xml> for details.
-
-=head2 add_label_attributes_loc
-
-=head2 add_label_attrs_loc
-
-See L<HTML::FormFu/add_attributes_loc> for details.
-
-=head2 del_label_attributes
-
-=head2 del_label_attrs
-
-See L<HTML::FormFu/del_attributes> for details.
-
-=head2 del_label_attributes_xml
-
-=head2 del_label_attrs_xml
-
-See L<HTML::FormFu/del_attributes_xml> for details.
-
-=head2 del_label_attributes_loc
-
-=head2 del_label_attrs_loc
-
-See L<HTML::FormFu/del_attributes_loc> for details.
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
 
 =head1 FORM LOGIC AND VALIDATION
 
@@ -1324,39 +1330,299 @@ See L<HTML::FormFu/transformers> for details.
 
 See L<HTML::FormFu/transformer> for details.
 
-=head1 CSS CLASSES
+=head1 CUSTOMIZING GENERATED MARKUP
 
-=head2 auto_id
+Each field is, by default, wrapped in a container.
+Each container may also contain a label, a comment, and after an invalid
+submission may contain 1 or more error messages.
 
-See L<HTML::FormFu/auto_id> for details.
+Example of generated form:
 
-=head2 auto_label
+    1   <form action="" method="post">
+    2       <div class="has-errors">    # container
+    3           <ul class="errors">     # error container
+    4               <li>                # error message
+    5                   This field must contain an email address
+    6               </li>
+    7           </li>
+    8           <label>Foo</label>      # label
+    9           <input name="foo" type="text" value="example.com" />
+    10          <span class="comment">  # comment
+    11              This is Foo
+    12          </span>
+    13      </div>
+    14  </form>
 
-See L<HTML::FormFu/auto_label> for details.
+    # Line 2 starts the 'container' - by default a DIV.
+    # Line 2 starts an error container, which may contain 1 or more error
+             messages - in this case, a unordered list (UL).
+    # Line 4 starts a single error message - in this case, a list item (LI).
+    # Line 8 shows a 'label'.
+    # Line 9 shows the field's 'input' tag.
+    # Lines 10 starts a 'comment'.
 
-=head2 auto_error_class
+=head2 CONTAINER
 
-See L<HTML::FormFu/auto_error_class> for details.
+=head3 container_tag
 
-=head2 auto_error_message
+Default value: 'div'
 
-See L<HTML::FormFu/auto_error_message> for details.
+The container wrapping each entire field, any label, comment, and errors.
 
-=head2 auto_constraint_class
+=head3 container_attributes
 
-See L<HTML::FormFu/auto_constraint_class> for details.
+Attributes added to the container tag.
 
-=head2 auto_inflator_class
+Is an L<attribute accessor|HTML::FormFu/ATTRIBUTE ACCESSOR>.
 
-See L<HTML::FormFu/auto_inflator_class> for details.
+=head3 auto_container_class
 
-=head2 auto_validator_class
+Default Value: '%t'
 
-See L<HTML::FormFu/auto_validator_class> for details.
+If set, then the container of each field will be given a class-name based on
+the given pattern.
 
-=head2 auto_transformer_class
+Supports L<substitutions|HTML::FormFu/ATTRIBUTE SUBSTITUTIONS>: C<%f>, C<%n>, C<%t>.
 
-See L<HTML::FormFu/auto_transformer_class> for details.
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
+
+=head3 auto_container_label_class
+
+Default Value: 'label'
+
+If set, and if the field has a L<label|/label>, the container will be given a
+class-name based on the given pattern.
+
+Supports L<substitutions|HTML::FormFu/ATTRIBUTE SUBSTITUTIONS>: C<%f>, C<%n>, C<%t>.
+
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
+
+=head3 auto_container_comment_class
+
+Default Value: '%t'
+
+If set, and if the field has a
+L<comment|HTML::FormFu::Role::Element::Field/comment>, the container will be
+given a class-name based on the given pattern.
+
+Supports L<substitutions|HTML::FormFu/ATTRIBUTE SUBSTITUTIONS>: C<%f>, C<%n>, C<%t>.
+
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
+
+=head3 auto_container_error_class
+
+Default Value: 'error'
+
+If set, then the container of each field with an error will be given a
+class-name based on the given pattern.
+
+Supports L<substitutions|HTML::FormFu/ATTRIBUTE SUBSTITUTIONS>: C<%f>, C<%n>.
+
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
+
+=head3 auto_container_per_error_class
+
+Default Value: 'error_%s_%t'
+
+If set, then the container of each field with an error will be given a
+class-name based on the given pattern.
+
+Supports L<substitutions|HTML::FormFu/ATTRIBUTE SUBSTITUTIONS>: C<%f>, C<%n>, C<%t>, C<%s>.
+
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
+
+=head2 FORM FIELD
+
+=head3 auto_id
+
+If set, then the field will be given an L<id|HTML::FormFu::Element/id>
+attribute, if it doesn't have one already.
+
+E.g., setting C<< $form->auto_id('%n') >> will make each field have an ID
+the same as the field's name. This makes our form config simpler, and ensures
+we don't need to manually update IDs if any field names are changed.
+
+Supports L<substitutions|HTML::FormFu/ATTRIBUTE SUBSTITUTIONS>: C<%f>, C<%n>, C<%r>.
+
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
+
+=head2 LABEL
+
+=head3 label
+
+Set a label to communicate the purpose of the form-field to the user.
+
+Is an L<output accessor|HTML::FormFu/OUTPUT ACCESSORS>.
+
+=head3 auto_label
+
+If L<label|/label> isn't already set, the value of L</auto_label> is passed through
+L<localize|HTML::FormFu/localize> to generate a label.
+
+Supports L<substitutions|HTML::FormFu/ATTRIBUTE SUBSTITUTIONS>: C<%f>, C<%n>.
+
+The generated string will be passed to L</localize> to create the label.
+
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
+
+=head3 label_tag
+
+Default value: 'label'
+(except L<Checkboxgroup|HTML::FormFu::Element::Checkboxgroup>)
+
+Default value: 'legend'
+(only L<Checkboxgroup|HTML::FormFu::Element::Checkboxgroup>)
+
+Set which tag is used to wrap a L<label|/label>.
+
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
+
+=head3 label_attributes
+
+Attributes added to the label container.
+
+Is an L<attribute accessor|HTML::FormFu/ATTRIBUTE ACCESSOR>.
+
+=head2 COMMENT
+
+=head3 comment
+
+Set a comment to be displayed along with the form-field.
+
+Is an L<output accessor|HTML::FormFu/OUTPUT ACCESSORS>.
+
+=head3 comment_attributes
+
+Attributes added to the comment container.
+
+Is an L<attribute accessor|HTML::FormFu/ATTRIBUTE ACCESSOR>.
+
+=head3 auto_comment_class
+
+Default Value: '%t'
+
+If set, and if the field has a
+L<comment|HTML::FormFu::Role::Element::Field/comment>, the comment tag will
+be given a class-name based on the given pattern.
+
+Supports L<substitutions|HTML::FormFu/ATTRIBUTE SUBSTITUTIONS>: C<%f>, C<%n>, C<%t>.
+
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
+
+=head2 ERROR CONTAINER
+
+=head3 error_container_tag
+
+If set, and if the field has any errors, a container of this type is
+wrapped around all of the field error messages.
+
+    # Example - this would wrap each individual error in a 'li' tag,
+    # with a single 'ul' tag wrapped around all the errors.
+    
+    element:
+      name: foo
+      error_container_tag: ul
+      error_tag: li
+
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
+
+=head3 auto_error_container_class
+
+Add a class-name to the error container.
+
+Supports L<substitutions|HTML::FormFu/ATTRIBUTE SUBSTITUTIONS>: C<%f>, C<%n>.
+
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
+
+=head3 auto_error_container_per_error_class
+
+Add a class-name to the error container for each error on that field.
+
+Supports L<substitutions|HTML::FormFu/ATTRIBUTE SUBSTITUTIONS>: C<%f>, C<%n>, C<%t>, C<%s>.
+
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
+
+=head2 ERROR MESSAGES
+
+=head3 error_tag
+
+Default value: 'span'
+
+Sets the tag used to wrap each individual error message.
+
+Defaults to C<span>.
+
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
+
+
+=head3 auto_error_message
+
+Default Value: 'form_%s_%t'
+
+If set, then each error will be given an auto-generated
+L<message|HTML::FormFu::Exception::Input/message>, if it doesn't have one
+already.
+
+The generated string will be passed to L</localize> to create the message.
+
+For example, a L<Required constraint|HTML::FormFu::Constraint::Required>
+will return the string C<form_constraint_required>. Under the default
+localization behaviour, the appropriate message for
+C<form_constraint_required> will be used from the default I18N package.
+
+Supports L<substitutions|HTML::FormFu/ATTRIBUTE SUBSTITUTIONS>: C<%f>, C<%n>, C<%t>, C<%s>.
+
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
+
+=head3 error_attributes
+
+Set attributes on the tag of each error message.
+
+Is an L<attribute accessor|HTML::FormFu/ATTRIBUTE ACCESSOR>.
+
+=head3 auto_error_class
+
+Default Value: 'error_%s_%t'
+
+Add a class-name to the tag of each error message.
+
+Supports L<substitutions|HTML::FormFu/ATTRIBUTE SUBSTITUTIONS>: C<%f>, C<%n>, C<%t>, C<%s>.
+
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
+
+=head2 PROCESSOR CLASSES
+
+=head3 auto_constraint_class
+
+Add a class-name to the container tag, for each constraint added to the field.
+
+Supports L<substitutions|HTML::FormFu/ATTRIBUTE SUBSTITUTIONS>: C<%f>, C<%n>, C<%t>.
+
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
+
+=head3 auto_inflator_class
+
+Add a class-name to the container tag, for each inflator added to the field.
+
+Supports L<substitutions|HTML::FormFu/ATTRIBUTE SUBSTITUTIONS>: C<%f>, C<%n>, C<%t>.
+
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
+
+=head3 auto_validator_class
+
+Add a class-name to the container tag, for each validator added to the field.
+
+Supports L<substitutions|HTML::FormFu/ATTRIBUTE SUBSTITUTIONS>: C<%f>, C<%n>, C<%t>.
+
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
+
+=head3 auto_transformer_class
+
+Add a class-name to the container tag, for each transformer added to the field.
+
+Supports L<substitutions|HTML::FormFu/ATTRIBUTE SUBSTITUTIONS>: C<%f>, C<%n>, C<%t>.
+
+Is an L<inheriting accessor|HTML::FormFu/INHERITING ACCESSORS>.
 
 =head1 RENDERING
 
@@ -1371,7 +1637,13 @@ Must be set by more specific field classes.
 
 The template filename to be used to render the label.
 
-Must be set by more specific field classes.
+Defaults to C<label>.
+
+=head2 errors_filename
+
+The template filename to be used to render any error messages.
+
+Defaults to C<errors>.
 
 =head1 ERROR HANDLING
 

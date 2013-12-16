@@ -1,4 +1,7 @@
 package HTML::FormFu::Element::Blank;
+{
+  $HTML::FormFu::Element::Blank::VERSION = '1.00';
+}
 use Moose;
 
 extends 'HTML::FormFu::Element';

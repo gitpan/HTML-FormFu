@@ -1,4 +1,7 @@
 package HTML::FormFu::Role::Element::SingleValueField;
+{
+  $HTML::FormFu::Role::Element::SingleValueField::VERSION = '1.00';
+}
 use Moose::Role;
 
 use Carp qw( croak );

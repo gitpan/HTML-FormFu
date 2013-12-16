@@ -1,4 +1,7 @@
 package HTML::FormFu::Role::CreateChildren;
+{
+  $HTML::FormFu::Role::CreateChildren::VERSION = '1.00';
+}
 use Moose::Role;
 
 use HTML::FormFu::Util qw( _merge_hashes require_class );
@@ -140,13 +143,18 @@ sub _require_element {
             parent => $self,
         } );
 
-    if ( $element->can('default_args') ) {
-        $element->default_args( Clone::clone( $self->default_args ) );
-    }
+    my $default_args = $self->default_args;
 
-    # handle default_args
-    if ( exists $self->default_args->{elements}{$type} ) {
-        $arg = _merge_hashes( $self->default_args->{elements}{$type}, $arg, );
+    if ( %$default_args ) {
+        if ( $element->can('default_args') ) {
+            $element->default_args( Clone::clone( $default_args ) );
+        }
+
+        $default_args = $element->_match_default_args( Clone::clone( $default_args->{elements} ) );
+
+        if ( %$default_args ) {
+            $arg = _merge_hashes( $arg, $default_args );
+        }
     }
 
     $element->populate($arg);

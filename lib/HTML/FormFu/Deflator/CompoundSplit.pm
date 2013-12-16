@@ -1,4 +1,7 @@
 package HTML::FormFu::Deflator::CompoundSplit;
+{
+  $HTML::FormFu::Deflator::CompoundSplit::VERSION = '1.00';
+}
 
 use Moose;
 use MooseX::Attribute::Chained;

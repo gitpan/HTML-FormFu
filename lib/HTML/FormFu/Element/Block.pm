@@ -1,4 +1,7 @@
 package HTML::FormFu::Element::Block;
+{
+  $HTML::FormFu::Element::Block::VERSION = '1.00';
+}
 use Moose;
 use MooseX::Attribute::Chained;
 
@@ -8,7 +11,8 @@ with 'HTML::FormFu::Role::CreateChildren',
     'HTML::FormFu::Role::GetProcessors',
     'HTML::FormFu::Role::ContainsElements',
     'HTML::FormFu::Role::ContainsElementsSharedWithField',
-    'HTML::FormFu::Role::FormAndBlockMethods';
+    'HTML::FormFu::Role::FormAndBlockMethods',
+    'HTML::FormFu::Role::FormBlockAndFieldMethods';
 
 use HTML::FormFu::Constants qw( $EMPTY_STR );
 use HTML::FormFu::Util qw( _get_elements xml_escape process_attrs );
@@ -29,14 +33,6 @@ has _elements => (
 );
 
 __PACKAGE__->mk_output_accessors(qw( content ));
-
-__PACKAGE__->mk_inherited_accessors( qw(
-        auto_id auto_label auto_error_class auto_error_message
-        auto_constraint_class auto_inflator_class auto_validator_class
-        auto_transformer_class render_processed_value force_errors
-        repeatable_count
-        locale
-) );
 
 *elements     = \&element;
 *constraints  = \&constraint;
@@ -369,6 +365,10 @@ See L<HTML::FormFu/transformers> for details.
 =head2 transformer
 
 See L<HTML::FormFu/transformer> for details.
+
+=head2 auto_datalist_id
+
+See L<HTML::FormFu/auto_datalist_id> for details.
 
 =head1 CSS CLASSES
 

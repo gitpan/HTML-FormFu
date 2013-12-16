@@ -1,4 +1,7 @@
 package HTML::FormFu::Role::GetProcessors;
+{
+  $HTML::FormFu::Role::GetProcessors::VERSION = '1.00';
+}
 use Moose::Role;
 
 use HTML::FormFu::Util qw(

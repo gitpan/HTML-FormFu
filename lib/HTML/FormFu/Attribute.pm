@@ -1,7 +1,11 @@
 package HTML::FormFu::Attribute;
+{
+  $HTML::FormFu::Attribute::VERSION = '1.00';
+}
 
 use strict;
 use Exporter qw( import );
+use Carp qw( croak );
 use Class::MOP::Method;
 use HTML::FormFu::Util qw(
     append_xml_attribute remove_xml_attribute literal
@@ -11,6 +15,7 @@ our @EXPORT_OK = qw(
     mk_attrs                        mk_attr_accessors
     mk_attr_modifiers               mk_inherited_accessors
     mk_output_accessors             mk_inherited_merging_accessors
+    mk_attr_bool_accessors
 );
 
 sub mk_attrs {
@@ -61,6 +66,23 @@ sub mk_attrs {
         $class->meta->add_method( $name,         $method );
         $class->meta->add_method( "${name}_xml", $xml_method );
 
+        my $loc_sub = sub {
+            my ( $self, $mess, @args ) = @_;
+
+            if ( ref $mess eq 'ARRAY' ) {
+                ( $mess, @args ) = ( @$mess, @args );
+            }
+
+            return $self->$name(
+                literal( $self->form->localize( $mess, @args ) ) );
+        };
+
+        my $loc_method = Class::MOP::Method->wrap(
+            body         => $loc_sub,
+            name         => "${name}_loc",
+            package_name => $class,
+        );
+
         # add shortcuts
         my $short = $name;
         if ( $short =~ s/attributes$/attrs/ ) {
@@ -77,8 +99,15 @@ sub mk_attrs {
                 package_name => $class,
             );
 
+            my $loc_method = Class::MOP::Method->wrap(
+                body         => $loc_sub,
+                name         => "${short}_loc",
+                package_name => $class,
+            );
+
             $class->meta->add_method( $short,         $method );
             $class->meta->add_method( "${short}_xml", $xml_method );
+            $class->meta->add_method( "${short}_loc", $loc_method );
         }
     }
 
@@ -111,21 +140,9 @@ sub mk_attr_accessors {
         );
 
         my $xml_sub = sub {
-            my ( $self, @attrs ) = @_;
-            my @args;
+            my ( $self, $value ) = @_;
 
-            for my $item (@attrs) {
-                if ( ref $item eq 'HASH' ) {
-                    push @args, { map { $_, literal($_) } keys %$item };
-                }
-                elsif ( ref $item eq 'ARRAY' ) {
-                    push @args, [ map { literal($_) } @$item ];
-                }
-                else {
-                    push @args, literal($item);
-                }
-            }
-            return $self->$name( [@args] );
+            return $self->attributes->{$name} = literal $value;
         };
 
         my $xml_method = Class::MOP::Method->wrap(
@@ -134,28 +151,26 @@ sub mk_attr_accessors {
             package_name => $class,
         );
 
+        my $loc_sub = sub {
+            my ( $self, $mess, @args ) = @_;
+
+            if ( ref $mess eq 'ARRAY' ) {
+                ( $mess, @args ) = ( @$mess, @args );
+            }
+
+            return $self->attributes->{$name} =
+                literal( $self->form->localize( $mess, @args ) );
+        };
+
+        my $loc_method = Class::MOP::Method->wrap(
+            body         => $loc_sub,
+            name         => "${name}_loc",
+            package_name => $class,
+        );
+
         $class->meta->add_method( $name,         $method );
         $class->meta->add_method( "${name}_xml", $xml_method );
-
-        # add shortcuts
-        my $short = $name;
-        if ( $short =~ s/attributes$/attrs/ ) {
-
-            my $method = Class::MOP::Method->wrap(
-                body         => $sub,
-                name         => $short,
-                package_name => $class,
-            );
-
-            my $xml_method = Class::MOP::Method->wrap(
-                body         => $xml_sub,
-                name         => "${short}_xml",
-                package_name => $class,
-            );
-
-            $class->meta->add_method( $short,         $method );
-            $class->meta->add_method( "${short}_xml", $xml_method );
-        }
+        $class->meta->add_method( "${name}_loc", $loc_method );
     }
 
     return;
@@ -199,8 +214,26 @@ sub mk_add_attrs {
             package_name => $class,
         );
 
+        my $loc_sub = sub {
+            my ( $self, $mess, @args ) = @_;
+
+            if ( ref $mess eq 'ARRAY' ) {
+                ( $mess, @args ) = ( @$mess, @args );
+            }
+
+            return $self->$method(
+                literal( $self->form->localize( $mess, @args ) ) );
+        };
+
+        my $loc_method = Class::MOP::Method->wrap(
+            body         => $loc_sub,
+            name         => "add_${name}_loc",
+            package_name => $class,
+        );
+
         $class->meta->add_method( "add_$name",       $method );
         $class->meta->add_method( "add_${name}_xml", $xml_method );
+        $class->meta->add_method( "add_${name}_loc", $loc_method );
 
         # add shortcuts
         my $short = $name;
@@ -218,8 +251,15 @@ sub mk_add_attrs {
                 package_name => $class,
             );
 
+            my $loc_method = Class::MOP::Method->wrap(
+                body         => $loc_sub,
+                name         => "add_${short}_loc",
+                package_name => $class,
+            );
+
             $class->meta->add_method( "add_$short",       $method );
             $class->meta->add_method( "add_${short}_xml", $xml_method );
+            $class->meta->add_method( "add_${short}_loc", $loc_method );
         }
     }
 
@@ -264,8 +304,26 @@ sub mk_del_attrs {
             package_name => $class,
         );
 
+        my $loc_sub = sub {
+            my ( $self, $mess, @args ) = @_;
+
+            if ( ref $mess eq 'ARRAY' ) {
+                ( $mess, @args ) = ( @$mess, @args );
+            }
+
+            return $self->$method(
+                literal( $self->form->localize( $mess, @args ) ) );
+        };
+
+        my $loc_method = Class::MOP::Method->wrap(
+            body         => $loc_sub,
+            name         => "del_${name}_loc",
+            package_name => $class,
+        );
+
         $class->meta->add_method( "del_$name",       $method );
         $class->meta->add_method( "del_${name}_xml", $xml_method );
+        $class->meta->add_method( "del_${name}_loc", $loc_method );
 
         # add shortcuts
         my $short = $name;
@@ -283,8 +341,15 @@ sub mk_del_attrs {
                 package_name => $class,
             );
 
+            my $loc_method = Class::MOP::Method->wrap(
+                body         => $loc_sub,
+                name         => "del_${short}_loc",
+                package_name => $class,
+            );
+
             $class->meta->add_method( "del_$short",       $method );
             $class->meta->add_method( "del_${short}_xml", $xml_method );
+            $class->meta->add_method( "del_${short}_loc", $loc_method );
         }
     }
 
@@ -315,13 +380,30 @@ sub mk_inherited_accessors {
             return $self->{$name};
         };
 
+        my $no_inherit_sub = sub {
+            my ( $self, $value ) = @_;
+
+            if ( @_ > 1 ) {
+                croak "Cannot call ${name}_no_inherit as a setter";
+            }
+
+            return $self->{$name};
+        };
+
         my $method = Class::MOP::Method->wrap(
             body         => $sub,
             name         => $name,
             package_name => $class,
         );
 
+        my $no_inherit_method = Class::MOP::Method->wrap(
+            body         => $no_inherit_sub,
+            name         => "${name}_no_inherit",
+            package_name => $class,
+        );
+
         $class->meta->add_method( $name, $method );
+        $class->meta->add_method( "${name}_no_inherit", $no_inherit_method );
     }
 
     return;
@@ -425,13 +507,57 @@ sub mk_output_accessors {
     return;
 }
 
+sub mk_attr_bool_accessors {
+    my ( $self, @names ) = @_;
+
+    my $class = ref $self || $self;
+
+    for my $name (@names) {
+        my $sub = sub {
+            my ( $self, $attr ) = @_;
+
+            if ( @_ == 1 ) {
+                # Getter
+                return undef if !exists $self->attributes->{$name};
+
+                return $self->attributes->{$name} ? $self->attributes->{$name}
+                                                  : undef;
+            }
+
+            # Any true value sets a bool attribute, e.g.
+            #     required="required"
+            # Any false value deletes the attribute
+
+            if ( $attr ) {
+                $self->attributes->{$name} = $name;
+            }
+            else {
+                delete $self->attributes->{$name};
+            }
+
+            return $self;
+        };
+
+        my $method = Class::MOP::Method->wrap(
+            body         => $sub,
+            name         => $name,
+            package_name => $class,
+        );
+
+        $class->meta->add_method( $name,         $method );
+    }
+
+    return;
+}
+
+
 1;
 
 __END__
 
 =head1 NAME
 
-HTML::FormFu::Attribute
+HTML::FormFu::Attribute - accessor class
 
 =head1 SYNOPSIS
 

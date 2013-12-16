@@ -1,4 +1,7 @@
 package HTML::FormFu::Constraint::File::Size;
+{
+  $HTML::FormFu::Constraint::File::Size::VERSION = '1.00';
+}
 use Moose;
 use MooseX::Attribute::Chained;
 use MooseX::Aliases;

@@ -1,4 +1,7 @@
 package HTML::FormFu::Constraint::File::MIME;
+{
+  $HTML::FormFu::Constraint::File::MIME::VERSION = '1.00';
+}
 
 use Moose;
 use MooseX::Attribute::Chained;

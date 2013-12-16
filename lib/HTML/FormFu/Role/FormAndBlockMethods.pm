@@ -1,4 +1,7 @@
 package HTML::FormFu::Role::FormAndBlockMethods;
+{
+  $HTML::FormFu::Role::FormAndBlockMethods::VERSION = '1.00';
+}
 use Moose::Role;
 
 use HTML::FormFu::Util qw( _merge_hashes );

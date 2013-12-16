@@ -1,4 +1,7 @@
 package HTML::FormFu::UploadParam;
+{
+  $HTML::FormFu::UploadParam::VERSION = '1.00';
+}
 use Moose;
 use MooseX::Attribute::Chained;
 
@@ -89,7 +92,7 @@ __END__
 
 =head1 NAME
 
-HTML::FormFu::UploadParam
+HTML::FormFu::UploadParam - accessor class
 
 =head1 DESCRIPTION
 

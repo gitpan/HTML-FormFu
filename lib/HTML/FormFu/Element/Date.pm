@@ -1,4 +1,7 @@
 package HTML::FormFu::Element::Date;
+{
+  $HTML::FormFu::Element::Date::VERSION = '1.00';
+}
 use Moose;
 use MooseX::Attribute::Chained;
 

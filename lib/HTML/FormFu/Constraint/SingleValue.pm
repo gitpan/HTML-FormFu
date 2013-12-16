@@ -1,4 +1,7 @@
 package HTML::FormFu::Constraint::SingleValue;
+{
+  $HTML::FormFu::Constraint::SingleValue::VERSION = '1.00';
+}
 
 use Moose;
 extends 'HTML::FormFu::Constraint';

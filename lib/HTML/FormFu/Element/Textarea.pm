@@ -1,4 +1,7 @@
 package HTML::FormFu::Element::Textarea;
+{
+  $HTML::FormFu::Element::Textarea::VERSION = '1.00';
+}
 use Moose;
 
 extends "HTML::FormFu::Element";
@@ -9,7 +12,13 @@ with 'HTML::FormFu::Role::Element::Field',
 
 use HTML::FormFu::Util qw( process_attrs );
 
-__PACKAGE__->mk_attr_accessors(qw( cols rows placeholder ));
+__PACKAGE__->mk_attr_accessors(qw(
+    autocomplete
+    cols
+    maxlength
+    rows
+    placeholder
+));
 
 after BUILD => sub {
     my $self = shift;
@@ -52,17 +61,10 @@ sub _string_field {
 
     # textarea_tag template
 
-    my $html .= "<textarea";
-
-    $html .= sprintf qq{ name="%s"}, $render->{nested_name};
-
-    if ( defined $self->placeholder ) {
-        $html .= sprintf qq{ placeholder="%s"}, $self->placeholder;
-    }
-
-    $html .= process_attrs( $render->{attributes} );
-
-    $html .= '>';
+    my $html = sprintf qq{<textarea name="%s"%s>},
+        $render->{nested_name},
+        process_attrs( $render->{attributes} ),
+        ;
 
     if ( defined $render->{value} ) {
         $html .= $render->{value};
@@ -91,32 +93,23 @@ HTML::FormFu::Element::Textarea - Textarea form field
 
 Textarea form field.
 
-=head1 METHODS
+=head1 ATTRIBUTE ACCESSORS
+
+Get / set input attributes directly with these methods.
+
+Arguments: [$string]
+
+Return Value: $string
+
+=head2 autocomplete
 
 =head2 cols
 
-Sets the C<textarea> tag's C<cols> attribute.
+=head2 maxlength
 
 =head2 rows
 
-Sets the C<textarea> tag's C<rows> attribute.
-
 =head2 placeholder
-
-Sets the HTML5 attribute C<placeholder> to the specified value.
-
-=head2 placeholder_xml
-
-If you don't want the C<placeholder> attribute to be XML-escaped, use the L</placeholder_xml> 
-method instead of L</placeholder>.
-
-Arguments: $string
-
-=head2 placeholder_loc
-
-Arguments: $localization_key
-
-Set the  C<placeholder> attribute using a L10N key.
 
 =head1 SEE ALSO
 

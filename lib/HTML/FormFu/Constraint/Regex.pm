@@ -1,4 +1,7 @@
 package HTML::FormFu::Constraint::Regex;
+{
+  $HTML::FormFu::Constraint::Regex::VERSION = '1.00';
+}
 
 use Moose;
 use MooseX::Attribute::Chained;
@@ -6,8 +9,9 @@ extends 'HTML::FormFu::Constraint';
 
 use Regexp::Common;
 
-has common => ( is => 'rw', traits => ['Chained'] );
-has regex  => ( is => 'rw', traits => ['Chained'] );
+has common   => ( is => 'rw', traits => ['Chained'] );
+has regex    => ( is => 'rw', traits => ['Chained'] );
+has anchored => ( is => 'rw', traits => ['Chained'] );
 
 sub constrain_value {
     my ( $self, $value ) = @_;
@@ -34,6 +38,10 @@ sub constrain_value {
     }
     else {
         $regex = qr/.*/;
+    }
+
+    if ( $self->anchored ) {
+        $regex = qr{^$regex\z};
     }
 
     my $ok = $value =~ $regex;
@@ -77,6 +85,13 @@ C<< $RE{URI}{HTTP}{-scheme => 'https?'} >>
       - URI
       - HTTP
       - { '-scheme': 'https?' }
+
+=-head2 anchored
+
+Arguments: bool
+
+If true, uses C<^> and C<\z> to anchor the L</regex> or L</common>
+to the start and end of the submitted value.
 
 =head1 SEE ALSO
 

@@ -1,4 +1,7 @@
 package HTML::FormFu::Element::Text;
+{
+  $HTML::FormFu::Element::Text::VERSION = '1.00';
+}
 use Moose;
 
 extends 'HTML::FormFu::Element';

@@ -1,4 +1,7 @@
 package HTML::FormFu::Role::Filter::Compound;
+{
+  $HTML::FormFu::Role::Filter::Compound::VERSION = '1.00';
+}
 use Moose::Role;
 
 has field_order => ( is => 'rw', traits => ['Chained'] );

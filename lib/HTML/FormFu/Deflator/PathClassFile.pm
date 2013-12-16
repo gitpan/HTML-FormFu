@@ -1,4 +1,7 @@
 package HTML::FormFu::Deflator::PathClassFile;
+{
+  $HTML::FormFu::Deflator::PathClassFile::VERSION = '1.00';
+}
 
 use Moose;
 use MooseX::Attribute::Chained;

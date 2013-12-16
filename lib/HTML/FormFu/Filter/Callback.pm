@@ -1,4 +1,7 @@
 package HTML::FormFu::Filter::Callback;
+{
+  $HTML::FormFu::Filter::Callback::VERSION = '1.00';
+}
 
 use Moose;
 use MooseX::Attribute::Chained;

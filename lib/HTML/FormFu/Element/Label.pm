@@ -1,4 +1,7 @@
 package HTML::FormFu::Element::Label;
+{
+  $HTML::FormFu::Element::Label::VERSION = '1.00';
+}
 use Moose;
 use MooseX::Attribute::Chained;
 
@@ -12,8 +15,9 @@ with 'HTML::FormFu::Role::Element::Field',
 use HTML::FormFu::Util qw( process_attrs );
 use List::MoreUtils qw( none );
 
-has field_type     => ( is => 'rw', traits => ['Chained'] );
-has label_filename => ( is => 'rw', traits => ['Chained'] );
+has field_type      => ( is => 'rw', traits => ['Chained'] );
+has label_filename  => ( is => 'rw', traits => ['Chained'] );
+has errors_filename => ( is => 'rw', traits => ['Chained'] );
 
 has tag => (
     is      => 'rw',
@@ -25,7 +29,8 @@ has tag => (
 after BUILD => sub {
     my $self = shift;
 
-    $self->filename('label_tag');
+    $self->filename('input');
+    $self->field_filename('label_element');
     $self->non_param(1);
 
     #$self->field_type('label');

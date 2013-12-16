@@ -1,4 +1,7 @@
 package HTML::FormFu::Element::Radio;
+{
+  $HTML::FormFu::Element::Radio::VERSION = '1.00';
+}
 use Moose;
 
 extends 'HTML::FormFu::Element::Checkbox';

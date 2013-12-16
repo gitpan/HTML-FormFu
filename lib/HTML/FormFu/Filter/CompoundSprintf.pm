@@ -1,4 +1,7 @@
 package HTML::FormFu::Filter::CompoundSprintf;
+{
+  $HTML::FormFu::Filter::CompoundSprintf::VERSION = '1.00';
+}
 use Moose;
 use MooseX::Attribute::Chained;
 extends 'HTML::FormFu::Filter';

@@ -1,4 +1,7 @@
 package HTML::FormFu::Processor;
+{
+  $HTML::FormFu::Processor::VERSION = '1.00';
+}
 use Moose;
 use MooseX::Attribute::Chained;
 

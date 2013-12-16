@@ -1,4 +1,7 @@
 package HTML::FormFu::Literal;
+{
+  $HTML::FormFu::Literal::VERSION = '1.00';
+}
 
 use strict;
 use HTML::FormFu::Constants qw( $EMPTY_STR );

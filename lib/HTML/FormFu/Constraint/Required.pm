@@ -1,4 +1,7 @@
 package HTML::FormFu::Constraint::Required;
+{
+  $HTML::FormFu::Constraint::Required::VERSION = '1.00';
+}
 
 use Moose;
 extends 'HTML::FormFu::Constraint';

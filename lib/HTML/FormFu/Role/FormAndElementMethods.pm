@@ -1,12 +1,50 @@
 package HTML::FormFu::Role::FormAndElementMethods;
+{
+  $HTML::FormFu::Role::FormAndElementMethods::VERSION = '1.00';
+}
 use Moose::Role;
 
+use HTML::FormFu::Attribute qw(
+    mk_attrs
+    mk_attr_accessors
+    mk_inherited_accessors
+    mk_inherited_merging_accessors
+);
 use HTML::FormFu::Util qw(
     require_class
     _merge_hashes
 );
 use Carp qw( croak );
 use Scalar::Util qw( blessed refaddr );
+
+my @ATTRS = (qw( attributes ));
+
+__PACKAGE__->mk_attrs( @ATTRS );
+
+my @ATTR_ACCESSOR = (qw( title ));
+
+__PACKAGE__->mk_attr_accessors( @ATTR_ACCESSOR );
+
+my @INHERITED = qw(
+    render_method
+    config_file_path
+);
+
+__PACKAGE__->mk_inherited_accessors( @INHERITED );
+
+my @MERGING = qw(
+    tt_args
+    config_callback
+);
+
+__PACKAGE__->mk_inherited_merging_accessors( @MERGING );
+
+our @MULTIFORM_SHARED = (
+    @ATTRS,
+    @ATTR_ACCESSOR,
+    @INHERITED,
+    @MERGING,
+);
 
 sub _require_deflator {
     my ( $self, $type, $opt ) = @_;

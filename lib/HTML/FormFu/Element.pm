@@ -1,10 +1,15 @@
 package HTML::FormFu::Element;
+{
+  $HTML::FormFu::Element::VERSION = '1.00';
+}
 use Moose;
 use MooseX::Attribute::Chained;
 
 with 'HTML::FormFu::Role::Render',
     'HTML::FormFu::Role::FormAndElementMethods',
-    'HTML::FormFu::Role::HasParent';
+    'HTML::FormFu::Role::HasParent',
+    'HTML::FormFu::Role::CustomRoles',
+    'HTML::FormFu::Role::Populate';
 
 use HTML::FormFu::Attribute qw(
     mk_attrs
@@ -16,13 +21,12 @@ use HTML::FormFu::Attribute qw(
 use HTML::FormFu::ObjectUtil qw(
     load_config_file
     load_config_filestem
-    populate
     form
     stash
     parent
     get_parent
 );
-use HTML::FormFu::Util qw( require_class xml_escape process_attrs );
+use HTML::FormFu::Util qw( require_class xml_escape process_attrs _merge_hashes );
 use Clone ();
 use Scalar::Util qw( refaddr weaken );
 use Carp qw( croak );
@@ -35,8 +39,6 @@ use overload (
     fallback => 1
 );
 
-__PACKAGE__->mk_attrs(qw( attributes ));
-
 __PACKAGE__->mk_attr_accessors(qw( id ));
 
 has type          => ( is => 'rw', traits => ['Chained'] );
@@ -44,14 +46,6 @@ has filename      => ( is => 'rw', traits => ['Chained'] );
 has is_field      => ( is => 'rw', traits => ['Chained'] );
 has is_block      => ( is => 'rw', traits => ['Chained'] );
 has is_repeatable => ( is => 'rw', traits => ['Chained'] );
-
-__PACKAGE__->mk_inherited_accessors( qw(
-        tt_args
-        render_method
-        config_file_path
-) );
-
-__PACKAGE__->mk_inherited_merging_accessors(qw( config_callback ));
 
 after BUILD => sub {
     my ( $self, $args ) = @_;
@@ -133,6 +127,106 @@ sub get_output_processor {
     my $self = shift;
 
     return $self->form->get_output_processor(@_);
+}
+
+sub _match_default_args {
+    my ( $self, $defaults ) = @_;
+
+    return {} if !$defaults || !%$defaults;
+
+    # apply any starting with 'Block', 'Field', 'Input' first, each longest first
+    my @block = sort { length $a <=> length $b } grep { $_ =~ /^Block/ } keys %$defaults;
+    my @field = sort { length $a <=> length $b } grep { $_ =~ /^Field/ } keys %$defaults;
+    my @input = sort { length $a <=> length $b } grep { $_ =~ /^Input/ } keys %$defaults;
+
+    my %others = map { $_ => 1 } keys %$defaults;
+    map {
+        delete $others{$_}
+    } @block, @field, @input;
+
+    # apply remaining keys, longest first
+    my $arg = {};
+
+KEY:
+    for my $key ( @block, @field, @input, sort { length $a <=> length $b } keys %others ) {
+        my @type = split qr{\|}, $key;
+        my $match;
+
+TYPE:
+        for my $type (@type) {
+            my $not_in;
+            my $is_in;
+            if ( $type =~ s/^-// ) {
+                $not_in = 1;
+            }
+            elsif ( $type =~ s/^\+// ) {
+                $is_in = 1;
+            }
+
+            my $check_parents = $not_in || $is_in;
+
+            if ( $self->_match_default_args_type( $type, $check_parents ) ) {
+                if ( $not_in ) {
+                    next KEY;
+                }
+                else {
+                    $match = 1;
+                    next TYPE;
+                }
+            }
+        }
+
+        if ( $match ) {
+            $arg = _merge_hashes( $arg, $defaults->{$key} );
+        }
+    }
+
+    return $arg;
+}
+
+sub _match_default_args_type {
+    my ( $self, $type, $check_parents ) = @_;
+
+    my @target;
+    if ( $check_parents ) {
+        my $self = $self;
+        while ( defined ( my $parent = $self->parent ) ) {
+            last if !$parent->isa('HTML::FormFu::Element');
+            push @target, $parent;
+            $self = $parent;
+        }
+    }
+    else {
+        @target = ($self);
+    }
+
+    for my $target (@target) {
+        # handle Block default_args
+        if ( 'Block' eq $type
+            && $target->isa('HTML::FormFu::Element::Block') )
+        {
+            return 1;
+        }
+
+        # handle Field default_args
+        if ( 'Field' eq $type
+            && $target->does('HTML::FormFu::Role::Element::Field') )
+        {
+            return 1;
+        }
+
+        # handle Input default_args
+        if ( 'Input' eq $type
+            && $target->does('HTML::FormFu::Role::Element::Input') )
+        {
+            return 1;
+        }
+
+        # handle explicit default_args
+        if ( $type eq $target->type ) {
+            return 1;
+        }
+    }
 }
 
 sub clone {
@@ -480,6 +574,8 @@ See L<HTML::FormFu/render_method> for details.
 
 =item L<HTML::FormFu::Element::Date>
 
+=item L<HTML::FormFu::Element::Email>
+
 =item L<HTML::FormFu::Element::File>
 
 =item L<HTML::FormFu::Element::Hidden>
@@ -503,6 +599,8 @@ See L<HTML::FormFu/render_method> for details.
 =item L<HTML::FormFu::Element::Textarea>
 
 =item L<HTML::FormFu::Element::Text>
+
+=item L<HTML::FormFu::Element::URL>
 
 =back
 

@@ -1,4 +1,7 @@
 package HTML::FormFu::Deflator::Strftime;
+{
+  $HTML::FormFu::Deflator::Strftime::VERSION = '1.00';
+}
 
 use Moose;
 use MooseX::Attribute::Chained;

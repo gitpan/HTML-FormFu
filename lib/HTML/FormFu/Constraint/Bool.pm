@@ -1,4 +1,7 @@
 package HTML::FormFu::Constraint::Bool;
+{
+  $HTML::FormFu::Constraint::Bool::VERSION = '1.00';
+}
 
 use Moose;
 extends 'HTML::FormFu::Constraint::Regex';

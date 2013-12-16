@@ -1,4 +1,7 @@
 package HTML::FormFu::Constraint::Printable;
+{
+  $HTML::FormFu::Constraint::Printable::VERSION = '1.00';
+}
 
 use Moose;
 extends 'HTML::FormFu::Constraint::Regex';

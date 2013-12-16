@@ -1,4 +1,7 @@
 package HTML::FormFu::Inflator::CompoundDateTime;
+{
+  $HTML::FormFu::Inflator::CompoundDateTime::VERSION = '1.00';
+}
 
 use Moose;
 use MooseX::Attribute::Chained;

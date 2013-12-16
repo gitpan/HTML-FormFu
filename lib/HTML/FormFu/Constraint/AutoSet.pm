@@ -1,4 +1,7 @@
 package HTML::FormFu::Constraint::AutoSet;
+{
+  $HTML::FormFu::Constraint::AutoSet::VERSION = '1.00';
+}
 
 use Moose;
 extends 'HTML::FormFu::Constraint::Set';

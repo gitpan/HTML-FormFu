@@ -1,3 +1,84 @@
+1.00 2013-12-16
+
+    - TT template files changed - update them if you use a local copy.
+      Template file 'label_tag' renamed to 'label_element' - old file can
+      be deleted. 'field' file changed. New 'errors' file.
+    
+    - TT no longer listed as a prerequisite. If you use the TT files,
+      you must add 'Template' to your own app's prereqs.
+    
+    - Element::reCAPTCHA and Constraint::reCAPTCHA moved out to separate
+      distribution.
+    
+    - HTML::FormFu::MultiForm moved out to separate distribution.
+    
+    - auto_container_class(), auto_label_class(), auto_comment_class(),
+      auto_container_error_class(), auto_container_per_error_class(),
+      auto_error_class() no longer have default values.
+      See "RESTORING LEGACY HTML CLASSES" in HTML::FormFu docs to restore
+      previous behaviour.
+    
+    - auto_label_class() no longer adds class to container.
+      auto_label_class() now adds class to label tag.
+      new auto_container_label_class() adds class to container.
+      See "RESTORING LEGACY HTML CLASSES" in HTML::FormFu docs to restore
+      previous behaviour.
+    
+    - auto_comment_class() no longer adds class to both container and comment.
+      auto_comment_class() now only adds class to comment tag.
+      new auto_container_comment_class() adds class to container.
+      See "RESTORING LEGACY HTML CLASSES" in HTML::FormFu docs to restore
+      previous behaviour.
+    
+    - Bug fix: param_value() form method now matches documented behaviour -
+      returns undef when field has errors. (Reported by Hailin Hu).
+    
+    - New Element::Email and Element::URL HTML5 input fields.
+    
+    - Role::Element::Input has new datalist_options(), datalist_values(),
+      datalist_id() and auto_datalist_id() methods to support HTML5 datalists.
+      auto_datalist_id() is an inherited accessor which can be set on the 
+      Form, MultiForm, or Block.
+    
+    - Form and Elements has new title() attribute short-cut.
+    
+    - Constraint::Regex has new anchored() accessor.
+    
+    - New Input attribute accessors: placeholder(), pattern(), autocomplete().
+    
+    - New Input boolean attribute accessors: autofocus(), multiple(), required().
+    
+    - New Field inherited accessors: auto_container_per_error_class(),
+      auto_error_container_class(), auto_error_container_per_error_class(),
+      error_tag(), error_container_tag
+    
+    - Constraints have new experimental method fetch_error_message().
+    
+    - All field elements have new method error_filename().
+    
+    - default_args() now supports 'Block', 'Field', 'Input' pseudo-elements,
+      '|' alternatives, and '+' and '-' ancestor modifiers.
+    
+    - New Czech (cs) I18N translation by Jan Grmela.
+    
+    - mk_inherited_accessors() now also creates a *_no_inherit() method.
+    
+    - Experimental new roles() form method.
+    
+    - form methods start(), end() now respect render_method - no longer
+      force use of tt templates.
+    
+    - Bug fix: del_attribute() on empty attribute no longer sets the attribute.
+    
+    - All attribute accessors generated with mk_attrs() now have *_loc variants.
+    
+    - form methods start(), end() now respect render_method - no longer
+      force use of tt templates.
+    
+    - Tests now always require Test::Aggregate::Nested.
+      Re-enable aggregate tests on Win32.
+      Don't run all tests twice under both aggregate and t/ (doh!)
+
 0.09010 2012-10-05
 
     - Internal changes - all Repeatable/nested_name munging is moved out of
@@ -6,8 +87,6 @@
 0.09009 2012-09-29
     - Make sure object can('checked') before calling checked() (colinnewell)
     - Updated Repeatable control to update id_field on DBIC::Unique if present
-    - Added support for arbitrary elements within Multi blocks so that they
-      don't need to support methods like _striing_field and label etc.
     - ComboBox new get_select_field_nested_name(), get_text_field_nested_name()
       accessors.
     - Fieldset new legend_attributes() method.

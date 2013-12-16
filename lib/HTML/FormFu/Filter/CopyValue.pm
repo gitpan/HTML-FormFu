@@ -1,4 +1,7 @@
 package HTML::FormFu::Filter::CopyValue;
+{
+  $HTML::FormFu::Filter::CopyValue::VERSION = '1.00';
+}
 
 use Moose;
 use MooseX::Attribute::Chained;

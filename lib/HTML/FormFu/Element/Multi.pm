@@ -1,4 +1,7 @@
 package HTML::FormFu::Element::Multi;
+{
+  $HTML::FormFu::Element::Multi::VERSION = '1.00';
+}
 use Moose;
 extends 'HTML::FormFu::Element::Block';
 
@@ -161,24 +164,19 @@ sub string {
 
         next if !defined $render;
 
-        if ( $elem->can('_string_field') ) {
-            if ( $elem->reverse_multi ) {
-                $html .= $elem->_string_field($render);
+        if ( $elem->reverse_multi ) {
+            $html .= $elem->_string_field($render);
 
-                if ( defined $elem->label ) {
-                    $html .= sprintf "\n%s", $elem->_string_label($render);
-                }
-            }
-            else {
-                if ( defined $elem->label ) {
-                    $html .= $elem->_string_label($render) . "\n";
-                }
-
-                $html .= $elem->_string_field($render);
+            if ( defined $elem->label ) {
+                $html .= sprintf "\n%s", $elem->_string_label($render);
             }
         }
         else {
-            $html .= $elem->string( { render_data => $render } );
+            if ( defined $elem->label ) {
+                $html .= $elem->_string_label($render) . "\n";
+            }
+
+            $html .= $elem->_string_field($render);
         }
 
         $html .= "\n";
@@ -223,7 +221,17 @@ HTML::FormFu::Element::Multi - Combine multiple fields in a single element
 
 Combine multiple form fields in a single logical element.
 
-=head1 METHODS
+Non-field elements cannot be added as children of the Multi element.
+
+=head1 RENDERING NOTES
+
+If the Multi element is rendered with the default 'string' render-method,
+all child fields will be rendered with the 'string' render-method, regardless
+of their L<HTML::FormFu/render_method> value.
+
+Likewise, if the Multi element is rendered with the 'tt' render-method,
+all child fields will be rendered with the 'tt' render-method, regardless of
+their L<HTML::FormFu/render_method> value.
 
 =head1 SEE ALSO
 

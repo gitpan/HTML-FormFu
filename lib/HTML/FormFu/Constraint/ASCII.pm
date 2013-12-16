@@ -1,4 +1,7 @@
 package HTML::FormFu::Constraint::ASCII;
+{
+  $HTML::FormFu::Constraint::ASCII::VERSION = '1.00';
+}
 
 use Moose;
 extends 'HTML::FormFu::Constraint::Regex';

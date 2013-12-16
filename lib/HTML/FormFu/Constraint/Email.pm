@@ -1,4 +1,7 @@
 package HTML::FormFu::Constraint::Email;
+{
+  $HTML::FormFu::Constraint::Email::VERSION = '1.00';
+}
 
 use Moose;
 extends 'HTML::FormFu::Constraint';

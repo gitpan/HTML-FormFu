@@ -1,4 +1,7 @@
 package HTML::FormFu::Element::Button;
+{
+  $HTML::FormFu::Element::Button::VERSION = '1.00';
+}
 use Moose;
 
 extends 'HTML::FormFu::Element';
