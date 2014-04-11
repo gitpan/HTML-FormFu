@@ -1,7 +1,5 @@
 package HTML::FormFu::Constraint::Equal;
-{
-  $HTML::FormFu::Constraint::Equal::VERSION = '1.00';
-}
+$HTML::FormFu::Constraint::Equal::VERSION = '2.00';
 use Moose;
 extends 'HTML::FormFu::Constraint';
 

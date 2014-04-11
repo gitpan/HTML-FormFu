@@ -1,8 +1,5 @@
 package HTML::FormFu::Constraint::Number;
-{
-  $HTML::FormFu::Constraint::Number::VERSION = '1.00';
-}
-
+$HTML::FormFu::Constraint::Number::VERSION = '2.00';
 use Moose;
 extends 'HTML::FormFu::Constraint';
 

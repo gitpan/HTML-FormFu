@@ -1,8 +1,5 @@
 package HTML::FormFu::Filter::FormatNumber;
-{
-  $HTML::FormFu::Filter::FormatNumber::VERSION = '1.00';
-}
-
+$HTML::FormFu::Filter::FormatNumber::VERSION = '2.00';
 use Moose;
 extends 'HTML::FormFu::Filter';
 

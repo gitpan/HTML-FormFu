@@ -1,8 +1,5 @@
 package HTML::FormFu::Filter::TrimEdges;
-{
-  $HTML::FormFu::Filter::TrimEdges::VERSION = '1.00';
-}
-
+$HTML::FormFu::Filter::TrimEdges::VERSION = '2.00';
 use Moose;
 extends 'HTML::FormFu::Filter';
 

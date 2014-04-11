@@ -1,9 +1,7 @@
 package HTML::FormFu::Processor;
-{
-  $HTML::FormFu::Processor::VERSION = '1.00';
-}
+$HTML::FormFu::Processor::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
+use MooseX::Attribute::FormFuChained;
 
 with 'HTML::FormFu::Role::NestedHashUtils',
     'HTML::FormFu::Role::HasParent',
@@ -21,7 +19,7 @@ use HTML::FormFu::ObjectUtil qw(
 use Scalar::Util qw( refaddr reftype );
 use Carp qw( croak );
 
-has type => ( is => 'rw', traits => ['Chained'] );
+has type => ( is => 'rw', traits => ['FormFuChained'] );
 
 __PACKAGE__->mk_output_accessors(qw( message ));
 

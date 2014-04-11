@@ -1,8 +1,5 @@
 package HTML::FormFu::Constraint::MinLength;
-{
-  $HTML::FormFu::Constraint::MinLength::VERSION = '1.00';
-}
-
+$HTML::FormFu::Constraint::MinLength::VERSION = '2.00';
 use Moose;
 extends 'HTML::FormFu::Constraint::Length';
 

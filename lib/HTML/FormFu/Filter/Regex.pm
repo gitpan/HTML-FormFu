@@ -1,17 +1,14 @@
 package HTML::FormFu::Filter::Regex;
-{
-  $HTML::FormFu::Filter::Regex::VERSION = '1.00';
-}
-
+$HTML::FormFu::Filter::Regex::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
+use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::Filter';
 
 use HTML::FormFu::Constants qw( $EMPTY_STR );
 
-has match   => ( is => 'rw', traits => ['Chained'] );
-has replace => ( is => 'rw', traits => ['Chained'] );
-has eval    => ( is => 'rw', traits => ['Chained'] );
+has match   => ( is => 'rw', traits => ['FormFuChained'] );
+has replace => ( is => 'rw', traits => ['FormFuChained'] );
+has eval    => ( is => 'rw', traits => ['FormFuChained'] );
 
 sub filter {
     my ( $self, $value ) = @_;

@@ -1,8 +1,5 @@
 package HTML::FormFu::Exception::Transformer;
-{
-  $HTML::FormFu::Exception::Transformer::VERSION = '1.00';
-}
-
+$HTML::FormFu::Exception::Transformer::VERSION = '2.00';
 use Moose;
 extends 'HTML::FormFu::Exception::Input';
 

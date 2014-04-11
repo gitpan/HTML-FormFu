@@ -1,7 +1,5 @@
 package HTML::FormFu::Role::CreateChildren;
-{
-  $HTML::FormFu::Role::CreateChildren::VERSION = '1.00';
-}
+$HTML::FormFu::Role::CreateChildren::VERSION = '2.00';
 use Moose::Role;
 
 use HTML::FormFu::Util qw( _merge_hashes require_class );

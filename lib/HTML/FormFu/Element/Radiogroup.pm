@@ -1,15 +1,10 @@
 package HTML::FormFu::Element::Radiogroup;
-{
-  $HTML::FormFu::Element::Radiogroup::VERSION = '1.00';
-}
+$HTML::FormFu::Element::Radiogroup::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
 extends 'HTML::FormFu::Element::Checkboxgroup';
 
 use HTML::FormFu::Constants qw( $EMPTY_STR );
 use HTML::FormFu::Util qw( append_xml_attribute process_attrs );
-
-has radiogroup_filename => ( is => 'rw', traits => ['Chained'] );
 
 after BUILD => sub {
     my $self = shift;
@@ -82,6 +77,10 @@ no duplicated ID's.
 =head2 reverse_group
 
 See L<HTML::FormFu::Element::Checkboxgroup/reverse_group>.
+
+=head1 DEPRECATED METHODS
+
+=head2 radiogroup_filename
 
 =head1 SEE ALSO
 

@@ -1,7 +1,5 @@
 package HTML::FormFu::Element::Hr;
-{
-  $HTML::FormFu::Element::Hr::VERSION = '1.00';
-}
+$HTML::FormFu::Element::Hr::VERSION = '2.00';
 use Moose;
 
 extends 'HTML::FormFu::Element';

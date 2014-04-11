@@ -1,7 +1,5 @@
 package HTML::FormFu::Element::Select;
-{
-  $HTML::FormFu::Element::Select::VERSION = '1.00';
-}
+$HTML::FormFu::Element::Select::VERSION = '2.00';
 use Moose;
 extends 'HTML::FormFu::Element';
 
@@ -16,8 +14,7 @@ __PACKAGE__->mk_attr_accessors(qw( multiple size ));
 after BUILD => sub {
     my $self = shift;
 
-    $self->filename('input');
-    $self->field_filename('select_tag');
+    $self->layout_field_filename('field_layout_select_field');
     $self->multi_value(1);
 
     return;

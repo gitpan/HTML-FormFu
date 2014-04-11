@@ -1,9 +1,7 @@
 package HTML::FormFu::Filter::CompoundSprintf;
-{
-  $HTML::FormFu::Filter::CompoundSprintf::VERSION = '1.00';
-}
+$HTML::FormFu::Filter::CompoundSprintf::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
+use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::Filter';
 
 with 'HTML::FormFu::Role::Filter::Compound';
@@ -11,7 +9,7 @@ with 'HTML::FormFu::Role::Filter::Compound';
 use HTML::FormFu::Constants qw( $EMPTY_STR );
 use Carp qw( croak );
 
-has sprintf => ( is => 'rw', traits => ['Chained'] );
+has sprintf => ( is => 'rw', traits => ['FormFuChained'] );
 
 sub filter {
     my ( $self, $value ) = @_;

@@ -1,7 +1,5 @@
 package HTML::FormFu::Constraint::Repeatable::Any;
-{
-  $HTML::FormFu::Constraint::Repeatable::Any::VERSION = '1.00';
-}
+$HTML::FormFu::Constraint::Repeatable::Any::VERSION = '2.00';
 use Moose;
 
 extends 'HTML::FormFu::Constraint';

@@ -1,10 +1,7 @@
 package HTML::FormFu::OutputProcessor::StripWhitespace;
-{
-  $HTML::FormFu::OutputProcessor::StripWhitespace::VERSION = '1.00';
-}
-
+$HTML::FormFu::OutputProcessor::StripWhitespace::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
+use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::OutputProcessor';
 
 use HTML::FormFu::Constants qw( $EMPTY_STR );
@@ -28,7 +25,7 @@ has collapse_tags => (
                 ) ];
     },
     lazy   => 1,
-    traits => ['Chained'],
+    traits => ['FormFuChained'],
 );
 
 has collapse_consecutive_tags => (
@@ -40,7 +37,7 @@ has collapse_consecutive_tags => (
                 ) ];
     },
     lazy   => 1,
-    traits => ['Chained'],
+    traits => ['FormFuChained'],
 );
 
 sub process {
@@ -123,11 +120,9 @@ sub process {
 __PACKAGE__->meta->make_immutable;
 
 package HTML::FormFu::OutputProcessor::StripWhitespace::_iter;
-{
-  $HTML::FormFu::OutputProcessor::StripWhitespace::_iter::VERSION = '1.00';
-}
+$HTML::FormFu::OutputProcessor::StripWhitespace::_iter::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
+use MooseX::Attribute::FormFuChained;
 
 sub new {
     my ( $class, @tags ) = @_;

@@ -1,7 +1,5 @@
 package HTML::FormFu::Element::Radio;
-{
-  $HTML::FormFu::Element::Radio::VERSION = '1.00';
-}
+$HTML::FormFu::Element::Radio::VERSION = '2.00';
 use Moose;
 
 extends 'HTML::FormFu::Element::Checkbox';
@@ -35,12 +33,6 @@ HTML::FormFu::Element::Radio - Radio form field
 =head1 DESCRIPTION
 
 Radio form field.
-
-=head1 METHODS
-
-=head2 reverse_multi
-
-Overrides the default value, so it's C<true>.
 
 =head1 SEE ALSO
 

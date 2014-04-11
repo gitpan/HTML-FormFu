@@ -1,7 +1,5 @@
 package HTML::FormFu::Element::Reset;
-{
-  $HTML::FormFu::Element::Reset::VERSION = '1.00';
-}
+$HTML::FormFu::Element::Reset::VERSION = '2.00';
 use Moose;
 
 extends 'HTML::FormFu::Element::Button';

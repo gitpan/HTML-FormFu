@@ -1,7 +1,5 @@
 package HTML::FormFu::I18N::pt_br;
-{
-  $HTML::FormFu::I18N::pt_br::VERSION = '1.00';
-}
+$HTML::FormFu::I18N::pt_br::VERSION = '2.00';
 use utf8;
 
 use Moose;

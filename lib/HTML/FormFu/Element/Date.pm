@@ -1,9 +1,7 @@
 package HTML::FormFu::Element::Date;
-{
-  $HTML::FormFu::Element::Date::VERSION = '1.00';
-}
+$HTML::FormFu::Element::Date::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
+use MooseX::Attribute::FormFuChained;
 
 extends 'HTML::FormFu::Element::Multi';
 
@@ -19,12 +17,12 @@ use Carp qw( croak );
 
 __PACKAGE__->mk_attrs(qw( day  month  year ));
 
-has auto_inflate          => ( is => 'rw', traits => ['Chained'] );
-has default_natural       => ( is => 'rw', traits => ['Chained'] );
-has default_datetime_args => ( is => 'rw', traits => ['Chained'] );
-has printf_day            => ( is => 'rw', traits => ['Chained'] );
-has printf_month          => ( is => 'rw', traits => ['Chained'] );
-has printf_year           => ( is => 'rw', traits => ['Chained'] );
+has auto_inflate          => ( is => 'rw', traits => ['FormFuChained'] );
+has default_natural       => ( is => 'rw', traits => ['FormFuChained'] );
+has default_datetime_args => ( is => 'rw', traits => ['FormFuChained'] );
+has printf_day            => ( is => 'rw', traits => ['FormFuChained'] );
+has printf_month          => ( is => 'rw', traits => ['FormFuChained'] );
+has printf_year           => ( is => 'rw', traits => ['FormFuChained'] );
 
 has _known_fields => ( is => 'rw' );
 
@@ -32,7 +30,7 @@ has strftime => (
     is      => 'rw',
     default => '%d-%m-%Y',
     lazy    => 1,
-    traits  => ['Chained'],
+    traits  => ['FormFuChained'],
 );
 
 *default = \&value;
@@ -770,11 +768,11 @@ L</auto_inflate>.
 
 Although this element inherits from L<HTML::FormFu::Element::Block>, its 
 behaviour for the methods 
-L<filter/filters|HTML::FormFu/filters>, 
-L<constraint/constraints|HTML::FormFu/constraints>, 
-L<inflator/inflators|HTML::FormFu/inflators>, 
-L<validator/validators|HTML::FormFu/validators> and 
-L<transformer/transformers|HTML::FormFu/transformers> is more like that of 
+L<filterE<sol>filters|HTML::FormFu/filters>,
+L<constraintE<sol>constraints|HTML::FormFu/constraints>,
+L<inflatorE<sol>inflators|HTML::FormFu/inflators>,
+L<validatorE<sol>validators|HTML::FormFu/validators> and
+L<transformerE<sol>transformers|HTML::FormFu/transformers> is more like that of
 a L<field element|HTML::FormFu::Role::Element::Field>, meaning all processors are 
 added directly to the date element, not to its select-menu child elements.
 

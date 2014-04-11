@@ -1,14 +1,11 @@
 package HTML::FormFu::Filter::Split;
-{
-  $HTML::FormFu::Filter::Split::VERSION = '1.00';
-}
-
+$HTML::FormFu::Filter::Split::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
+use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::Filter';
 
-has regex => ( is => 'rw', traits => ['Chained'] );
-has limit => ( is => 'rw', traits => ['Chained'] );
+has regex => ( is => 'rw', traits => ['FormFuChained'] );
+has limit => ( is => 'rw', traits => ['FormFuChained'] );
 
 sub filter {
     my ( $self, $value ) = @_;

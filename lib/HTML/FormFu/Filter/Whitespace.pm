@@ -1,8 +1,5 @@
 package HTML::FormFu::Filter::Whitespace;
-{
-  $HTML::FormFu::Filter::Whitespace::VERSION = '1.00';
-}
-
+$HTML::FormFu::Filter::Whitespace::VERSION = '2.00';
 use Moose;
 extends 'HTML::FormFu::Filter::Regex';
 

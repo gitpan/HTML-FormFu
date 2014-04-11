@@ -1,8 +1,5 @@
 package HTML::FormFu::Deploy;
-{
-  $HTML::FormFu::Deploy::VERSION = '1.00';
-}
-
+$HTML::FormFu::Deploy::VERSION = '2.00';
 use strict;
 
 use HTML::FormFu::Constants qw( $EMPTY_STR );

@@ -1,7 +1,5 @@
 package HTML::FormFu::Role::NestedHashUtils;
-{
-  $HTML::FormFu::Role::NestedHashUtils::VERSION = '1.00';
-}
+$HTML::FormFu::Role::NestedHashUtils::VERSION = '2.00';
 use Moose::Role;
 
 use HTML::FormFu::Util qw( split_name );

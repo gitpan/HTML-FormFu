@@ -1,9 +1,7 @@
 package HTML::FormFu::Element::Checkboxgroup;
-{
-  $HTML::FormFu::Element::Checkboxgroup::VERSION = '1.00';
-}
+$HTML::FormFu::Element::Checkboxgroup::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
+use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::Element';
 
 with 'HTML::FormFu::Role::Element::Group';
@@ -16,24 +14,31 @@ has input_type => (
     is      => 'rw',
     default => 'checkbox',
     lazy    => 1,
-    traits  => ['Chained'],
+    traits  => ['FormFuChained'],
 );
 
 has reverse_group => (
     is     => 'rw',
-    traits => ['Chained'],
+    traits => ['FormFuChained'],
 );
 
 after BUILD => sub {
     my ( $self, $args ) = @_;
 
-    $self->filename('input');
-    $self->field_filename('checkboxgroup_tag');
+    $self->layout_field_filename('field_layout_checkboxgroup_field');
     $self->label_tag('legend');
     $self->container_tag('fieldset');
     $self->multi_value(1);
     $self->reverse_group(1);
     $self->input_type('checkbox');
+
+    $self->layout( [
+        'label',
+        'errors',
+        'field',
+        'comment',
+        'javascript',
+    ] );
 
     return;
 };

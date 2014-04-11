@@ -1,8 +1,5 @@
 package HTML::FormFu::Validator;
-{
-  $HTML::FormFu::Validator::VERSION = '1.00';
-}
-
+$HTML::FormFu::Validator::VERSION = '2.00';
 use Moose;
 extends 'HTML::FormFu::Processor';
 
@@ -105,9 +102,8 @@ Then, the form config file would just need:
 And the class would be something like this:
 
     package HTML::FormFu::Validator::MyApp::SomeValidator;
-    use strict;
-    use warnings;
-    use base 'HTML::FormFu::Validator';
+    use Moose;
+    extends 'HTML::FormFu::Validator';
 
     sub validate_value {
         my ( $self, $value, $params ) = @_;

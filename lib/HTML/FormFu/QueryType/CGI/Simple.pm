@@ -1,7 +1,5 @@
 package HTML::FormFu::QueryType::CGI::Simple;
-{
-  $HTML::FormFu::QueryType::CGI::Simple::VERSION = '1.00';
-}
+$HTML::FormFu::QueryType::CGI::Simple::VERSION = '2.00';
 use Moose;
 
 extends 'HTML::FormFu::QueryType::CGI';

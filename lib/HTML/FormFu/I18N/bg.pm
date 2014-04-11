@@ -1,11 +1,9 @@
 package HTML::FormFu::I18N::bg;
-{
-  $HTML::FormFu::I18N::bg::VERSION = '1.00';
-}
-use strict;
+$HTML::FormFu::I18N::bg::VERSION = '2.00';
 use utf8;
 
-use base qw( HTML::FormFu::I18N );
+use Moose;
+extends 'HTML::FormFu::I18N';
 
 our %Lexicon = (
     form_error_message =>

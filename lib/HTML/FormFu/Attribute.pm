@@ -1,8 +1,5 @@
 package HTML::FormFu::Attribute;
-{
-  $HTML::FormFu::Attribute::VERSION = '1.00';
-}
-
+$HTML::FormFu::Attribute::VERSION = '2.00';
 use strict;
 use Exporter qw( import );
 use Carp qw( croak );

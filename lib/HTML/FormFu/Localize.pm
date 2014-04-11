@@ -1,8 +1,5 @@
 package HTML::FormFu::Localize;
-{
-  $HTML::FormFu::Localize::VERSION = '1.00';
-}
-
+$HTML::FormFu::Localize::VERSION = '2.00';
 use strict;
 
 use HTML::FormFu::Util qw( require_class );

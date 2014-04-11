@@ -1,8 +1,5 @@
 package HTML::FormFu::Constants;
-{
-  $HTML::FormFu::Constants::VERSION = '1.00';
-}
-
+$HTML::FormFu::Constants::VERSION = '2.00';
 use strict;
 use Readonly;
 use Exporter qw( import );

@@ -1,13 +1,10 @@
 package HTML::FormFu::Constraint::Callback;
-{
-  $HTML::FormFu::Constraint::Callback::VERSION = '1.00';
-}
-
+$HTML::FormFu::Constraint::Callback::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
+use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::Constraint';
 
-has callback => ( is => 'rw', traits => ['Chained'] );
+has callback => ( is => 'rw', traits => ['FormFuChained'] );
 
 sub constrain_value {
     my ( $self, $value, $params ) = @_;

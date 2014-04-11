@@ -1,9 +1,7 @@
 package HTML::FormFu::Element::Block;
-{
-  $HTML::FormFu::Element::Block::VERSION = '1.00';
-}
+$HTML::FormFu::Element::Block::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
+use MooseX::Attribute::FormFuChained;
 
 extends 'HTML::FormFu::Element';
 
@@ -20,10 +18,10 @@ use Clone ();
 use List::MoreUtils qw( uniq );
 use Carp qw( croak );
 
-has tag                  => ( is => 'rw', traits => ['Chained'] );
-has nested_name          => ( is => 'rw', traits => ['Chained'] );
-has original_nested_name => ( is => 'rw', traits => ['Chained'] );
-has auto_block_id        => ( is => 'rw', traits => ['Chained'] );
+has tag                  => ( is => 'rw', traits => ['FormFuChained'] );
+has nested_name          => ( is => 'rw', traits => ['FormFuChained'] );
+has original_nested_name => ( is => 'rw', traits => ['FormFuChained'] );
+has auto_block_id        => ( is => 'rw', traits => ['FormFuChained'] );
 
 has _elements => (
     is      => 'rw',

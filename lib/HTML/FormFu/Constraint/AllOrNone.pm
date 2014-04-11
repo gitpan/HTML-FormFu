@@ -1,7 +1,5 @@
 package HTML::FormFu::Constraint::AllOrNone;
-{
-  $HTML::FormFu::Constraint::AllOrNone::VERSION = '1.00';
-}
+$HTML::FormFu::Constraint::AllOrNone::VERSION = '2.00';
 use Moose;
 extends 'HTML::FormFu::Constraint';
 

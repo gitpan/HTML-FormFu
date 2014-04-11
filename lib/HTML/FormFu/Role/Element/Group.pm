@@ -1,14 +1,11 @@
 package HTML::FormFu::Role::Element::Group;
-{
-  $HTML::FormFu::Role::Element::Group::VERSION = '1.00';
-}
+$HTML::FormFu::Role::Element::Group::VERSION = '2.00';
 use Moose::Role;
+use MooseX::Attribute::FormFuChained;
 
 with 'HTML::FormFu::Role::Element::Field',
-    'HTML::FormFu::Role::Element::SingleValueField' =>
-    { -excludes => 'nested_name' },
-    'HTML::FormFu::Role::Element::ProcessOptionsFromModel',
     'HTML::FormFu::Role::Element::SingleValueField',
+    'HTML::FormFu::Role::Element::ProcessOptionsFromModel',
     'HTML::FormFu::Role::Element::Coercible';
 
 use HTML::FormFu::Attribute qw( mk_output_accessors );
@@ -18,7 +15,7 @@ use List::MoreUtils qw( none );
 use Scalar::Util qw( reftype );
 use Carp qw( croak );
 
-has empty_first => ( is => 'rw', traits => ['Chained'] );
+has empty_first => ( is => 'rw', traits => ['FormFuChained'] );
 
 __PACKAGE__->mk_output_accessors(qw( empty_first_label ));
 
@@ -373,42 +370,6 @@ sub _quote_options {
             $self->_quote_options( $opt->{group} );
         }
     }
-}
-
-sub string {
-    my ( $self, $args ) = @_;
-
-    $args ||= {};
-
-    my $render
-        = exists $args->{render_data}
-        ? $args->{render_data}
-        : $self->render_data;
-
-    # field wrapper template - start
-
-    my $html = $self->_string_field_start($render);
-
-    # input_tag template
-
-    $html .= $self->_string_field($render);
-
-    # field wrapper template - end
-
-    $html .= $self->_string_field_end($render);
-
-    return $html;
-}
-
-sub as {
-    my ( $self, $type, %attrs ) = @_;
-
-    return $self->_coerce(
-        type       => $type,
-        attributes => \%attrs,
-        errors     => $self->_errors,
-        package    => __PACKAGE__,
-    );
 }
 
 around clone => sub {

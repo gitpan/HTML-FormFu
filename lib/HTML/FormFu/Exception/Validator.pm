@@ -1,8 +1,5 @@
 package HTML::FormFu::Exception::Validator;
-{
-  $HTML::FormFu::Exception::Validator::VERSION = '1.00';
-}
-
+$HTML::FormFu::Exception::Validator::VERSION = '2.00';
 use Moose;
 extends 'HTML::FormFu::Exception::Input';
 

@@ -1,9 +1,7 @@
 package HTML::FormFu::Model::HashRef;
-{
-  $HTML::FormFu::Model::HashRef::VERSION = '1.00';
-}
+$HTML::FormFu::Model::HashRef::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
+use MooseX::Attribute::FormFuChained;
 
 extends 'HTML::FormFu::Model';
 
@@ -13,21 +11,21 @@ use Scalar::Util qw(blessed);
 has flatten => ( is => 'rw' );
 has options => ( is => 'rw' );
 
-has _repeatable => ( is => 'rw', traits => ['Chained'] );
-has _multi      => ( is => 'rw', traits => ['Chained'] );
+has _repeatable => ( is => 'rw', traits => ['FormFuChained'] );
+has _multi      => ( is => 'rw', traits => ['FormFuChained'] );
 
 has deflators => (
     is      => 'rw',
     default => 1,
     lazy    => 1,
-    traits  => ['Chained'],
+    traits  => ['FormFuChained'],
 );
 
 has inflators => (
     is      => 'rw',
     default => 1,
     lazy    => 1,
-    traits  => ['Chained'],
+    traits  => ['FormFuChained'],
 );
 
 sub default_values {

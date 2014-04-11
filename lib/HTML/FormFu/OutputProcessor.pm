@@ -1,9 +1,7 @@
 package HTML::FormFu::OutputProcessor;
-{
-  $HTML::FormFu::OutputProcessor::VERSION = '1.00';
-}
+$HTML::FormFu::OutputProcessor::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
+use MooseX::Attribute::FormFuChained;
 
 with 'HTML::FormFu::Role::HasParent', 'HTML::FormFu::Role::Populate';
 
@@ -11,7 +9,7 @@ use HTML::FormFu::ObjectUtil qw( form parent );
 use Scalar::Util qw( reftype );
 use Carp qw( croak );
 
-has type => ( is => 'rw', traits => ['Chained'] );
+has type => ( is => 'rw', traits => ['FormFuChained'] );
 
 sub clone {
     my ($self) = @_;

@@ -1,12 +1,11 @@
 package HTML::FormFu::Role::Element::NonBlock;
-{
-  $HTML::FormFu::Role::Element::NonBlock::VERSION = '1.00';
-}
+$HTML::FormFu::Role::Element::NonBlock::VERSION = '2.00';
 use Moose::Role;
+use MooseX::Attribute::FormFuChained;
 
 use HTML::FormFu::Util qw( process_attrs );
 
-has tag => ( is => 'rw', traits => ['Chained'] );
+has tag => ( is => 'rw', traits => ['FormFuChained'] );
 
 after BUILD => sub {
     my $self = shift;

@@ -1,15 +1,12 @@
 package HTML::FormFu::Filter::CopyValue;
-{
-  $HTML::FormFu::Filter::CopyValue::VERSION = '1.00';
-}
-
+$HTML::FormFu::Filter::CopyValue::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
+use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::Filter';
 
 with 'HTML::FormFu::Role::NestedHashUtils';
 
-has field => ( is => 'rw', traits => ['Chained'] );
+has field => ( is => 'rw', traits => ['FormFuChained'] );
 
 sub filter {
     my ( $self, $value ) = @_;

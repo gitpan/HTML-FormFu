@@ -1,7 +1,5 @@
 package HTML::FormFu::Role::FormBlockAndFieldMethods;
-{
-  $HTML::FormFu::Role::FormBlockAndFieldMethods::VERSION = '1.00';
-}
+$HTML::FormFu::Role::FormBlockAndFieldMethods::VERSION = '2.00';
 use Moose::Role;
 
 use HTML::FormFu::Attribute qw( mk_inherited_accessors );

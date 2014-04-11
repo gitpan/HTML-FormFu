@@ -1,9 +1,7 @@
 package HTML::FormFu::Element;
-{
-  $HTML::FormFu::Element::VERSION = '1.00';
-}
+$HTML::FormFu::Element::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
+use MooseX::Attribute::FormFuChained;
 
 with 'HTML::FormFu::Role::Render',
     'HTML::FormFu::Role::FormAndElementMethods',
@@ -41,11 +39,11 @@ use overload (
 
 __PACKAGE__->mk_attr_accessors(qw( id ));
 
-has type          => ( is => 'rw', traits => ['Chained'] );
-has filename      => ( is => 'rw', traits => ['Chained'] );
-has is_field      => ( is => 'rw', traits => ['Chained'] );
-has is_block      => ( is => 'rw', traits => ['Chained'] );
-has is_repeatable => ( is => 'rw', traits => ['Chained'] );
+has type          => ( is => 'rw', traits => ['FormFuChained'] );
+has filename      => ( is => 'rw', traits => ['FormFuChained'] );
+has is_field      => ( is => 'rw', traits => ['FormFuChained'] );
+has is_block      => ( is => 'rw', traits => ['FormFuChained'] );
+has is_repeatable => ( is => 'rw', traits => ['FormFuChained'] );
 
 after BUILD => sub {
     my ( $self, $args ) = @_;

@@ -1,8 +1,5 @@
 package HTML::FormFu::Constraint::File::MaxSize;
-{
-  $HTML::FormFu::Constraint::File::MaxSize::VERSION = '1.00';
-}
-
+$HTML::FormFu::Constraint::File::MaxSize::VERSION = '2.00';
 use Moose;
 extends 'HTML::FormFu::Constraint::File::Size';
 

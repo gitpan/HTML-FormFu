@@ -1,9 +1,7 @@
 package HTML::FormFu::Filter;
-{
-  $HTML::FormFu::Filter::VERSION = '1.00';
-}
+$HTML::FormFu::Filter::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
+use MooseX::Attribute::FormFuChained;
 
 with 'HTML::FormFu::Role::NestedHashUtils',
     'HTML::FormFu::Role::HasParent',
@@ -14,9 +12,9 @@ use HTML::FormFu::ObjectUtil qw(
     form name parent nested_name nested_names );
 use Carp qw( croak );
 
-has type => ( is => 'rw', traits => ['Chained'] );
+has type => ( is => 'rw', traits => ['FormFuChained'] );
 
-has localize_args => ( is => 'rw', traits => ['Chained'] );
+has localize_args => ( is => 'rw', traits => ['FormFuChained'] );
 
 sub process {
     my ( $self, $result, $params ) = @_;
@@ -136,6 +134,8 @@ Shorthand for C<< $filter->parent->name >>
 =item L<HTML::FormFu::Filter::Default>
 
 =item L<HTML::FormFu::Filter::Encode>
+
+=item L<HTML::FormFu::Filter::ForceListValue>
 
 =item L<HTML::FormFu::Filter::FormatNumber>
 

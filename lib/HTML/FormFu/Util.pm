@@ -1,8 +1,5 @@
 package HTML::FormFu::Util;
-{
-  $HTML::FormFu::Util::VERSION = '1.00';
-}
-
+$HTML::FormFu::Util::VERSION = '2.00';
 use strict;
 
 use HTML::FormFu::Constants qw( $SPACE );

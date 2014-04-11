@@ -1,9 +1,7 @@
 package HTML::FormFu::Constraint::MinMaxFields;
-{
-  $HTML::FormFu::Constraint::MinMaxFields::VERSION = '1.00';
-}
+$HTML::FormFu::Constraint::MinMaxFields::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
+use MooseX::Attribute::FormFuChained;
 use MooseX::Aliases;
 extends 'HTML::FormFu::Constraint';
 
@@ -14,13 +12,13 @@ use HTML::FormFu::Util qw( DEBUG_CONSTRAINTS debug );
 has minimum => (
     is     => 'rw',
     alias  => 'min',
-    traits => ['Chained'],
+    traits => ['FormFuChained'],
 );
 
 has maximum => (
     is     => 'rw',
     alias  => 'max',
-    traits => ['Chained'],
+    traits => ['FormFuChained'],
 );
 
 after BUILD => sub {

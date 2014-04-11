@@ -1,8 +1,5 @@
 package HTML::FormFu::Constraint::DateTime;
-{
-  $HTML::FormFu::Constraint::DateTime::VERSION = '1.00';
-}
-
+$HTML::FormFu::Constraint::DateTime::VERSION = '2.00';
 use Moose;
 extends 'HTML::FormFu::Constraint';
 

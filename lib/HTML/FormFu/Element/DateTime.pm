@@ -1,10 +1,7 @@
 package HTML::FormFu::Element::DateTime;
-{
-  $HTML::FormFu::Element::DateTime::VERSION = '1.00';
-}
-
+$HTML::FormFu::Element::DateTime::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
+use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::Element::Date';
 
 use Moose::Util qw( apply_all_roles );
@@ -22,7 +19,7 @@ for my $name ( qw(
         is      => 'rw',
         default => '%02d',
         lazy    => 1,
-        traits  => ['Chained'],
+        traits  => ['FormFuChained'],
     );
 }
 

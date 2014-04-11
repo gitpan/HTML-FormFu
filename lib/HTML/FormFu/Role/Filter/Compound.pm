@@ -1,10 +1,9 @@
 package HTML::FormFu::Role::Filter::Compound;
-{
-  $HTML::FormFu::Role::Filter::Compound::VERSION = '1.00';
-}
+$HTML::FormFu::Role::Filter::Compound::VERSION = '2.00';
 use Moose::Role;
+use MooseX::Attribute::FormFuChained;
 
-has field_order => ( is => 'rw', traits => ['Chained'] );
+has field_order => ( is => 'rw', traits => ['FormFuChained'] );
 
 sub _get_values {
     my ( $self, $value ) = @_;

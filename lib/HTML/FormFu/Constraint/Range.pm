@@ -1,9 +1,7 @@
 package HTML::FormFu::Constraint::Range;
-{
-  $HTML::FormFu::Constraint::Range::VERSION = '1.00';
-}
+$HTML::FormFu::Constraint::Range::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
+use MooseX::Attribute::FormFuChained;
 use MooseX::Aliases;
 
 extends 'HTML::FormFu::Constraint';
@@ -13,13 +11,13 @@ use Scalar::Util qw( looks_like_number );
 has minimum => (
     is     => 'rw',
     alias  => 'min',
-    traits => ['Chained'],
+    traits => ['FormFuChained'],
 );
 
 has maximum => (
     is     => 'rw',
     alias  => 'max',
-    traits => ['Chained'],
+    traits => ['FormFuChained'],
 );
 
 sub constrain_value {

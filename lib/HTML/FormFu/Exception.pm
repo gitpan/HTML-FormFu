@@ -1,7 +1,5 @@
 package HTML::FormFu::Exception;
-{
-  $HTML::FormFu::Exception::VERSION = '1.00';
-}
+$HTML::FormFu::Exception::VERSION = '2.00';
 use Moose;
 
 with 'HTML::FormFu::Role::Populate';

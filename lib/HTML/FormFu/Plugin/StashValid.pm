@@ -1,8 +1,5 @@
 package HTML::FormFu::Plugin::StashValid;
-{
-  $HTML::FormFu::Plugin::StashValid::VERSION = '1.00';
-}
-
+$HTML::FormFu::Plugin::StashValid::VERSION = '2.00';
 use Moose;
 extends 'HTML::FormFu::Plugin';
 

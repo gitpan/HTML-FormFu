@@ -1,9 +1,7 @@
 package HTML::FormFu::Upload;
-{
-  $HTML::FormFu::Upload::VERSION = '1.00';
-}
+$HTML::FormFu::Upload::VERSION = '2.00';
 use Moose;
-use MooseX::Attribute::Chained;
+use MooseX::Attribute::FormFuChained;
 
 with 'HTML::FormFu::Role::Populate';
 
@@ -13,10 +11,10 @@ use HTML::FormFu::ObjectUtil qw( form parent );
 use HTML::FormFu::UploadParam;
 use Scalar::Util qw( reftype );
 
-has headers  => ( is => 'rw', traits => ['Chained'] );
-has filename => ( is => 'rw', traits => ['Chained'] );
-has size     => ( is => 'rw', traits => ['Chained'] );
-has type     => ( is => 'rw', traits => ['Chained'] );
+has headers  => ( is => 'rw', traits => ['FormFuChained'] );
+has filename => ( is => 'rw', traits => ['FormFuChained'] );
+has size     => ( is => 'rw', traits => ['FormFuChained'] );
+has type     => ( is => 'rw', traits => ['FormFuChained'] );
 
 sub BUILD { }
 

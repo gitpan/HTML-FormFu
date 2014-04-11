@@ -1,7 +1,5 @@
 package HTML::FormFu::Role::Populate;
-{
-  $HTML::FormFu::Role::Populate::VERSION = '1.00';
-}
+$HTML::FormFu::Role::Populate::VERSION = '2.00';
 use Moose::Role;
 
 use Scalar::Util qw( reftype );

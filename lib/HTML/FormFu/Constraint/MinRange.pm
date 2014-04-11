@@ -1,8 +1,5 @@
 package HTML::FormFu::Constraint::MinRange;
-{
-  $HTML::FormFu::Constraint::MinRange::VERSION = '1.00';
-}
-
+$HTML::FormFu::Constraint::MinRange::VERSION = '2.00';
 use Moose;
 extends 'HTML::FormFu::Constraint::Range';
 

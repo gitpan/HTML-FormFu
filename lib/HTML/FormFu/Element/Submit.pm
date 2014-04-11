@@ -1,7 +1,5 @@
 package HTML::FormFu::Element::Submit;
-{
-  $HTML::FormFu::Element::Submit::VERSION = '1.00';
-}
+$HTML::FormFu::Element::Submit::VERSION = '2.00';
 use Moose;
 
 extends 'HTML::FormFu::Element::Button';

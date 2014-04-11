@@ -1,7 +1,5 @@
 package HTML::FormFu::Role::ContainsElementsSharedWithField;
-{
-  $HTML::FormFu::Role::ContainsElementsSharedWithField::VERSION = '1.00';
-}
+$HTML::FormFu::Role::ContainsElementsSharedWithField::VERSION = '2.00';
 use Moose::Role;
 
 use HTML::FormFu::Util qw(
