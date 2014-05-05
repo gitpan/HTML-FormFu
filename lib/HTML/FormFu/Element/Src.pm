@@ -1,5 +1,5 @@
 package HTML::FormFu::Element::Src;
-$HTML::FormFu::Element::Src::VERSION = '2.00';
+$HTML::FormFu::Element::Src::VERSION = '2.01';
 use Moose;
 extends 'HTML::FormFu::Element::Block';
 

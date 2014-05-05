@@ -1,5 +1,5 @@
 package HTML::FormFu::Transformer::Callback;
-$HTML::FormFu::Transformer::Callback::VERSION = '2.00';
+$HTML::FormFu::Transformer::Callback::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::Transformer';

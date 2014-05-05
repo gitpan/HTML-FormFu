@@ -1,5 +1,5 @@
 package HTML::FormFu::Inflator::Callback;
-$HTML::FormFu::Inflator::Callback::VERSION = '2.00';
+$HTML::FormFu::Inflator::Callback::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::Inflator';

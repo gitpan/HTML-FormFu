@@ -1,5 +1,5 @@
 package HTML::FormFu::Element::Number;
-$HTML::FormFu::Element::Number::VERSION = '2.00';
+$HTML::FormFu::Element::Number::VERSION = '2.01';
 use Moose;
 
 extends 'HTML::FormFu::Element::Text';

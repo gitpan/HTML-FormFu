@@ -1,5 +1,5 @@
 package HTML::FormFu::Element::ComboBox;
-$HTML::FormFu::Element::ComboBox::VERSION = '2.00';
+$HTML::FormFu::Element::ComboBox::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::Element::Multi';

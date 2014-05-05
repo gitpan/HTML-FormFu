@@ -1,5 +1,5 @@
 package HTML::FormFu::Filter::Regex;
-$HTML::FormFu::Filter::Regex::VERSION = '2.00';
+$HTML::FormFu::Filter::Regex::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::Filter';

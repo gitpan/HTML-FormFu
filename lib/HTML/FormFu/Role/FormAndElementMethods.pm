@@ -1,5 +1,5 @@
 package HTML::FormFu::Role::FormAndElementMethods;
-$HTML::FormFu::Role::FormAndElementMethods::VERSION = '2.00';
+$HTML::FormFu::Role::FormAndElementMethods::VERSION = '2.01';
 use Moose::Role;
 
 use HTML::FormFu::Attribute qw(

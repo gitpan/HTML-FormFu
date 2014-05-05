@@ -1,5 +1,5 @@
 package HTML::FormFu::Constraint::File::MIME;
-$HTML::FormFu::Constraint::File::MIME::VERSION = '2.00';
+$HTML::FormFu::Constraint::File::MIME::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::Constraint';

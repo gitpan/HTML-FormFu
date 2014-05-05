@@ -1,5 +1,5 @@
 package HTML::FormFu::Element::Checkboxgroup;
-$HTML::FormFu::Element::Checkboxgroup::VERSION = '2.00';
+$HTML::FormFu::Element::Checkboxgroup::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::Element';

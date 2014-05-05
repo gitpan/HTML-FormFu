@@ -1,6 +1,7 @@
 package HTML::FormFu::Attribute;
-$HTML::FormFu::Attribute::VERSION = '2.00';
+$HTML::FormFu::Attribute::VERSION = '2.01';
 use strict;
+use warnings;
 use Exporter qw( import );
 use Carp qw( croak );
 use Class::MOP::Method;

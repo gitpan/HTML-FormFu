@@ -1,5 +1,5 @@
 package HTML::FormFu::Role::Element::Input;
-$HTML::FormFu::Role::Element::Input::VERSION = '2.00';
+$HTML::FormFu::Role::Element::Input::VERSION = '2.01';
 use Moose::Role;
 
 with 'HTML::FormFu::Role::Element::Field',

@@ -1,5 +1,5 @@
 package HTML::FormFu::I18N;
-$HTML::FormFu::I18N::VERSION = '2.00';
+$HTML::FormFu::I18N::VERSION = '2.01';
 use Moose;
 
 extends 'Locale::Maketext';

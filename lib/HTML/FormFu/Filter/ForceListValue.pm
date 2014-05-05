@@ -1,5 +1,5 @@
 package HTML::FormFu::Filter::ForceListValue;
-$HTML::FormFu::Filter::ForceListValue::VERSION = '2.00';
+$HTML::FormFu::Filter::ForceListValue::VERSION = '2.01';
 use Moose;
 extends 'HTML::FormFu::Filter';
 
@@ -18,7 +18,7 @@ sub process {
 
 =head1 NAME
 
-HTML::FormFu::Filter::ForceListValue
+HTML::FormFu::Filter::ForceListValue - convert a single value into a 1-item-list
 
 =head1 SYNOPSIS
 

@@ -1,5 +1,5 @@
 package HTML::FormFu::OutputProcessor::Indent;
-$HTML::FormFu::OutputProcessor::Indent::VERSION = '2.00';
+$HTML::FormFu::OutputProcessor::Indent::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::OutputProcessor';

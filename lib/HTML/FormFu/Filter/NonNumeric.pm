@@ -1,5 +1,5 @@
 package HTML::FormFu::Filter::NonNumeric;
-$HTML::FormFu::Filter::NonNumeric::VERSION = '2.00';
+$HTML::FormFu::Filter::NonNumeric::VERSION = '2.01';
 use Moose;
 extends 'HTML::FormFu::Filter::Regex';
 

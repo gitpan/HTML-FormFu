@@ -1,5 +1,5 @@
 package HTML::FormFu::Filter::CompoundSprintf;
-$HTML::FormFu::Filter::CompoundSprintf::VERSION = '2.00';
+$HTML::FormFu::Filter::CompoundSprintf::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::Filter';

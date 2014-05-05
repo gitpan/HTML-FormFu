@@ -1,5 +1,5 @@
 package HTML::FormFu::Transformer;
-$HTML::FormFu::Transformer::VERSION = '2.00';
+$HTML::FormFu::Transformer::VERSION = '2.01';
 use Moose;
 extends 'HTML::FormFu::Processor';
 

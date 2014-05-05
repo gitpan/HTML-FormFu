@@ -1,5 +1,5 @@
 package HTML::FormFu::Filter::CompoundJoin;
-$HTML::FormFu::Filter::CompoundJoin::VERSION = '2.00';
+$HTML::FormFu::Filter::CompoundJoin::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::Filter';

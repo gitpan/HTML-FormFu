@@ -1,5 +1,5 @@
 package HTML::FormFu::Exception::Inflator;
-$HTML::FormFu::Exception::Inflator::VERSION = '2.00';
+$HTML::FormFu::Exception::Inflator::VERSION = '2.01';
 use Moose;
 extends 'HTML::FormFu::Exception::Input';
 

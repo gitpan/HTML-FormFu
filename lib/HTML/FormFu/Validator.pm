@@ -1,5 +1,5 @@
 package HTML::FormFu::Validator;
-$HTML::FormFu::Validator::VERSION = '2.00';
+$HTML::FormFu::Validator::VERSION = '2.01';
 use Moose;
 extends 'HTML::FormFu::Processor';
 

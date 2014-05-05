@@ -1,5 +1,5 @@
 package HTML::FormFu::Inflator;
-$HTML::FormFu::Inflator::VERSION = '2.00';
+$HTML::FormFu::Inflator::VERSION = '2.01';
 use Moose;
 extends 'HTML::FormFu::Processor';
 

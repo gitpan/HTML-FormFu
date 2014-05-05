@@ -1,5 +1,5 @@
 package HTML::FormFu::QueryType::Catalyst;
-$HTML::FormFu::QueryType::Catalyst::VERSION = '2.00';
+$HTML::FormFu::QueryType::Catalyst::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 

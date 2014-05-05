@@ -1,5 +1,5 @@
 package HTML::FormFu::Plugin;
-$HTML::FormFu::Plugin::VERSION = '2.00';
+$HTML::FormFu::Plugin::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 

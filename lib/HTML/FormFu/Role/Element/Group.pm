@@ -1,5 +1,5 @@
 package HTML::FormFu::Role::Element::Group;
-$HTML::FormFu::Role::Element::Group::VERSION = '2.00';
+$HTML::FormFu::Role::Element::Group::VERSION = '2.01';
 use Moose::Role;
 use MooseX::Attribute::FormFuChained;
 

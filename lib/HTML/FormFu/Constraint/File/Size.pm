@@ -1,5 +1,5 @@
 package HTML::FormFu::Constraint::File::Size;
-$HTML::FormFu::Constraint::File::Size::VERSION = '2.00';
+$HTML::FormFu::Constraint::File::Size::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 use MooseX::Aliases;

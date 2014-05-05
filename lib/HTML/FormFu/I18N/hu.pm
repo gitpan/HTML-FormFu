@@ -1,5 +1,5 @@
 package HTML::FormFu::I18N::hu;
-$HTML::FormFu::I18N::hu::VERSION = '2.00';
+$HTML::FormFu::I18N::hu::VERSION = '2.01';
 use Moose;
 use utf8;
 

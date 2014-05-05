@@ -1,5 +1,5 @@
 package HTML::FormFu::Exception::Constraint;
-$HTML::FormFu::Exception::Constraint::VERSION = '2.00';
+$HTML::FormFu::Exception::Constraint::VERSION = '2.01';
 use Moose;
 extends 'HTML::FormFu::Exception::Input';
 

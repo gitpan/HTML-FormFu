@@ -1,5 +1,5 @@
 package HTML::FormFu::Role::Element::Field;
-$HTML::FormFu::Role::Element::Field::VERSION = '2.00';
+$HTML::FormFu::Role::Element::Field::VERSION = '2.01';
 use Moose::Role;
 use MooseX::Aliases;
 use MooseX::Attribute::FormFuChained;

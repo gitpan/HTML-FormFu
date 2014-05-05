@@ -1,5 +1,5 @@
 package HTML::FormFu::Role::Constraint::Others;
-$HTML::FormFu::Role::Constraint::Others::VERSION = '2.00';
+$HTML::FormFu::Role::Constraint::Others::VERSION = '2.01';
 use Moose::Role;
 use MooseX::Attribute::FormFuChained;
 

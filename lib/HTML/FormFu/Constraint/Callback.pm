@@ -1,5 +1,5 @@
 package HTML::FormFu::Constraint::Callback;
-$HTML::FormFu::Constraint::Callback::VERSION = '2.00';
+$HTML::FormFu::Constraint::Callback::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::Constraint';

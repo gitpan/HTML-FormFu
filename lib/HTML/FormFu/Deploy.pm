@@ -1,6 +1,7 @@
 package HTML::FormFu::Deploy;
-$HTML::FormFu::Deploy::VERSION = '2.00';
+$HTML::FormFu::Deploy::VERSION = '2.01';
 use strict;
+use warnings;
 
 use HTML::FormFu::Constants qw( $EMPTY_STR );
 use Cwd qw( getcwd );

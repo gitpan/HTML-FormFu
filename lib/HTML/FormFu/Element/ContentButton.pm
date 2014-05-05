@@ -1,5 +1,5 @@
 package HTML::FormFu::Element::ContentButton;
-$HTML::FormFu::Element::ContentButton::VERSION = '2.00';
+$HTML::FormFu::Element::ContentButton::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 extends "HTML::FormFu::Element";

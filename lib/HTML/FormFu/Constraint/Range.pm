@@ -1,5 +1,5 @@
 package HTML::FormFu::Constraint::Range;
-$HTML::FormFu::Constraint::Range::VERSION = '2.00';
+$HTML::FormFu::Constraint::Range::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 use MooseX::Aliases;

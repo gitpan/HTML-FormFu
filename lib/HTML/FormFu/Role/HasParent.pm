@@ -1,5 +1,5 @@
 package HTML::FormFu::Role::HasParent;
-$HTML::FormFu::Role::HasParent::VERSION = '2.00';
+$HTML::FormFu::Role::HasParent::VERSION = '2.01';
 use Moose::Role;
 
 sub BUILD {

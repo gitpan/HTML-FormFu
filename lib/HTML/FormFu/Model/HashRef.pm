@@ -1,5 +1,5 @@
 package HTML::FormFu::Model::HashRef;
-$HTML::FormFu::Model::HashRef::VERSION = '2.00';
+$HTML::FormFu::Model::HashRef::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 

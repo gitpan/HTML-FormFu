@@ -1,5 +1,5 @@
 package HTML::FormFu::Element::Textarea;
-$HTML::FormFu::Element::Textarea::VERSION = '2.00';
+$HTML::FormFu::Element::Textarea::VERSION = '2.01';
 use Moose;
 
 extends "HTML::FormFu::Element";

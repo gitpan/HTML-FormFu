@@ -1,5 +1,5 @@
 package HTML::FormFu::Deflator::CompoundDateTime;
-$HTML::FormFu::Deflator::CompoundDateTime::VERSION = '2.00';
+$HTML::FormFu::Deflator::CompoundDateTime::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::Deflator';

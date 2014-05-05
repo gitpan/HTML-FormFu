@@ -1,5 +1,5 @@
 package HTML::FormFu::Filter::LowerCase;
-$HTML::FormFu::Filter::LowerCase::VERSION = '2.00';
+$HTML::FormFu::Filter::LowerCase::VERSION = '2.01';
 use Moose;
 extends 'HTML::FormFu::Filter';
 

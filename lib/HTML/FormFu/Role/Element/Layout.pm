@@ -1,5 +1,5 @@
 package HTML::FormFu::Role::Element::Layout;
-$HTML::FormFu::Role::Element::Layout::VERSION = '2.00';
+$HTML::FormFu::Role::Element::Layout::VERSION = '2.01';
 use Moose::Role;
 use MooseX::Attribute::FormFuChained;
 
@@ -247,7 +247,9 @@ sub _parse_layout_label {
     my $self   = shift;
     my $render = shift;
 
-    return "" unless exists $render->{label} && length $render->{label};
+    return "" unless exists $render->{label}
+        && defined $render->{label}
+        && length $render->{label};
 
     if ( @_ ) {
         my ( $tag, @content ) = @_;

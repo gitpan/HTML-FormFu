@@ -1,5 +1,5 @@
 package HTML::FormFu::Filter::HTMLScrubber;
-$HTML::FormFu::Filter::HTMLScrubber::VERSION = '2.00';
+$HTML::FormFu::Filter::HTMLScrubber::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::Filter';

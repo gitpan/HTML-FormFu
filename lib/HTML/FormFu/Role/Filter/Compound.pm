@@ -1,5 +1,5 @@
 package HTML::FormFu::Role::Filter::Compound;
-$HTML::FormFu::Role::Filter::Compound::VERSION = '2.00';
+$HTML::FormFu::Role::Filter::Compound::VERSION = '2.01';
 use Moose::Role;
 use MooseX::Attribute::FormFuChained;
 

@@ -1,5 +1,5 @@
 package HTML::FormFu::Upload;
-$HTML::FormFu::Upload::VERSION = '2.00';
+$HTML::FormFu::Upload::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 

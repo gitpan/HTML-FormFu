@@ -1,6 +1,7 @@
 package HTML::FormFu::Preload;
-$HTML::FormFu::Preload::VERSION = '2.00';
+$HTML::FormFu::Preload::VERSION = '2.01';
 use strict;
+use warnings;
 use HTML::FormFu;
 
 use Module::Pluggable (

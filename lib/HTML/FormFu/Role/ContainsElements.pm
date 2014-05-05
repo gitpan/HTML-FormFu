@@ -1,5 +1,5 @@
 package HTML::FormFu::Role::ContainsElements;
-$HTML::FormFu::Role::ContainsElements::VERSION = '2.00';
+$HTML::FormFu::Role::ContainsElements::VERSION = '2.01';
 use Moose::Role;
 
 use HTML::FormFu::Util qw(

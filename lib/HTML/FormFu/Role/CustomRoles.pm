@@ -1,5 +1,5 @@
 package HTML::FormFu::Role::CustomRoles;
-$HTML::FormFu::Role::CustomRoles::VERSION = '2.00';
+$HTML::FormFu::Role::CustomRoles::VERSION = '2.01';
 use Moose::Role;
 use Moose::Util qw( ensure_all_roles );
 

@@ -1,5 +1,5 @@
 package HTML::FormFu::Element::Fieldset;
-$HTML::FormFu::Element::Fieldset::VERSION = '2.00';
+$HTML::FormFu::Element::Fieldset::VERSION = '2.01';
 use Moose;
 extends 'HTML::FormFu::Element::Block';
 

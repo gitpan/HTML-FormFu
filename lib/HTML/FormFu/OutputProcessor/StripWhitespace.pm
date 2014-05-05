@@ -1,5 +1,5 @@
 package HTML::FormFu::OutputProcessor::StripWhitespace;
-$HTML::FormFu::OutputProcessor::StripWhitespace::VERSION = '2.00';
+$HTML::FormFu::OutputProcessor::StripWhitespace::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 extends 'HTML::FormFu::OutputProcessor';
@@ -120,7 +120,7 @@ sub process {
 __PACKAGE__->meta->make_immutable;
 
 package HTML::FormFu::OutputProcessor::StripWhitespace::_iter;
-$HTML::FormFu::OutputProcessor::StripWhitespace::_iter::VERSION = '2.00';
+$HTML::FormFu::OutputProcessor::StripWhitespace::_iter::VERSION = '2.01';
 use Moose;
 use MooseX::Attribute::FormFuChained;
 

@@ -1,5 +1,5 @@
 package HTML::FormFu::Role::Element::NonBlock;
-$HTML::FormFu::Role::Element::NonBlock::VERSION = '2.00';
+$HTML::FormFu::Role::Element::NonBlock::VERSION = '2.01';
 use Moose::Role;
 use MooseX::Attribute::FormFuChained;
 

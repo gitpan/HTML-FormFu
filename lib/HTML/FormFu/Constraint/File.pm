@@ -1,5 +1,5 @@
 package HTML::FormFu::Constraint::File;
-$HTML::FormFu::Constraint::File::VERSION = '2.00';
+$HTML::FormFu::Constraint::File::VERSION = '2.01';
 use Moose;
 extends 'HTML::FormFu::Constraint';
 

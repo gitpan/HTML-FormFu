@@ -1,6 +1,7 @@
 package HTML::FormFu::ObjectUtil;
-$HTML::FormFu::ObjectUtil::VERSION = '2.00';
+$HTML::FormFu::ObjectUtil::VERSION = '2.01';
 use strict;
+use warnings;
 use Exporter qw( import );
 
 use HTML::FormFu::Util qw(

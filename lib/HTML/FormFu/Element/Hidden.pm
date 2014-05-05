@@ -1,5 +1,5 @@
 package HTML::FormFu::Element::Hidden;
-$HTML::FormFu::Element::Hidden::VERSION = '2.00';
+$HTML::FormFu::Element::Hidden::VERSION = '2.01';
 use Moose;
 
 extends 'HTML::FormFu::Element';

@@ -67,4 +67,4 @@ requires:
   perl: '5.008001'
 resources:
   repository: git://github.com/fireartist/HTML-FormFu.git
-version: '2.00'
+version: '2.01'

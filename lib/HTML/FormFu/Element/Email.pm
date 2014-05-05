@@ -1,5 +1,5 @@
 package HTML::FormFu::Element::Email;
-$HTML::FormFu::Element::Email::VERSION = '2.00';
+$HTML::FormFu::Element::Email::VERSION = '2.01';
 use Moose;
 
 extends 'HTML::FormFu::Element';
